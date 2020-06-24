@@ -4,7 +4,7 @@
   <packaging>war</packaging>
   <version>1.0</version>
 
-  <groupId>com.google.planet</groupId>
+  <groupId>com.google.planet</groupId> 
   <artifactId>planet</artifactId>
 
   <properties>
@@ -33,11 +33,6 @@
       <version>3.1.0</version>
       <type>jar</type>
       <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>jstl</groupId>
-      <artifactId>jstl</artifactId>
-      <version>1.2</version>
     </dependency>
 
     <!-- Test Dependencies -->
