@@ -14,34 +14,16 @@
 
 package com.google.planet.data;
 
-public final class Event {
-    private final long id;
+public final class ItineraryItem {
     private final String name; 
     private final String address;
-    private final double duration; 
-    private final String preferredTime;
-    private final String userId;
+    private final TimeRange timeRange;
 
-    public Event(long id, String name, String address, double duration, String preferredTime, String userId) {
-        this.id = id;
+    public ItineraryItem (String name, String address, TimeRange timeRange) {
         this.name = name;
         this.address = address;
-        this.duration = duration;
-        this.preferredTime = preferredTime;
-        this.userId = userId;
-    }
-
-    public int getDurationInMinutes(){
-        return (int) (this.duration * 60);
-    }
-    public String getName(){
-        return this.name;
-    }
-    public String getAddress(){
-        return this.address;
-    }
-    public String getPreferredTime(){
-        return this.preferredTime;
+        this.timeRange = timeRange;
     }
 }
+
 

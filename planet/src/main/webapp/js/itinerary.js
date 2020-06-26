@@ -46,6 +46,14 @@ async function generateItinerary() {
     // const events = await eventsResponse.json();
 }
 
+function timeToString(totalMinutes) {
+    const hours = totalMinutes / 60;
+    const minutes = totalMinutes % 60;
+
+    const hoursString = hours < 10 ? ('0' + hours) : hours;
+    const minutesString = minutes < 10 ? ('0' + minutes) : minutes;
+    return hoursString + ':' + minutesString;
+}
 
 
 document.addEventListener('DOMContentLoaded', function() {
