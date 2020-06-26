@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link href='//fonts.googleapis.com/css?family=Marmelad' rel='stylesheet' type='text/css'>
+    <!--Import materialize.css-->
+    <link type="text/css" rel="stylesheet" href="css/materialize.css"  media="screen,projection"/>
+    <link rel="stylesheet" href="css/signup.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>  
+    <meta charset="UTF-8">
+    <title>Planet</title>
+    <script src="https://www.gstatic.com/firebasejs/4.1.3/firebase.js"></script>
+    <script src="js/authentication.js"></script>
+  </head>
+  <body>
+    <div class="container">
+      <form class="col s12">
+        <h1 class="form-text">Sign Up</h1>
+        <p class="form-text">Please fill in this form to get started</p>
+        <hr>
+        <div class="row">
+          <div class="input-field col s6">
+            <input id="first_name" type="text" class="validate">
+            <label for="first_name">First Name</label>
+          </div>
+          <div class="input-field col s6">
+            <input id="last_name" type="text" class="validate">
+            <label for="last_name">Last Name</label>
+          </div>
+        </div>
+        <div class="row">
+          <div class="input-field col s6">
+            <input id="email" type="email" class="validate">
+            <label for="email">Email</label>
+          </div>
+          <div class="input-field col s6">
+            <input id="phone" type="tel" class="validate">
+            <label for="phone">Phone Number</label>
+          </div>
+        </div>
+        <div class="row">
+          <div class="input-field col s12">
+            <input id="password" type="password" class="validate">
+            <label for="password">Password</label>
+          </div>
+        </div>
+        <div class="row">
+          <div class="input-field col s12">
+            <input id="repeat-password" type="password" class="validate">
+            <label for="repeat-password">Confirm Password</label>
+          </div>
+        </div>
+        <div class="row">
+          <div class="input-field col s6"></div>
+          <div class="input-field col s3">
+            <button id="cancel-btn" class="btn waves-effect waves-light">Cancel</button>
+          </div>
+          <div class="input-field col s3">
+            <button class="btn waves-effect waves-light" type="submit">Sign Up</button>
+          </div>
+        </div>
+      </form>
+    </div>
+    
+    <!-- Import materialize.js-->
+    <script type="text/javascript" src="js/materialize.js"></script>
+  </body>
+</html>
