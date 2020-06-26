@@ -5,7 +5,7 @@ function initMap() {
         zoom: 8
     });
 
-    var input = document.getElementById('pac-input');
+    var input = document.getElementById('search');
     var searchBox = new google.maps.places.SearchBox(input);
     map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
 
@@ -82,6 +82,7 @@ function initMap() {
         map.fitBounds(bounds);
     });
 }
+
 function handleLocationError(browserHasGeolocation, infoWindow, pos) {
     infoWindow.setPosition(pos);
     infoWindow.setContent(browserHasGeolocation ?
@@ -89,4 +90,3 @@ function handleLocationError(browserHasGeolocation, infoWindow, pos) {
             'Error: Your browser doesn\'t support geolocation.');
     infoWindow.open(map);
 }
-
