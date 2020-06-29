@@ -12,8 +12,8 @@ const firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 
-function resetForm() {
-    const myFormInputs = document.getElementsByClassName('input-sign-up');
+function resetForm(elementsClass) {
+    const myFormInputs = document.getElementsByClassName(elementsClass);
     if (myFormInputs === null) {
         return;
     }
@@ -22,7 +22,7 @@ function resetForm() {
     }
 }
 
-function submitForm() {
+function signUp() {
     const password = document.getElementById('password').value;
     const passwordConfirmation = document.getElementById('repeat-password').value;
     const email = document.getElementById('email').value;
@@ -31,6 +31,17 @@ function submitForm() {
         return;
     }
     firebase.auth().createUserWithEmailAndPassword(email, password).catch(function(error) {
+        // Handle Errors here.
+        var errorCode = error.code;
+        var errorMessage = error.message;
+        // ...
+    });
+}
+
+function signIn() {
+    const password = document.getElementById('password-in').value;
+    const email = document.getElementById('email-in').value;
+    firebase.auth().signInWithEmailAndPassword(email, password).catch(function(error) {
         // Handle Errors here.
         var errorCode = error.code;
         var errorMessage = error.message;
