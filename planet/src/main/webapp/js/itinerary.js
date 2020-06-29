@@ -42,8 +42,9 @@ async function deleteEvent(id) {
 }
 
 async function generateItinerary() {
-    // const eventsResponse = await fetch('/update-event');
-    // const events = await eventsResponse.json();
+    const itineraryResponse = await fetch('/generate-itinerary', {method: 'POST'});
+    const itinerary = await itineraryResponse.json();
+    createItinerary(itinerary);
 }
 
 function timeToString(totalMinutes) {
@@ -55,6 +56,15 @@ function timeToString(totalMinutes) {
     return hoursString + ':' + minutesString;
 }
 
+function createItinerary(items) {
+    const itineraryContainer = document.getElementById('itinerary');
+    itineraryContainer.innerHTML = '';
+
+    items.forEach((item) => {
+        itineraryContainer.innerHTML += '<li>' + item.name + ', ' + item.address + ', ' + timeToString(item.timeRange.start) +
+            ' - ' + timeToString(item.timeRange.end) + '</li>';
+    });
+}
 
 document.addEventListener('DOMContentLoaded', function() {
     let elems = document.querySelectorAll('select');

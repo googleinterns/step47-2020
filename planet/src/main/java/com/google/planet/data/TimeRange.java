@@ -21,10 +21,12 @@ public final class TimeRange {
 
     private final int start;
     private final int duration;
+    private final int end;
 
     private TimeRange(int start, int duration) {
         this.start = start;
         this.duration = duration;
+        this.end = this.end();
     }
 
     public static TimeRange fromStartDuration(int start, int duration) {

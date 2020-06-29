@@ -16,11 +16,12 @@ package com.google.planet.data;
 
 import java.util.List;
 import java.util.Arrays;
+import java.util.ArrayList;
 
 
 public final class ItineraryGenerator {
     public List<ItineraryItem> generateItinerary(List<Event> events) { 
-        List<ItineraryItem> items = Arrays.asList();
+        List<ItineraryItem> items = new ArrayList<>();;
         boolean sessionIsFull = false;
         int start_morning = TimeRange.getTimeInMinutes(8, 0);
         int start_afternoon = TimeRange.getTimeInMinutes(12, 0);
@@ -29,17 +30,17 @@ public final class ItineraryGenerator {
         for (Event event: events) {
             // First, try to schedule the event in their preferred session
             if (event.getPreferredTime().equals("8am - 12pm")) {
-                if (start_morning + event.getDurationInMinutes() > TimeRange.getTimeInMinutes(11, 59)) {
+                if (start_morning + event.getDurationInMinutes() > TimeRange.getTimeInMinutes(11, 59) + 1) {
                     sessionIsFull = true;
                 }else {
-                    sessionIsFull = false;
+                    sessionIsFull = false; 
                     ItineraryItem item = new ItineraryItem(event.getName(), event.getAddress(), 
-                        TimeRange.fromStartDuration(start_morning, event.getDurationInMinutes()));
+                        TimeRange.fromStartDuration(start_morning, event.getDurationInMinutes())); 
                     items.add(item);
                     start_morning += event.getDurationInMinutes();
                 }  
             }else if (event.getPreferredTime().equals("12pm - 4pm")) {
-                if (start_afternoon + event.getDurationInMinutes() > TimeRange.getTimeInMinutes(15, 59)) {
+                if (start_afternoon + event.getDurationInMinutes() > TimeRange.getTimeInMinutes(15, 59) + 1) {
                     sessionIsFull = true;
                 }else {
                     sessionIsFull = false;
@@ -49,7 +50,7 @@ public final class ItineraryGenerator {
                     start_afternoon += event.getDurationInMinutes();
                 }  
             }else if (event.getPreferredTime().equals("4pm - 8pm")) {
-                if (start_evening + event.getDurationInMinutes() > TimeRange.getTimeInMinutes(19, 59)) {
+                if (start_evening + event.getDurationInMinutes() > TimeRange.getTimeInMinutes(19, 59) + 1) {
                     sessionIsFull = true;
                 }else {
                     sessionIsFull = false;
@@ -62,17 +63,17 @@ public final class ItineraryGenerator {
 
             // If the preferred session is full, choose another session, check if the other session is available, then add
             if (sessionIsFull){
-                if (start_morning + event.getDurationInMinutes() <= TimeRange.getTimeInMinutes(11, 59)) {
+                if (start_morning + event.getDurationInMinutes() <= TimeRange.getTimeInMinutes(11, 59) + 1) {
                     ItineraryItem item = new ItineraryItem(event.getName(), event.getAddress(), 
                         TimeRange.fromStartDuration(start_morning, event.getDurationInMinutes()));
                     items.add(item);
                     start_morning += event.getDurationInMinutes();
-                }else if (start_afternoon + event.getDurationInMinutes() <= TimeRange.getTimeInMinutes(15, 59)) {
+                }else if (start_afternoon + event.getDurationInMinutes() <= TimeRange.getTimeInMinutes(15, 59) + 1) {
                     ItineraryItem item = new ItineraryItem(event.getName(), event.getAddress(), 
                         TimeRange.fromStartDuration(start_afternoon, event.getDurationInMinutes()));
                     items.add(item);
                     start_afternoon += event.getDurationInMinutes();
-                }else if (start_evening + event.getDurationInMinutes() <= TimeRange.getTimeInMinutes(19, 59)) {
+                }else if (start_evening + event.getDurationInMinutes() <= TimeRange.getTimeInMinutes(19, 59) + 1) {
                     ItineraryItem item = new ItineraryItem(event.getName(), event.getAddress(), 
                         TimeRange.fromStartDuration(start_evening, event.getDurationInMinutes()));
                     items.add(item);
