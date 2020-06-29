@@ -13,49 +13,49 @@
   </head>
   <body>
     <div class="container">
-      <form class="col s12">
+      <form id="sign-up-form" class="col s12">
         <h1 class="form-text">Sign Up</h1>
         <p class="form-text">Please fill in this form to get started</p>
         <hr>
         <div class="row">
           <div class="input-field col s6">
-            <input id="first_name" type="text" class="validate">
+            <input id="first_name" class="input-sign-up" type="text" class="validate" required>
             <label for="first_name">First Name</label>
           </div>
           <div class="input-field col s6">
-            <input id="last_name" type="text" class="validate">
+            <input id="last_name" class="input-sign-up" type="text" class="validate" required>
             <label for="last_name">Last Name</label>
           </div>
         </div>
         <div class="row">
           <div class="input-field col s6">
-            <input id="email" type="email" class="validate">
+            <input id="email" class="input-sign-up" type="email" class="validate" required>
             <label for="email">Email</label>
           </div>
           <div class="input-field col s6">
-            <input id="phone" type="tel" class="validate">
+            <input id="phone" class="input-sign-up" type="tel" class="validate" required>
             <label for="phone">Phone Number</label>
           </div>
         </div>
         <div class="row">
           <div class="input-field col s12">
-            <input id="password" type="password" class="validate">
+            <input id="password" class="input-sign-up" type="password" class="validate" required>
             <label for="password">Password</label>
           </div>
         </div>
         <div class="row">
           <div class="input-field col s12">
-            <input id="repeat-password" type="password" class="validate">
+            <input id="repeat-password" class="input-sign-up" type="password" class="validate" required>
             <label for="repeat-password">Confirm Password</label>
           </div>
         </div>
         <div class="row">
           <div class="input-field col s6"></div>
           <div class="input-field col s3">
-            <button id="cancel-btn" class="btn waves-effect waves-light">Cancel</button>
+            <button id="cancel-btn" type="button" class="btn waves-effect waves-light" onclick="resetForm()">Cancel</button>
           </div>
           <div class="input-field col s3">
-            <button class="btn waves-effect waves-light" type="submit">Sign Up</button>
+            <button class="btn waves-effect waves-light" type="submit" onclick="submitForm()">Sign Up</button>
           </div>
         </div>
       </form>
