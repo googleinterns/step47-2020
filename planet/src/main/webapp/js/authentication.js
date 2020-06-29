@@ -26,14 +26,20 @@ function signUp() {
     const password = document.getElementById('password').value;
     const passwordConfirmation = document.getElementById('repeat-password').value;
     const email = document.getElementById('email').value;
+    const displayName = document.getElementById('first_name').value 
+    + ' ' + document.getElementById('last_name').value;
+    resetForm('input-sign-up');
     if (password !== passwordConfirmation) {
-        resetForm();
         return;
     }
-    firebase.auth().createUserWithEmailAndPassword(email, password).catch(function(error) {
+    firebase.auth().createUserWithEmailAndPassword(email, password)
+    .then(function() {
+        return firebase.auth().currentUser.updateProfile({
+            displayName: displayName,
+        })
+    }).catch(function(error) {
         // Handle Errors here.
-        var errorCode = error.code;
-        var errorMessage = error.message;
+        console.log(error);
         // ...
     });
 }
@@ -41,10 +47,11 @@ function signUp() {
 function signIn() {
     const password = document.getElementById('password-in').value;
     const email = document.getElementById('email-in').value;
+    resetForm('input-sign-in');
     firebase.auth().signInWithEmailAndPassword(email, password).catch(function(error) {
         // Handle Errors here.
-        var errorCode = error.code;
-        var errorMessage = error.message;
+        console.log(error);
         // ...
     });
+    console.log(firebase.auth().currentUser);
 }
