@@ -52,10 +52,37 @@
         <div class="row">
           <div class="input-field col s6"></div>
           <div class="input-field col s3">
-            <button id="cancel-btn" type="button" class="btn waves-effect waves-light" onclick="resetForm()">Cancel</button>
+            <button type="button" class="btn waves-effect waves-light" onclick="resetForm('input-sign-up')"style="background-color: indianred;">Cancel</button>
           </div>
           <div class="input-field col s3">
-            <button class="btn waves-effect waves-light" type="submit" onclick="submitForm()">Sign Up</button>
+            <button class="btn waves-effect waves-light" type="submit" onclick="signUp()">Sign Up</button>
+          </div>
+        </div>
+      </form>
+
+      <form id="sign-in-form" class="col s12 hidden">
+        <h1 class="form-text">Sign In</h1>
+        <p class="form-text">Please fill in this form to get logged in</p>
+        <hr>
+        <div class="row">
+          <div class="input-field col s6">
+            <input id="email-in" class="input-sign-in" type="email" class="validate" required>
+            <label for="email">Email</label>
+          </div>
+        </div>
+        <div class="row">
+          <div class="input-field col s6">
+            <input id="password-in" class="input-sign-in" type="password" class="validate" required>
+            <label for="password">Password</label>
+          </div>
+        </div>
+        <div class="row">
+          <div class="input-field col s6"></div>
+          <div class="input-field col s3">
+            <button type="button" class="btn waves-effect waves-light" onclick="resetForm('input-sign-in')" style="background-color: indianred;">Cancel</button>
+          </div>
+          <div class="input-field col s3">
+            <button class="btn waves-effect waves-light" type="button" onclick="signIn()">Sign In</button>
           </div>
         </div>
       </form>
