@@ -30,14 +30,13 @@ function initMap() {
     });
 
     let infoWindow = new google.maps.InfoWindow;
-        // Try HTML5 geolocation.
+        // Gets users current position
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(function(position) {
             let pos = {
               lat: position.coords.latitude,
               lng: position.coords.longitude
             };
-
             infoWindow.setPosition(pos);
             infoWindow.setContent('You are here.');
             infoWindow.open(map);
@@ -74,7 +73,7 @@ function initMap() {
               return;
             }
             // Add search results to a list
-            placeNames.push(place.name); 
+            placeNames.push(place.name + "\n"); 
 
             let icon = {
               url: place.icon,
@@ -101,27 +100,37 @@ function initMap() {
         map.fitBounds(bounds);
         listResults(placeNames);
     });
-
-    // Create the results section for places pagination
-    let service = new google.maps.places.PlacesService(map);
-    let getNextPage = null;
-    let moreButton = document.getElementById('more');
-    moreButton.onclick = function() {
-        moreButton.disabled = true;
-        if (getNextPage) getNextPage();
-    };
-
 }
 
-/** List results of nearby search */
+/** List results of nearby search on page*/
 function listResults(results) {
     const places = document.getElementById('places');
 
+    // Displays search results on page
     for (var i = 0; i < results.length; i++) {
-        places.innerText = places.innerText + <br /> + results[i]; 
+        // Create materialize card for each result by creating dom element in HTML
+        var div1 = document.createElement("div");
+        div1.classList.add("card"); 
+        div1.classList.add("horizontal"); 
+
+        var div2 = document.createElement("div");
+        div2.classList.add("card-stacked");
+
+        var div3 = document.createElement("div");
+        div3.classList.add("card-content"); 
+
+        var p = document.createElement("p");
+        var content = document.createTextNode(results[i]); 
+        p.appendChild(content); 
+        div3.appendChild(p);
+        div2.appendChild(div3);
+        div1.appendChild(div2); 
+
+        var element = document.getElementById("results");
+        element.appendChild(div1);
     }
 }
-    
+
 function handleLocationError(browserHasGeolocation, infoWindow, pos) {
     infoWindow.setPosition(pos);
     infoWindow.setContent(browserHasGeolocation ?

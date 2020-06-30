@@ -25,18 +25,14 @@
 </header>
 
 <body >
-        <div id="column">
-                <input id="pac-input" class="controls " type="text" placeholder="Search Location">
-                <div id="map"></div>
-        </div>   
-        <div id="column">
-            <div id="right-panel">
-                <h2>Results</h2>
-                <ul id="places"></ul>
-                <button id="more">More</button>
-            </div>
-        </div>
-
+    <div id="column" style="width:75%;" >
+        <input id="pac-input" class="controls " style="width:50%; background:white;" type="text" placeholder="Search Location">
+        <div id="map"></div>
+    </div>  
+    <div id="column" style="width:25%;">
+        <h2>Results</h2>
+        <div id="results" class="col s12 m7"></div>
+    </div> 
     <!-- Compiled and minified JavaScript -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDK36gDoYgOj4AlbCqh1IuaUuTlcpKF0ns&libraries=places&callback=initMap"</script>
