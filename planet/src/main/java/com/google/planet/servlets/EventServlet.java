@@ -38,13 +38,6 @@ import javax.servlet.http.HttpServletResponse;
 public class EventServlet extends HttpServlet {
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        // Wait 50 ms for datastore to update changes
-        try{
-            Thread.sleep(50);
-        }catch(InterruptedException ex){
-            Thread.currentThread().interrupt();
-        }
-
         Query query = new Query("Event");
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         PreparedQuery results = datastore.prepare(query);
@@ -84,6 +77,13 @@ public class EventServlet extends HttpServlet {
 
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         datastore.put(eventEntity);
+
+        // Wait 50 ms for datastore to update changes
+        try{
+            Thread.sleep(50);
+        }catch(InterruptedException ex){
+            Thread.currentThread().interrupt();
+        }
         response.sendRedirect("/itinerary.html");
     }
 
@@ -95,6 +95,13 @@ public class EventServlet extends HttpServlet {
         Key eventEntityKey = KeyFactory.createKey("Event", id);
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         datastore.delete(eventEntityKey);
+
+        // Wait 50 ms for datastore to update changes
+        try{
+            Thread.sleep(50);
+        }catch(InterruptedException ex){
+            Thread.currentThread().interrupt();
+        }
         response.sendRedirect("/itinerary.html");
     }
 }
