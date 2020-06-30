@@ -107,26 +107,26 @@ function listResults(results) {
     const places = document.getElementById('places');
 
     // Displays search results on page
-    for (var i = 0; i < results.length; i++) {
+    for (let i = 0; i < results.length; i++) {
         // Create materialize card for each result by creating dom element in HTML
-        var div1 = document.createElement("div");
+        let div1 = document.createElement("div");
         div1.classList.add("card"); 
         div1.classList.add("horizontal"); 
 
-        var div2 = document.createElement("div");
+        let div2 = document.createElement("div");
         div2.classList.add("card-stacked");
 
-        var div3 = document.createElement("div");
+        let div3 = document.createElement("div");
         div3.classList.add("card-content"); 
 
-        var p = document.createElement("p");
-        var content = document.createTextNode(results[i]); 
+        let p = document.createElement("p");
+        let content = document.createTextNode(results[i]); 
         p.appendChild(content); 
         div3.appendChild(p);
         div2.appendChild(div3);
         div1.appendChild(div2); 
 
-        var element = document.getElementById("results");
+        let element = document.getElementById("results");
         element.appendChild(div1);
     }
 }
