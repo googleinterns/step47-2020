@@ -34,8 +34,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-/** Servlet that handles the game two truths and one lie */
-
 @WebServlet("/update-event")
 public class EventServlet extends HttpServlet {
     @Override

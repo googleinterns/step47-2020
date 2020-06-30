@@ -18,10 +18,9 @@ import java.util.List;
 import java.util.Arrays;
 import java.util.ArrayList;
 
-
 public final class ItineraryGenerator {
     public List<ItineraryItem> generateItinerary(List<Event> events) { 
-        List<ItineraryItem> items = new ArrayList<>();;
+        List<ItineraryItem> items = new ArrayList<>();
         boolean sessionIsFull = false;
         int start_morning = TimeRange.getTimeInMinutes(8, 0);
         int start_afternoon = TimeRange.getTimeInMinutes(12, 0);
