@@ -18,16 +18,18 @@ public final class Event {
     private final long id;
     private final String name; 
     private final String address;
-    private final double duration; 
-    private final String preferredTime;
+    private final double duration; // Duration in hours.
+    private final TimeRange openingHours;
+    private final String listName; 
     private final String userId;
 
-    public Event(long id, String name, String address, double duration, String preferredTime, String userId) {
+    public Event(long id, String name, String address, double duration, TimeRange openingHours, String listName, String userId) {
         this.id = id;
         this.name = name;
         this.address = address;
         this.duration = duration;
-        this.preferredTime = preferredTime;
+        this.openingHours = openingHours;
+        this.listName = listName;
         this.userId = userId;
     }
 
@@ -40,8 +42,8 @@ public final class Event {
     public String getAddress(){
         return this.address;
     }
-    public String getPreferredTime(){
-        return this.preferredTime;
+    public TimeRange getOpeningHours(){
+        return this.openingHours;
     }
 }
 

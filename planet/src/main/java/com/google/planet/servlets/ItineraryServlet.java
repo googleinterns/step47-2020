@@ -52,9 +52,12 @@ public class ItineraryServlet extends HttpServlet {
             String name = (String) entity.getProperty("name");
             String address = (String) entity.getProperty("address");
             double duration = (double) entity.getProperty("duration");
-            String preferredTime = (String) entity.getProperty("preferredTime");
+            int openingTime = Math.toIntExact((long)entity.getProperty("openingTime"));
+            int closingTime = Math.toIntExact((long)entity.getProperty("closingTime"));
+            String listName = (String) entity.getProperty("listName");
             String userId = (String) entity.getProperty("userId");
-            Event event = new Event(id, name, address, duration, preferredTime, userId);
+            Event event = new Event(id, name, address, duration, 
+                TimeRange.fromStartEnd(openingTime, closingTime), listName, userId);
             events.add(event);
         }
 

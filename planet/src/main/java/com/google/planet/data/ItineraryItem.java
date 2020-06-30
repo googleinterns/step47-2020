@@ -17,12 +17,12 @@ package com.google.planet.data;
 public final class ItineraryItem {
     private final String name; 
     private final String address;
-    private final TimeRange timeRange;
+    private final TimeRange when;
 
-    public ItineraryItem (String name, String address, TimeRange timeRange) {
+    public ItineraryItem (String name, String address, TimeRange when) {
         this.name = name;
         this.address = address;
-        this.timeRange = timeRange;
+        this.when = when;
     }
 }
 

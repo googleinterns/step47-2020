@@ -32,6 +32,10 @@ public final class TimeRange {
     public static TimeRange fromStartDuration(int start, int duration) {
         return new TimeRange(start, duration);
     }
+
+    public static TimeRange fromStartEnd(int start, int end) {
+        return new TimeRange(start, end-start);
+    }
     
     public int start() {
         return start;

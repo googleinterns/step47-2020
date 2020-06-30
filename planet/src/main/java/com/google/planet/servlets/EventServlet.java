@@ -24,6 +24,7 @@ import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.planet.data.Event;
+import com.google.planet.data.TimeRange;
 import java.io.IOException;
 import javax.servlet.annotation.WebServlet;
 import java.util.Arrays;
@@ -48,10 +49,13 @@ public class EventServlet extends HttpServlet {
             String name = (String) entity.getProperty("name");
             String address = (String) entity.getProperty("address");
             double duration = (double) entity.getProperty("duration");
-            String preferredTime = (String) entity.getProperty("preferredTime");
+            int openingTime = Math.toIntExact((long)entity.getProperty("openingTime"));
+            int closingTime = Math.toIntExact((long)entity.getProperty("closingTime"));
+            String listName = (String) entity.getProperty("listName");
             String userId = (String) entity.getProperty("userId");
 
-            Event event = new Event(id, name, address, duration, preferredTime, userId);
+            Event event = new Event(id, name, address, duration, 
+                TimeRange.fromStartEnd(480, 1000), listName, userId);
             events.add(event);
         }
 
@@ -65,14 +69,21 @@ public class EventServlet extends HttpServlet {
         String name = request.getParameter("add-event-name");
         String address = request.getParameter("add-event-address");
         Double duration = Double.valueOf(request.getParameter("add-event-duration"));
-        String preferredTime = request.getParameter("add-event-timerange");
+
+        // Set every event's opening hours to 8am - 5pm for now
+        int openingTime = TimeRange.getTimeInMinutes(8,0);
+        int closingTime = TimeRange.getTimeInMinutes(17,0);
+
+        String listName = "current";
         String userId = "123";
 
         Entity eventEntity = new Entity("Event");
         eventEntity.setProperty("name", name);
         eventEntity.setProperty("address", address);
         eventEntity.setProperty("duration", duration);
-        eventEntity.setProperty("preferredTime", preferredTime);
+        eventEntity.setProperty("openingTime", openingTime);
+        eventEntity.setProperty("closingTime", closingTime);
+        eventEntity.setProperty("listName", listName);
         eventEntity.setProperty("userId", userId);
 
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();

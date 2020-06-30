@@ -13,12 +13,12 @@ async function renderEvents() {
 
     events.forEach((event) => {
         let eventElement = createEventElement (event.id, event.name, 
-            event.address, event.duration, event.preferredTime);
+            event.address, event.duration);
         document.getElementById('events').appendChild(eventElement);
     });
 }
 
-function createEventElement(id, name, address, duration, preferredTime) {
+function createEventElement(id, name, address, duration) {
     const eventElement = document.createElement('div');
     eventElement.setAttribute("class", "card");
     eventElement.innerHTML = 
@@ -28,7 +28,6 @@ function createEventElement(id, name, address, duration, preferredTime) {
         </div>
         <div class="card-action">
           <a>` + duration + ` hours </a>
-          <a>` + preferredTime + `</a>
         </div>
         <div>
           <button onclick="deleteEvent(` + id + `)"> Delete </button>
@@ -61,8 +60,8 @@ function createItinerary(items) {
     itineraryContainer.innerHTML = '';
 
     items.forEach((item) => {
-        itineraryContainer.innerHTML += '<li>' + item.name + ', ' + item.address + ', ' + timeToString(item.timeRange.start) +
-            ' - ' + timeToString(item.timeRange.end) + '</li>';
+        itineraryContainer.innerHTML += '<li>' + item.name + ', ' + item.address + ', ' + timeToString(item.when.start) +
+            ' - ' + timeToString(item.when.end) + '</li>';
     });
 }
 
