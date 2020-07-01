@@ -25,6 +25,13 @@ const firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 
+document.addEventListener('DOMContentLoaded', function() {
+    var elements = document.querySelectorAll('.modal');
+    M.Modal.init(elements, {
+        opacity: 0.7
+    });
+});
+
 function resetForm(elementsClass) {
     const myFormInputs = document.getElementsByClassName(elementsClass);
     if (myFormInputs === null) {
