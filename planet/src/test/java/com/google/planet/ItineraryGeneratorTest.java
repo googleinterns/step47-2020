@@ -62,5 +62,23 @@ public final class ItineraryGeneratorTest {
 
         Assert.assertEquals(expected, actual);
     }
+
+    @Test
+    public void tooManyEvents() {
+    // When too many events are scheduled in one day, the function should return an 
+    // empty list.
+        List<Event> events = new ArrayList<>();
+
+        Event event1 = new Event(123, "Event 1", "address", 3, 
+            TimeRange.fromStartEnd(TIME_0800AM, TIME_0500PM), "listName", "userId");
+        Event event2 = new Event(123, "Event 2", "address", 9, 
+            TimeRange.fromStartEnd(TIME_0800AM, TIME_0500PM), "listName", "userId");
+        events.add(event1);
+        events.add(event2);
+        List<ItineraryItem> actual = itinerary.generateItinerary(events);
+        List<ItineraryItem> expected = Arrays.asList();
+
+        Assert.assertEquals(expected, actual);
+    }
 }
 
