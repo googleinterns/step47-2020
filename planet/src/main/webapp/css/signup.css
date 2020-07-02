@@ -27,7 +27,7 @@
 }
 
 .container {
-    width: 80%;
+    width: 50%;
     margin-left: auto;
     margin-right: auto;
 }
@@ -42,13 +42,13 @@ button.btn.waves-effect.waves-light {
 }
 
 .input-field.col.s12 {
-    margin-bottom: 0;
-    margin-top: 0;
+    margin: 0;
+    padding: 0;
 }
 
 .input-field.col.s6 {
-    margin-bottom: 0;
-    margin-top: 0;
+    margin: 0;
+    padding: 0;
 }
 
 input.input-sign-up {
@@ -57,4 +57,29 @@ input.input-sign-up {
 
 input.input-sign-in {
     margin: 0;
+}
+
+.close-icon {
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+
+.close-icon:hover {
+    background-color: lightgray;
+    cursor: pointer;
+}
+
+.modal {
+    width: 50%;
+    height: auto;
+}
+
+button.btn.sign-in-button {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    text-transform: none;
+    background-color: white;
+    color: black;
 }
