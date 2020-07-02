@@ -29,7 +29,7 @@ public final class ItineraryGenerator {
         int END = events.get(0).getOpeningHours().end();
 
         int [][] travelTimeGraph = getTravelTimeGraph(events);
-        List<ItineraryItem> items = scheduleItineraryInOrder(events, START, END);
+        List<ItineraryItem> items = scheduleItineraryInOrder(events, START, END, travelTimeGraph);
         return items;
     }
 
@@ -51,17 +51,25 @@ public final class ItineraryGenerator {
         return travelTimeGraph;
     }
 
-    // Function that creates an itinerary by scheduling each event in order
-    public List<ItineraryItem> scheduleItineraryInOrder(List<Event> events, int START, int END) {
+    // Function that creates an itinerary by scheduling each event in order.
+    public List<ItineraryItem> scheduleItineraryInOrder(List<Event> events, int START, int END, 
+                                                        int[][] travelTimeGraph) {
         List<ItineraryItem> items = new ArrayList<>();
         int index = START; 
+        for (int i = 0; i < events.size(); i++){
+            Event event = events.get(i);
 
-        for (Event event: events){
+            // Add the event as an itinerary item if the remaining available time is longer than the
+            // event duration.
             if (index + event.getDurationInMinutes() <= END) {
                 ItineraryItem item = new ItineraryItem(event.getName(), event.getAddress(),
                     TimeRange.fromStartDuration(index, event.getDurationInMinutes()));
                 items.add(item);
-                index += event.getDurationInMinutes() + travelTimeGraph;
+
+                // Update the next event's start time
+                if (i != events.size() - 1) { 
+                    index += event.getDurationInMinutes() + travelTimeGraph[i][i+1];
+                }
             }else {
                 System.out.println("Sorry, you have too many events in a day!");
                 return Arrays.asList();

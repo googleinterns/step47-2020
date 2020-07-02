@@ -55,7 +55,7 @@ public class EventServlet extends HttpServlet {
             String userId = (String) entity.getProperty("userId");
 
             Event event = new Event(id, name, address, duration, 
-                TimeRange.fromStartEnd(480, 1000), listName, userId);
+                TimeRange.fromStartEnd(openingTime, closingTime), listName, userId);
             events.add(event);
         }
 

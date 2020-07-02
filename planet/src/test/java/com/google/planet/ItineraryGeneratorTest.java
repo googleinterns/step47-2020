@@ -30,33 +30,37 @@ import org.junit.runners.JUnit4;
  */
 @RunWith(JUnit4.class)
 public final class ItineraryGeneratorTest {
-  
-  private ItineraryGenerator itinerary;
+    private static final int TIME_0800AM = TimeRange.getTimeInMinutes(8, 0);
+    private static final int TIME_0500PM = TimeRange.getTimeInMinutes(17, 0);
+    
+    private ItineraryGenerator itinerary;
 
-  @Before
-  public void setUp() {
-    itinerary = new ItineraryGenerator();
-  }
+    @Before
+    public void setUp() {
+        itinerary = new ItineraryGenerator();
+    }
 
-  @Test
-  public void firstTest() {
-    List<Event> events = new ArrayList<>();
+    @Test
+    public void scheduleItineraryInOrder() {
+        List<Event> events = new ArrayList<>();
 
-    Event event1 = new Event(123, "Event 1", "address", 1, 
-        TimeRange.fromStartEnd(480, 1000), "listName", "userId");
-    Event event2 = new Event(123, "Event 2", "address", 1, 
-        TimeRange.fromStartEnd(480, 1000), "listName", "userId");
-    Event event3 = new Event(123, "Event 3", "address", 1, 
-        TimeRange.fromStartEnd(480, 1000), "listName", "userId");
+        Event event1 = new Event(123, "Event 1", "address", 1, 
+            TimeRange.fromStartEnd(TIME_0800AM, TIME_0500PM), "listName", "userId");
+        Event event2 = new Event(123, "Event 2", "address", 2, 
+            TimeRange.fromStartEnd(TIME_0800AM, TIME_0500PM), "listName", "userId");
+        Event event3 = new Event(123, "Event 3", "address", 3, 
+            TimeRange.fromStartEnd(TIME_0800AM, TIME_0500PM), "listName", "userId");
+        events.add(event1);
+        events.add(event2);
+        events.add(event3);
+        List<ItineraryItem> actual = itinerary.generateItinerary(events);
+        List<ItineraryItem> expected = Arrays.asList(
+            new ItineraryItem("Event 1", "address", TimeRange.fromStartEnd(480, 540)),
+            new ItineraryItem("Event 2", "address", TimeRange.fromStartEnd(555, 675)),
+            new ItineraryItem("Event 3", "address", TimeRange.fromStartEnd(690, 870))
+        );
 
-    events.add(event1);
-    events.add(event2);
-    events.add(event3);
-    List<ItineraryItem> actual = itinerary.generateItinerary(events);
-    List<ItineraryItem> expected = Arrays.asList();
-
-    Assert.assertEquals(expected, actual);
-  }
-
+        Assert.assertEquals(expected, actual);
+    }
 }
 

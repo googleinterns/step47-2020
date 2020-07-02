@@ -27,8 +27,17 @@ public final class ItineraryItem {
 
     @Override
     public String toString() {
-        return String.format("Item name: %s \n Range: [%d, %d)\n", 
-            name, when.start(), when.end());
+        return String.format("Item name: %s. Address: %s. Range: [%d, %d)\n", 
+            name, address, when.start(), when.end());
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        return other instanceof ItineraryItem && equals(this, (ItineraryItem) other);
+    }
+
+    private static boolean equals(ItineraryItem a, ItineraryItem b) {
+        return a.name == b.name && a.address == b.address && a.when.equals(b.when);
     }
 }
 
