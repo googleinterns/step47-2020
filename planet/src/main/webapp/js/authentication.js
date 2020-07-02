@@ -26,7 +26,7 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 
 document.addEventListener('DOMContentLoaded', function() {
-    var elements = document.querySelectorAll('.modal');
+    const elements = document.querySelectorAll('.modal');
     M.Modal.init(elements, {
         opacity: 0.7
     });
