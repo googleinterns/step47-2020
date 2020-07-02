@@ -77,6 +77,20 @@ function signIn() {
 
 function signInWithGoogle() {
     const provider = new firebase.auth.GoogleAuthProvider();
+    signInWithProvider(provider);
+}
+
+function signInWithFacebook() {
+    const provider = new firebase.auth.FacebookAuthProvider();
+    signInWithProvider(provider);
+}
+
+function signInWithGithub() {
+    const provider = new firebase.auth.GithubAuthProvider();
+    signInWithProvider(provider);
+}
+
+function signInWithProvider(provider) {
     firebase.auth().signInWithPopup(provider).then(function(result) {
         // The signed-in user info.
         var user = result.user;
