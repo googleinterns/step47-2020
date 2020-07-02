@@ -74,3 +74,16 @@ function signIn() {
         // ...
     });
 }
+
+function signInWithGoogle() {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    firebase.auth().signInWithPopup(provider).then(function(result) {
+        // The signed-in user info.
+        var user = result.user;
+        console.log(user);
+        // TODO: We will be adding more actions here 
+    }).catch(function(error) {
+        console.log(error);
+        // TODO: We will be handling errors here
+    });
+}
