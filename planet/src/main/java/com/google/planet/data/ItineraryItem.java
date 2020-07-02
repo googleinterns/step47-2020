@@ -24,6 +24,12 @@ public final class ItineraryItem {
         this.address = address;
         this.when = when;
     }
+
+    @Override
+    public String toString() {
+        return String.format("Item name: %s \n Range: [%d, %d)\n", 
+            name, when.start(), when.end());
+    }
 }
 
 
