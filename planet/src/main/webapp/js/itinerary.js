@@ -47,7 +47,7 @@ async function generateItinerary() {
 }
 
 function timeToString(totalMinutes) {
-    const hours = totalMinutes / 60;
+    const hours = Math.floor(totalMinutes / 60);
     const minutes = totalMinutes % 60;
 
     const hoursString = hours < 10 ? ('0' + hours) : hours;
