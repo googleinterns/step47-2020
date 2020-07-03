@@ -60,7 +60,7 @@ function signUp() {
     }).catch(function(error) {
         // Handle Errors here.
         console.log(error);
-        // ...
+        alert('Create account with Email and Password failed!');
     });
 }
 
@@ -71,6 +71,6 @@ function signIn() {
     firebase.auth().signInWithEmailAndPassword(email, password).catch(function(error) {
         // Handle Errors here.
         console.log(error);
-        // ...
+        alert('Sign in with Email and Password failed!');
     });
 }
