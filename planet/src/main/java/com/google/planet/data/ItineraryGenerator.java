@@ -58,11 +58,9 @@ public final class ItineraryGenerator {
                                                         int[][] travelTimeGraph) {
         List<ItineraryItem> items = new ArrayList<>();
         int start = openningTime; 
-        for (int i = 1; i < events.size(); i++){  //Skip the first event (hotel)
+        for (int i = 0; i < events.size(); i++){  
             Event event = events.get(i);
 
-            // Update start time with travelling time.
-            start += travelTimeGraph[i-1][i];
             // Add the event as an itinerary item if the remaining available time is longer than the
             // event duration.
             if (start + event.getDurationInMinutes() <= endingTime) {
@@ -71,7 +69,9 @@ public final class ItineraryGenerator {
                 items.add(item);
 
                 // Update the next event's start time
-                start += event.getDurationInMinutes();
+                if (i != events.size() - 1) { 
+                    start += event.getDurationInMinutes() + travelTimeGraph[i][i+1];
+                }
             }else {
                 System.out.println("Sorry, you have too many events in a day!");
                 return Arrays.asList();

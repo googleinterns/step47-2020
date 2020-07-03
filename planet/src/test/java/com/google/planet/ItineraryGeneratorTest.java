@@ -44,7 +44,7 @@ public final class ItineraryGeneratorTest {
     public void scheduleItineraryInOrder() {
         List<Event> events = new ArrayList<>();
 
-        Event hotel = new Event(123, "hotel", "address", 0, 
+        Event hotel = new Event(123, "Hotel", "address", 0, 
             TimeRange.WHOLE_DAY, "listName", "userId");
         Event event1 = new Event(123, "Event 1", "address", 1, 
             TimeRange.fromStartEnd(TIME_0800AM, TIME_0500PM), "listName", "userId");
@@ -57,6 +57,7 @@ public final class ItineraryGeneratorTest {
         events.add(event3);
         List<ItineraryItem> actual = itinerary.generateItinerary(events, hotel);
         List<ItineraryItem> expected = Arrays.asList(
+            new ItineraryItem("Hotel", "address", TimeRange.fromStartEnd(480, 480)),
             new ItineraryItem("Event 1", "address", TimeRange.fromStartEnd(495, 555)),
             new ItineraryItem("Event 2", "address", TimeRange.fromStartEnd(570, 690)),
             new ItineraryItem("Event 3", "address", TimeRange.fromStartEnd(705, 885))
@@ -71,7 +72,7 @@ public final class ItineraryGeneratorTest {
     // empty list.
         List<Event> events = new ArrayList<>();
 
-        Event hotel = new Event(123, "hotel", "address", 0, 
+        Event hotel = new Event(123, "Hotel", "address", 0, 
             TimeRange.WHOLE_DAY, "listName", "userId");
         Event event1 = new Event(123, "Event 1", "address", 3, 
             TimeRange.fromStartEnd(TIME_0800AM, TIME_0500PM), "listName", "userId");

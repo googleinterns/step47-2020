@@ -59,7 +59,9 @@ async function generateItinerary() {
         alert('Please input a valid hotel address');
         return;
     }
-    const itineraryResponse = await fetch('/generate-itinerary', {method: 'POST'});
+    const params = new URLSearchParams();
+    params.append("hotel-address", sessionStorage.hotel);
+    const itineraryResponse = await fetch('/generate-itinerary', {method: 'POST', body: params});
     const itinerary = await itineraryResponse.json();
     createItinerary(itinerary);
 }
@@ -78,8 +80,14 @@ function createItinerary(items) {
     itineraryContainer.innerHTML = '';
 
     items.forEach((item) => {
-        itineraryContainer.innerHTML += '<li>' + item.name + ', ' + item.address + ', ' + timeToString(item.when.start) +
-            ' - ' + timeToString(item.when.end) + '</li>';
+        // Only show one time stamp for hotel.
+        if (item.when.start === item.when.end) {
+            itineraryContainer.innerHTML += '<li>' + item.name + ', ' + item.address + ', ' + 
+                                timeToString(item.when.start) + '</li>';
+        }else {
+            itineraryContainer.innerHTML += '<li>' + item.name + ', ' + item.address + ', ' + 
+                timeToString(item.when.start) + ' - ' + timeToString(item.when.end) + '</li>';
+        }
     });
 }
 

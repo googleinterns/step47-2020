@@ -48,7 +48,7 @@ public class ItineraryServlet extends HttpServlet {
         // Create an event called "hotel" with duration of 0
         String hotelAddress = request.getParameter("hotel-address");
         Event hotel = new Event(123, 
-                                "hotel", 
+                                "Hotel", 
                                 hotelAddress, 
                                 0, 
                                 TimeRange.WHOLE_DAY, 
