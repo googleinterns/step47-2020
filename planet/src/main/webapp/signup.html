@@ -22,10 +22,10 @@
         </div>
     </div>
     <div id="sign-up-modal" class="modal">
+      <br>
+      <span class="close-icon"><i class="small material-icons" onclick="closeModal('sign-up-modal')">close</i></span>
+      <br>
       <form id="sign-up-form" class="container">
-        <br>
-        <span class="close-icon"><i class="small material-icons">close</i></span>
-        <br>
         <h3 class="form-text">Sign Up</h1>
         <p class="form-text">Please fill in this form to get started</p>
         <hr>
@@ -73,10 +73,10 @@
       </form>  
     </div>
     <div id="sign-in-modal" class="modal" style="padding-bottom: 1vh;">
-      <form id="sign-in-form" class="container">
-        <br>
-        <span class="close-icon"><i class="small material-icons">close</i></span>
-        <br>
+      <br>
+      <span class="close-icon"><i class="small material-icons" onclick="closeModal('sign-in-modal')">close</i></span>
+      <br>
+        <form id="sign-in-form" class="container">
         <h3 class="form-text">Sign In</h1>
         <p class="form-text">Please fill in this form to get logged in</p>
         <hr>
@@ -109,14 +109,14 @@
         <div class="row" style="margin: 0;">
             <div class="input-field col s2"></div>
             <div class="input-field col s8">
-                <button class="btn sign-in-button" type="button">Sign In with Facebook</button>
+                <button class="btn sign-in-button" type="button" onclick="signInWithFacebook()">Sign In with Facebook</button>
             </div>
             <div class="input-field col s2"></div>
         </div>
         <div class="row" style="margin: 0;">
             <div class="input-field col s2"></div>
             <div class="input-field col s8">
-                <button class="btn sign-in-button" type="button">Sign In with Github</button>
+                <button class="btn sign-in-button" type="button" onclick="signInWithGithub()">Sign In with Github</button>
             </div>
             <div class="input-field col s2"></div>
         </div>
