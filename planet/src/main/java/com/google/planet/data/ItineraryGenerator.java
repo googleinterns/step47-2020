@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 public final class ItineraryGenerator {
-    public List<ItineraryItem> generateItinerary(List<Event> events) { 
+    public List<ItineraryItem> generateItinerary(List<Event> events, Event hotel) { 
 
         // For the prototype, just find the shortest opening hours and 
         // schedule all events within that time range
@@ -28,6 +28,8 @@ public final class ItineraryGenerator {
         int START = events.get(0).getOpeningHours().start();
         int END = events.get(0).getOpeningHours().end();
 
+        // Add hotel as the "first" event
+        events.add(0, hotel);
         int [][] travelTimeGraph = getTravelTimeGraph(events);
         List<ItineraryItem> items = scheduleItineraryInOrder(events, START, END, travelTimeGraph);
         return items;
@@ -56,9 +58,11 @@ public final class ItineraryGenerator {
                                                         int[][] travelTimeGraph) {
         List<ItineraryItem> items = new ArrayList<>();
         int start = openningTime; 
-        for (int i = 0; i < events.size(); i++){
+        for (int i = 1; i < events.size(); i++){  //Skip the first event (hotel)
             Event event = events.get(i);
 
+            // Update start time with travelling time.
+            start += travelTimeGraph[i-1][i];
             // Add the event as an itinerary item if the remaining available time is longer than the
             // event duration.
             if (start + event.getDurationInMinutes() <= endingTime) {
@@ -67,9 +71,7 @@ public final class ItineraryGenerator {
                 items.add(item);
 
                 // Update the next event's start time
-                if (i != events.size() - 1) { 
-                    start += event.getDurationInMinutes() + travelTimeGraph[i][i+1];
-                }
+                start += event.getDurationInMinutes();
             }else {
                 System.out.println("Sorry, you have too many events in a day!");
                 return Arrays.asList();
