@@ -60,7 +60,19 @@ function signUp() {
     }).catch(function(error) {
         // Handle Errors here.
         console.log(error);
-        alert('Create account with Email and Password failed!');
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        if (errorCode === 'auth/email-already-in-use') {
+            alert('Email already in use');
+        } else if (errorCode === 'auth/invalid-email') {
+            alert('Invalid email');
+        } else if (errorCode === 'auth/operation-not-allowed') {
+            alert('Operation not allowed');
+        } else if (errorCode === 'auth/weak-password') {
+            alert('Weak password, choose another one');
+        } else {
+            alert(errorMessage);
+        }
     });
 }
 
@@ -71,6 +83,18 @@ function signIn() {
     firebase.auth().signInWithEmailAndPassword(email, password).catch(function(error) {
         // Handle Errors here.
         console.log(error);
-        alert('Sign in with Email and Password failed!');
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        if (errorCode === 'auth/wrong-password') {
+            alert('Wrong password.');
+        } else if (errorCode === 'auth/invalid-email') {
+            alert('Invalid email');
+        } else if (errorCode === 'auth/user-disabled') {
+            alert('User disabled');
+        } else if (errorCode === 'auth/user-not-found') {
+            alert('User not found');
+        } else {
+            alert(errorMessage);
+        }
     });
 }
