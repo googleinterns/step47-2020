@@ -41,7 +41,7 @@ button.btn.waves-effect.waves-light {
     width: 100%;
 }
 
-.input-field.col.s12, .input-field.col.s6 {
+.input-field.col.s12, .input-field.col.s6, .input-field.col.s4 {
     margin: 0;
     padding: 0;
 }
@@ -89,4 +89,18 @@ button.btn.sign-in-button:hover {
 
 .row.form-row {
     margin: 0;
+}
+
+.input-field.col label.form-label.active {
+    transform: translateY(-0.8vh) scale(0.8);
+    -webkit-transform: translateY(-0.8vh) scale(0.8);
+}
+
+.input-field.col label.form-label {
+    font-size: 1vw;
+    left: 0;
+}
+
+.link-text:hover {
+    cursor: pointer;
 }
