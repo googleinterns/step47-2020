@@ -101,3 +101,11 @@ function signInWithProvider(provider) {
         // TODO: We will be handling errors here
     });
 }
+
+function closeModal(modalElement) {
+    const modal = document.getElementById(modalElement);
+    if (modal === null) {
+        return;
+    }
+    M.Modal.getInstance(modal).close();
+}
