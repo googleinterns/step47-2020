@@ -7,6 +7,20 @@ function closeForm() {
     document.getElementById('add-event').style.display = 'none';
 }
 
+function handleHotelChange() {
+    if (typeof(Storage) !== "undefined") {
+        sessionStorage.hotel = document.getElementById('hotel-address').value;
+    } else {
+        alert ('Please update your browser'); 
+    }
+}
+
+function renderHotel() {
+    if (sessionStorage.hotel) {
+        document.getElementById('hotel-address').value = sessionStorage.hotel;
+    }
+}
+
 async function renderEvents() {
     const eventsResponse = await fetch('/update-event');
     const events = await eventsResponse.json();
@@ -41,6 +55,10 @@ async function deleteEvent(id) {
 }
 
 async function generateItinerary() {
+    if (!sessionStorage.hotel) {
+        alert('Please input a valid hotel address');
+        return;
+    }
     const itineraryResponse = await fetch('/generate-itinerary', {method: 'POST'});
     const itinerary = await itineraryResponse.json();
     createItinerary(itinerary);

@@ -24,10 +24,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   </head>    
    
-  <body onload ="renderEvents()">   
+  <body onload ="renderEvents(); renderHotel()">   
       <div id ="content">
         <div id="events-container" >
             <a class="btn-floating btn-large" onclick="openForm()"> <i class="material-icons">add</i> </a>
+            <p>Hotel/Home Address: 
+                    <input type="text" id="hotel-address" name="hotel-address" onchange="handleHotelChange()"> </input></p>
             <div id="add-event" class="add-event"> 
                 <a id="close-form" onclick="closeForm()"><i class="material-icons">close</i></a></br>
                 <form action="/update-event" method="POST">   
