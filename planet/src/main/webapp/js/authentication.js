@@ -99,6 +99,27 @@ function signInWithProvider(provider) {
     }).catch(function(error) {
         console.log(error);
         // TODO: We will be handling errors here
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        if (errorCode === 'auth/account-exists-with-different-credential') {
+            alert('Account exists with different credential');
+        } else if (errorCode === 'auth/auth-domain-config-required') {
+            alert('Authentication domain config required');
+        } else if (errorCode === 'auth/cancelled-popup-request') {
+            alert('Only one popup request is allowed at one time');
+        } else if (errorCode === 'auth/operation-not-allowed') {
+            alert('Operation not allowed');
+        } else if (errorCode === 'auth/operation-not-supported-in-this-environment') {
+            alert('Operation not supported in this environment');
+        } else if (errorCode === 'auth/popup-blocked') {
+            alert('Pop-up has been blocked by the browser');
+        } else if (errorCode === 'auth/popup-closed-by-user') {
+            alert('Pop-up has been closed by the user');
+        } else if (errorCode === 'auth/unauthorized-domain') {
+            alert('Unauthorized domain');
+        } else {
+            alert(errorMessage);
+        }
     });
 }
 
