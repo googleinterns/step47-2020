@@ -130,3 +130,11 @@ function closeModal(modalElement) {
     }
     M.Modal.getInstance(modal).close();
 }
+
+function openModal(modalElement) {
+    const modal = document.getElementById(modalElement);
+    if (modal === null) {
+        return;
+    }
+    M.Modal.getInstance(modal).open();
+}
