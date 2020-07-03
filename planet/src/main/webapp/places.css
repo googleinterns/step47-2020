@@ -12,6 +12,12 @@ header {
     padding:0; 
 }
 
+#greeting {
+    margin: 0.86vh;
+    font-size: 2.6vh;
+    padding:0.86vh;
+}
+
 #description {
     font-family: Roboto;
     font-size: 15px;
@@ -30,19 +36,9 @@ header {
     display: inline;
 }
 
-pac-input {
-    width: 50%;
-    background: white;
-}
-
 #column {
     height:100%;
     float: left;
-}
-
-h2 {
-    font-size: 18px;
-    margin: 5px 0 5px 5px;
 }
 
 #results {
@@ -50,7 +46,7 @@ h2 {
     margin: 0;
     height: 80%;
     overflow-y: scroll;
-    padding-right: 15px;
+    padding-right: 0.87vw;
 }
 
 .row {
@@ -64,5 +60,15 @@ h2 {
 }
 
 .card.horizontal {
-    margin: 10px;
+    margin: 0.86vh;
+}
+
+#button-bar {
+    padding: 0.86vh;
+    text-align: center;
+}
+
+.btn-floating {
+    margin: 0.86vh; 
+    transition: background-color 0.3s;
 }
