@@ -35,11 +35,12 @@ function initMap() {
             infoWindow.open(map);
             map.setCenter(pos);
         }, function() {
+            // User did not allow location
             handleLocationError(true, infoWindow, map.getCenter());
           });
         } else {
-          // Browser doesn't support Geolocation
-          handleLocationError(false, infoWindow, map.getCenter());
+            // Browser doesn't support Geolocation
+            handleLocationError(false, infoWindow, map.getCenter());
         }
     updateSearch();
 }
@@ -48,6 +49,8 @@ function initMap() {
 function updateSearch() {    
     let input = document.getElementById('pac-input');
     let searchBox = new google.maps.places.SearchBox(input);
+
+    // Set position of the search bar onto the map
     map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
 
     // Bias the SearchBox results towards current map's viewport.
@@ -131,7 +134,7 @@ function listResults(results) {
         div1.classList.add('horizontal'); 
 
         let div2 = document.createElement('div');
-        div2.classList.add("card-stacked");
+        div2.classList.add('card-stacked');
 
         let div3 = document.createElement('div');
         div3.classList.add('card-content'); 
