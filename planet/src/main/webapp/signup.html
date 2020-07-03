@@ -29,7 +29,7 @@
         <h3 class="form-text">Sign Up</h1>
         <p class="form-text">Please fill in this form to get started</p>
         <hr>
-        <div class="row" style="height: 20%">
+        <div class="row form-row" style="height: 20%">
           <div class="input-field col s6">
             <input id="first_name" class="input-sign-up" type="text" class="validate" required>
             <label for="first_name">First Name</label>
@@ -39,7 +39,7 @@
             <label for="last_name">Last Name</label>
           </div>
         </div>
-        <div class="row" style="height: 20%">
+        <div class="row form-row" style="height: 20%">
           <div class="input-field col s6">
             <input id="email" class="input-sign-up" type="email" class="validate" required>
             <label for="email">Email</label>
@@ -49,25 +49,27 @@
             <label for="phone">Phone Number</label>
           </div>
         </div>
-        <div class="row" style="height: 20%">
+        <div class="row form-row" style="height: 20%">
           <div class="input-field col s12">
             <input id="password" class="input-sign-up" type="password" class="validate" required>
             <label for="password">Password</label>
           </div>
         </div>
-        <div class="row" style="height: 20%">
+        <div class="row form-row" style="height: 20%">
           <div class="input-field col s12">
             <input id="repeat-password" class="input-sign-up" type="password" class="validate" required>
             <label for="repeat-password">Confirm Password</label>
           </div>
         </div>
-        <div class="row" style="height: 20%">
-          <div class="input-field col s6"></div>
-          <div class="input-field col s3">
-            <button type="button" class="btn waves-effect waves-light" onclick="resetForm('input-sign-up')"style="background-color: indianred;">Cancel</button>
+        <div class="row form-row" style="height: 20%">
+          <div class="input-field col s4"></div>
+          <div class="input-field col s4">
+            <button type="button" class="btn sign-in-button waves-effect waves-light" 
+                onclick="resetForm('input-sign-up')" style="background-color: #f44336;">Cancel</button>
           </div>
-          <div class="input-field col s3">
-            <button class="btn waves-effect waves-light" type="button" onclick="signUp()">Sign Up</button>
+          <div class="input-field col s4">
+            <button class="btn sign-in-button waves-effect waves-light" type="button" 
+                onclick="signUp()" style="background-color: #4CAF50;">Sign Up</button>
           </div>
         </div>
       </form>  
@@ -80,40 +82,39 @@
         <h3 class="form-text">Sign In</h1>
         <p class="form-text">Please fill in this form to get logged in</p>
         <hr>
-        <div class="row" style="height: 20%">
+        <div class="row form-row" style="height: 20%">
           <div class="input-field col s6">
             <input id="email-in" class="input-sign-in" type="email" class="validate" required>
             <label for="email">Email</label>
           </div>
         </div>
-        <div class="row">
+        <div class="row form-row">
           <div class="input-field col s6">
             <input id="password-in" class="input-sign-in" type="password" class="validate" required>
             <label for="password">Password</label>
           </div>
         </div>
-        <div class="row">
-          <div class="input-field col s2"></div>
-          <div class="input-field col s8">
-            <button class="btn waves-effect waves-light" type="button" onclick="signIn()">Sign In</button>
+        <div class="row form-row">
+          <div class="input-field col s12">
+            <button class="btn sign-in-button waves-effect waves-light" type="button" 
+                onclick="signIn()" style="background-color: #4CAF50;">Sign In</button>
           </div>
-          <div class="input-field col s2"></div>
         </div>
-        <div class="row" style="margin: 0;">
+        <div class="row form-row" style="margin: 0;">
             <div class="input-field col s2"></div>
             <div class="input-field col s8">
                 <button class="btn sign-in-button" type="button" onclick="signInWithGoogle()">Sign In with Google</button>
             </div>
             <div class="input-field col s2"></div>
         </div>
-        <div class="row" style="margin: 0;">
+        <div class="row form-row" style="margin: 0;">
             <div class="input-field col s2"></div>
             <div class="input-field col s8">
                 <button class="btn sign-in-button" type="button" onclick="signInWithFacebook()">Sign In with Facebook</button>
             </div>
             <div class="input-field col s2"></div>
         </div>
-        <div class="row" style="margin: 0;">
+        <div class="row form-row" style="margin: 0;">
             <div class="input-field col s2"></div>
             <div class="input-field col s8">
                 <button class="btn sign-in-button" type="button" onclick="signInWithGithub()">Sign In with Github</button>
