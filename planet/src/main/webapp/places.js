@@ -14,6 +14,7 @@
 
 /** Declare global variables */
 let map;
+let searchMarker;
 
 /** Initializes Map, implements search box and marks locations of searches */
 function initMap() {
@@ -22,36 +23,48 @@ function initMap() {
         center: TORONTO_COORDINATES,
         zoom: 8
     });
-    let infoWindow = new google.maps.InfoWindow;
-        // Gets users current position
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(function(position) {
-            let pos = {
-              lat: position.coords.latitude,
-              lng: position.coords.longitude
+
+    // Gets users current location
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function(position) {
+            pos = {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude
             };
-            infoWindow.setPosition(pos);
-            infoWindow.setContent('You are here.');
-            infoWindow.open(map);
+            // Create draggable marker at current location
+            let searchMarker = new google.maps.Marker({
+                position: pos,
+                map: map,
+                animation: google.maps.Animation.DROP,
+                draggable: true
+            });
             map.setCenter(pos);
         }, function() {
             // User did not allow location
             handleLocationError(true, infoWindow, map.getCenter());
-          });
-        } else {
-            // Browser doesn't support Geolocation
-            handleLocationError(false, infoWindow, map.getCenter());
-        }
-    updateSearch();
-}
+            });
+    } else {
+        // Browser doesn't support Geolocation
+        handleLocationError(false, infoWindow, map.getCenter());
+    }
 
-/** Create new markers and display new search */
-function updateSearch() {    
     let input = document.getElementById('pac-input');
     let searchBox = new google.maps.places.SearchBox(input);
 
     // Set position of the search bar onto the map
     map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+
+    // Listener for when map is dragged to a new location
+    google.maps.event.addListener(map, 'dragend', function() {
+        alert('map dragged');
+    });
+    updateSearch();
+}
+
+/** Create new markers and display new search */
+function updateSearch() {    
+    input = document.getElementById('pac-input');
+    searchBox = new google.maps.places.SearchBox(input);
 
     // Bias the SearchBox results towards current map's viewport.
     map.addListener('bounds_changed', function() {
@@ -63,7 +76,7 @@ function updateSearch() {
 
     // Listener for when user selects new location
     searchBox.addListener('places_changed', function() {
-    let places = searchBox.getPlaces();
+        let places = searchBox.getPlaces();
         if (places.length == 0) {
             return;
         }
@@ -75,7 +88,8 @@ function updateSearch() {
         placeNames = [];
 
         // For each place, get the icon, name and location.
-        let bounds = new google.maps.LatLngBounds();
+        // let bounds = new google.maps.LatLngBounds();
+        let bounds = map.getBounds();
         places.forEach(function(place) {
             if (!place.geometry) {
               console.log("Returned place contains no geometry");
@@ -111,6 +125,7 @@ function updateSearch() {
     });
 }
 
+/** Displays error message in info window when user location is not allowed */
 function handleLocationError(browserHasGeolocation, infoWindow, pos) {
     infoWindow.setPosition(pos);
     infoWindow.setContent(browserHasGeolocation ?
