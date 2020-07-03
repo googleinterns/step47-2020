@@ -30,41 +30,25 @@ header {
     display: inline;
 }
 
-.pac-card {
-    margin: 10px 10px 0 0;
-    border-radius: 2px 0 0 2px;
-    box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    outline: none;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
-    background-color: #fff;
-    font-family: Roboto;
-}
-
-.pac-input {
-    z-index: 10; 
-}
-
-input {
-    z-index: 10;
+pac-input {
+    width: 50%;
+    background: white;
 }
 
 #column {
     height:100%;
     float: left;
-    width: 50%;
 }
 
 h2 {
-    font-size: 22px;
-    margin: 0 0 5px 0;
+    font-size: 18px;
+    margin: 5px 0 5px 5px;
 }
 
-ul {
-    list-style-type: none;
+#results {
     padding: 0;
     margin: 0;
-    height: 271px;
+    height: 80%;
     overflow-y: scroll;
     padding-right: 15px;
 }
@@ -77,4 +61,8 @@ ul {
     margin-right: auto;
     width: 100%;
     text-align: center;
+}
+
+.card.horizontal {
+    margin: 10px;
 }
