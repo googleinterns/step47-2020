@@ -21,7 +21,7 @@
             <button data-target="sign-in-modal" class="modal-trigger btn waves-effect waves-light" style="width: 100%">Sign In</button>
         </div>
     </div>
-    <div id="sign-up-modal" class="modal">
+    <div id="sign-up-modal" class="modal" style="padding-bottom: 1vh;">
       <br>
       <span class="close-icon"><i class="small material-icons" onclick="closeModal('sign-up-modal')">close</i></span>
       <br>
@@ -32,36 +32,36 @@
         <div class="row form-row" style="height: 20%">
           <div class="input-field col s6">
             <input id="first_name" class="input-sign-up" type="text" class="validate" required>
-            <label for="first_name">First Name</label>
+            <label class ="form-label" for="first_name">First Name</label>
           </div>
           <div class="input-field col s6">
             <input id="last_name" class="input-sign-up" type="text" class="validate" required>
-            <label for="last_name">Last Name</label>
+            <label class ="form-label" for="last_name">Last Name</label>
           </div>
         </div>
         <div class="row form-row" style="height: 20%">
           <div class="input-field col s6">
             <input id="email" class="input-sign-up" type="email" class="validate" required>
-            <label for="email">Email</label>
+            <label class ="form-label" for="email">Email</label>
           </div>
           <div class="input-field col s6">
             <input id="phone" class="input-sign-up" type="tel" class="validate" required>
-            <label for="phone">Phone Number</label>
+            <label class ="form-label" for="phone">Phone Number</label>
           </div>
         </div>
         <div class="row form-row" style="height: 20%">
           <div class="input-field col s12">
             <input id="password" class="input-sign-up" type="password" class="validate" required>
-            <label for="password">Password</label>
+            <label class ="form-label" for="password">Password</label>
           </div>
         </div>
         <div class="row form-row" style="height: 20%">
           <div class="input-field col s12">
             <input id="repeat-password" class="input-sign-up" type="password" class="validate" required>
-            <label for="repeat-password">Confirm Password</label>
+            <label class ="form-label" for="repeat-password">Confirm Password</label>
           </div>
         </div>
-        <div class="row form-row" style="height: 20%">
+        <div class="row form-row" style="height: 20%; margin-top: 1vh">
           <div class="input-field col s4"></div>
           <div class="input-field col s4">
             <button type="button" class="btn sign-in-button waves-effect waves-light" 
@@ -71,6 +71,10 @@
             <button class="btn sign-in-button waves-effect waves-light" type="button" 
                 onclick="signUp()" style="background-color: #4CAF50;">Sign Up</button>
           </div>
+        </div>
+        <div class="row form-row center-align" style="height: 20%; margin-top: 1vh">
+            Already have an account?
+            <a class="link-text" onclick="closeModal('sign-up-modal'); openModal('sign-in-modal')">Sign in</a>
         </div>
       </form>  
     </div>
@@ -85,13 +89,13 @@
         <div class="row form-row" style="height: 20%">
           <div class="input-field col s6">
             <input id="email-in" class="input-sign-in" type="email" class="validate" required>
-            <label for="email">Email</label>
+            <label class ="form-label" for="email">Email</label>
           </div>
         </div>
         <div class="row form-row">
           <div class="input-field col s6">
             <input id="password-in" class="input-sign-in" type="password" class="validate" required>
-            <label for="password">Password</label>
+            <label class ="form-label" for="password">Password</label>
           </div>
         </div>
         <div class="row form-row">
