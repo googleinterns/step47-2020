@@ -59,11 +59,7 @@ function initMap() {
 
     // Set position of the search bar onto the map
     map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
-
-    // Listener for when map is dragged to a new location
-    google.maps.event.addListener(map, 'dragend', function() {
-     //   alert('map dragged');
-    });
+    
     updateSearch();
 }
 
