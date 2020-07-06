@@ -108,7 +108,6 @@ $(function() {
           
 function reorderEvents(ui) { 
     $('.event').each(function (i) {
-        console.log(this.innerHTML);
-        // $(this).html(i + 2);
+        console.log('order is ' + i + ' for ' + this.innerHTML);
     });
 } 
