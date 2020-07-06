@@ -48,6 +48,11 @@
       <version>1.9.80</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>com.google.firebase</groupId>
+      <artifactId>firebase-admin</artifactId>
+      <version>6.14.0</version>
+    </dependency>
 
     <dependency>
       <groupId>com.google.appengine</groupId>
@@ -82,14 +87,13 @@
     <outputDirectory>${project.build.directory}/${project.build.finalName}/WEB-INF/classes</outputDirectory>
     <plugins>
       <plugin>
-        <groupId>com.google.appengine</groupId>
+        <groupId>com.google.cloud.tools</groupId>
         <artifactId>appengine-maven-plugin</artifactId>
-        <version>1.9.80</version>
+        <version>2.2.0</version>
         <configuration>
-          <appId>planet</appId> <!-- Override appengine-web.xml <project> -->
-          <version>1</version>
-          <fullScanSeconds>1</fullScanSeconds>
-          <retainUploadDir>true</retainUploadDir>
+          <!-- TODO: set project ID. -->
+          <deploy.projectId>ndabouz-step-2020-2</deploy.projectId>
+          <deploy.version>1</deploy.version>
         </configuration>
       </plugin>
 
