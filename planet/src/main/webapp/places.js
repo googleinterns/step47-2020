@@ -48,7 +48,6 @@ function initMap() {
                 draggable: true
             });
             map.setCenter(TORONTO_COORDINATES);
-            
             });
     } else {
         alert('Error: Your browser doesn\'t support geolocation.'); 
@@ -59,7 +58,7 @@ function initMap() {
 
     // Set position of the search bar onto the map
     map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
-    
+
     updateSearch();
 }
 
@@ -91,7 +90,6 @@ function updateSearch() {
 
         // For each place, get the icon, name and location.
         let bounds = new google.maps.LatLngBounds();
-        //let bounds = map.getBounds();
         places.forEach(function(place) {
             if (!place.geometry) {
               console.log("Returned place contains no geometry");
@@ -171,8 +169,4 @@ function listResults(results) {
     }
     // Add search keyword to header
     document.getElementById('greeting').innerHTML = "Find a place: " + document.getElementById('pac-input').value;
-}
-
-function searchOption(search) {
-    document.getElementById('pac-input').value = search;
 }
