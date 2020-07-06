@@ -76,24 +76,21 @@ function signIn() {
 }
 
 function signInWithGoogle() {
-    const provider = new firebase.auth.GoogleAuthProvider();
-    signInWithProvider(provider);
+    signInWithProvider(new firebase.auth.GoogleAuthProvider());
 }
 
 function signInWithFacebook() {
-    const provider = new firebase.auth.FacebookAuthProvider();
-    signInWithProvider(provider);
+    signInWithProvider(new firebase.auth.FacebookAuthProvider());
 }
 
 function signInWithGithub() {
-    const provider = new firebase.auth.GithubAuthProvider();
-    signInWithProvider(provider);
+    signInWithProvider(new firebase.auth.GithubAuthProvider());
 }
 
 function signInWithProvider(provider) {
     firebase.auth().signInWithPopup(provider).then(function(result) {
         // The signed-in user info.
-        var user = result.user;
+        const user = result.user;
         console.log(user);
         // TODO: We will be adding more actions here 
     }).catch(function(error) {
