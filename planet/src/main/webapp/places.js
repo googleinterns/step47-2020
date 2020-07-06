@@ -15,6 +15,7 @@
 /** Declare global variables */
 let map;
 let searchMarker;
+let infoWindow;
 
 /** Initializes Map, implements search box and marks locations of searches */
 function initMap() {
@@ -120,7 +121,7 @@ function updateSearch() {
             });
 
             // Create an info window for each place
-            let infoWindow = new google.maps.InfoWindow({
+            infoWindow = new google.maps.InfoWindow({
                     content: ""
             });
 
