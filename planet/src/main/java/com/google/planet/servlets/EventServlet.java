@@ -39,7 +39,7 @@ import javax.servlet.http.HttpServletResponse;
 public class EventServlet extends HttpServlet {
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        Query query = new Query("Event");
+        Query query = new Query("Event").addSort("order", SortDirection.ASCENDING);
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         PreparedQuery results = datastore.prepare(query);
 
@@ -51,11 +51,12 @@ public class EventServlet extends HttpServlet {
             double duration = (double) entity.getProperty("duration");
             int openingTime = Math.toIntExact((long)entity.getProperty("openingTime"));
             int closingTime = Math.toIntExact((long)entity.getProperty("closingTime"));
+            long order = (long)entity.getProperty("order");
             String listName = (String) entity.getProperty("listName");
             String userId = (String) entity.getProperty("userId");
 
             Event event = new Event(id, name, address, duration, 
-                TimeRange.fromStartEnd(openingTime, closingTime), listName, userId);
+                TimeRange.fromStartEnd(openingTime, closingTime), order, listName, userId);
             events.add(event);
         }
 
@@ -74,6 +75,15 @@ public class EventServlet extends HttpServlet {
         int openingTime = TimeRange.getTimeInMinutes(8,0);
         int closingTime = TimeRange.getTimeInMinutes(17,0);
 
+        // Get the count of the current list (will need to add more filters, such as userid, listName, etc. later)
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        PreparedQuery entityStats = datastore.prepare(new Query("Event"));
+        long numOfEvents = 0;
+        for (Entity entity : entityStats.asIterable()) {
+            numOfEvents += 1;
+        }
+        long order = numOfEvents + 1;
+
         String listName = "current";
         String userId = "123";
 
@@ -83,10 +93,10 @@ public class EventServlet extends HttpServlet {
         eventEntity.setProperty("duration", duration);
         eventEntity.setProperty("openingTime", openingTime);
         eventEntity.setProperty("closingTime", closingTime);
+        eventEntity.setProperty("order", order);
         eventEntity.setProperty("listName", listName);
         eventEntity.setProperty("userId", userId);
 
-        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         datastore.put(eventEntity);
 
         // Wait 50 ms for datastore to update changes

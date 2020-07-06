@@ -24,6 +24,7 @@ import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
+import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.planet.data.Event;
 import java.io.IOException;
 import javax.servlet.annotation.WebServlet;
@@ -41,7 +42,7 @@ import javax.servlet.http.HttpServletResponse;
 public class ItineraryServlet extends HttpServlet {
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        Query query = new Query("Event");
+        Query query = new Query("Event").addSort("order", SortDirection.ASCENDING);
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         PreparedQuery results = datastore.prepare(query);
 
@@ -52,6 +53,7 @@ public class ItineraryServlet extends HttpServlet {
                                 hotelAddress, 
                                 0, 
                                 TimeRange.WHOLE_DAY, 
+                                0,
                                 "listName-none", 
                                 "userId-none");
 
@@ -64,6 +66,7 @@ public class ItineraryServlet extends HttpServlet {
             double duration = (double) entity.getProperty("duration");
             int openingTime = Math.toIntExact((long)entity.getProperty("openingTime"));
             int closingTime = Math.toIntExact((long)entity.getProperty("closingTime"));
+            long order = (long)entity.getProperty("order");
             String listName = (String) entity.getProperty("listName");
             String userId = (String) entity.getProperty("userId");
             Event event = new Event(id, 
@@ -71,6 +74,7 @@ public class ItineraryServlet extends HttpServlet {
                                     address, 
                                     duration, 
                                     TimeRange.fromStartEnd(openingTime, closingTime), 
+                                    order,
                                     listName, 
                                     userId);
             events.add(event);

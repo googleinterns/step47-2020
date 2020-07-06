@@ -45,13 +45,13 @@ public final class ItineraryGeneratorTest {
         List<Event> events = new ArrayList<>();
 
         Event hotel = new Event(123, "Hotel", "address", 0, 
-            TimeRange.WHOLE_DAY, "listName", "userId");
+            TimeRange.WHOLE_DAY, 0, "listName", "userId");
         Event event1 = new Event(123, "Event 1", "address", 1, 
-            TimeRange.fromStartEnd(TIME_0800AM, TIME_0500PM), "listName", "userId");
+            TimeRange.fromStartEnd(TIME_0800AM, TIME_0500PM), 1, "listName", "userId");
         Event event2 = new Event(123, "Event 2", "address", 2, 
-            TimeRange.fromStartEnd(TIME_0800AM, TIME_0500PM), "listName", "userId");
+            TimeRange.fromStartEnd(TIME_0800AM, TIME_0500PM), 2, "listName", "userId");
         Event event3 = new Event(123, "Event 3", "address", 3, 
-            TimeRange.fromStartEnd(TIME_0800AM, TIME_0500PM), "listName", "userId");
+            TimeRange.fromStartEnd(TIME_0800AM, TIME_0500PM), 3, "listName", "userId");
         events.add(event1);
         events.add(event2);
         events.add(event3);
@@ -73,11 +73,11 @@ public final class ItineraryGeneratorTest {
         List<Event> events = new ArrayList<>();
 
         Event hotel = new Event(123, "Hotel", "address", 0, 
-            TimeRange.WHOLE_DAY, "listName", "userId");
+            TimeRange.WHOLE_DAY, 0, "listName", "userId");
         Event event1 = new Event(123, "Event 1", "address", 3, 
-            TimeRange.fromStartEnd(TIME_0800AM, TIME_0500PM), "listName", "userId");
+            TimeRange.fromStartEnd(TIME_0800AM, TIME_0500PM), 1, "listName", "userId");
         Event event2 = new Event(123, "Event 2", "address", 9, 
-            TimeRange.fromStartEnd(TIME_0800AM, TIME_0500PM), "listName", "userId");
+            TimeRange.fromStartEnd(TIME_0800AM, TIME_0500PM), 2, "listName", "userId");
         events.add(event1);
         events.add(event2);
         List<ItineraryItem> actual = itinerary.generateItinerary(events, hotel);
