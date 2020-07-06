@@ -24,7 +24,7 @@ public final class ItineraryGenerator {
 
         // For the prototype, just find the shortest opening hours and 
         // schedule all events within that time range
-        Collections.sort(events, Event.orderByOpeningHours);
+        Collections.sort(events, Event.OrderByOpeningHours);
         int START = events.get(0).getOpeningHours().start();
         int END = events.get(0).getOpeningHours().end();
 
