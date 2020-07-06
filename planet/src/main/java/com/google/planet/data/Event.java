@@ -24,8 +24,9 @@ public final class Event {
     private final TimeRange openingHours;
     private final String listName; 
     private final String userId;
+    private final int order;
 
-    public Event(long id, String name, String address, double duration, TimeRange openingHours, String listName, String userId) {
+    public Event(long id, String name, String address, double duration, TimeRange openingHours, int order, String listName, String userId) {
         this.id = id;
         this.name = name;
         this.address = address;

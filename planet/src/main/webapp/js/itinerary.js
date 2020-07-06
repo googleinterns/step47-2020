@@ -34,7 +34,7 @@ async function renderEvents() {
 
 function createEventElement(id, name, address, duration) {
     const eventElement = document.createElement('div');
-    eventElement.setAttribute("class", "card");
+    eventElement.setAttribute("class", "card event");
     eventElement.innerHTML = 
         `<div class="card-content">
           <span class="card-title">` + name + `</span>
@@ -97,3 +97,18 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 
+// jQuery function that reorders the events
+$(function() { 
+    $( "#events" ).sortable({
+    update: function(event, ui) { 
+        reorderEvents(ui); 
+    }       
+    }); 
+}); 
+          
+function reorderEvents(ui) { 
+    $('.event').each(function (i) {
+        console.log(this.innerHTML);
+        // $(this).html(i + 2);
+    });
+} 
