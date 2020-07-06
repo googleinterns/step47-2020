@@ -37,7 +37,7 @@
 }
 
 button.btn.waves-effect.waves-light {
-    font-size: 1vw;
+    font-size: min(1vw, 18px);
     width: 100%;
 }
 
@@ -97,7 +97,7 @@ button.btn.sign-in-button:hover {
 }
 
 .input-field.col label.form-label {
-    font-size: 1vw;
+    font-size: min(1vw, 14px);
     left: 0;
 }
 
