@@ -40,12 +40,17 @@ function initMap() {
             });
             map.setCenter(pos);
         }, function() {
-            // User did not allow location
-            handleLocationError(true, infoWindow, map.getCenter());
+            let searchMarker = new google.maps.Marker({
+                position: TORONTO_COORDINATES,
+                map: map,
+                animation: google.maps.Animation.DROP,
+                draggable: true
+            });
+            map.setCenter(TORONTO_COORDINATES);
+            
             });
     } else {
-        // Browser doesn't support Geolocation
-        handleLocationError(false, infoWindow, map.getCenter());
+        alert('Error: Your browser doesn\'t support geolocation.'); 
     }
 
     let input = document.getElementById('pac-input');
@@ -56,7 +61,7 @@ function initMap() {
 
     // Listener for when map is dragged to a new location
     google.maps.event.addListener(map, 'dragend', function() {
-        alert('map dragged');
+     //   alert('map dragged');
     });
     updateSearch();
 }
@@ -72,7 +77,7 @@ function updateSearch() {
     });
 
     let markers = [];
-    let placeNames = [];
+    let placeInfo = [];
 
     // Listener for when user selects new location
     searchBox.addListener('places_changed', function() {
@@ -85,18 +90,18 @@ function updateSearch() {
             marker.setMap(null);
         });
         markers = [];
-        placeNames = [];
+        placeInfo = [];
 
         // For each place, get the icon, name and location.
-        // let bounds = new google.maps.LatLngBounds();
-        let bounds = map.getBounds();
+        let bounds = new google.maps.LatLngBounds();
+        //let bounds = map.getBounds();
         places.forEach(function(place) {
             if (!place.geometry) {
               console.log("Returned place contains no geometry");
               return;
             }
             // Add search results to a list
-            placeNames.push(place.name + "\n"); 
+            placeInfo.push(place.name + "\n" + "Rating: " + place.rating + "\n"); 
 
             let icon = {
               url: place.icon,
@@ -106,13 +111,27 @@ function updateSearch() {
               scaledSize: new google.maps.Size(25, 25)
             };
 
-            // Create a marker for each place.
-            markers.push(new google.maps.Marker({
+            // Create a marker for each place
+            let marker = new google.maps.Marker({
               map: map,
               icon: icon,
               title: place.name,
               position: place.geometry.location
-            }));
+            });
+
+            // Create an info window for each place
+            let infoWindow = new google.maps.InfoWindow({
+                    content: ""
+            });
+
+            // Add markers to array
+            markers.push(marker);
+
+            // Display info window with name marker is clicked
+            google.maps.event.addDomListener(marker,'click', function() {
+                    infoWindow.setContent(place.name);
+                    infoWindow.open(map, this); 
+            });
 
             if (place.geometry.viewport) {
               bounds.union(place.geometry.viewport);
@@ -121,17 +140,8 @@ function updateSearch() {
             }
         });
         map.fitBounds(bounds);
-        listResults(placeNames);
+        listResults(placeInfo);
     });
-}
-
-/** Displays error message in info window when user location is not allowed */
-function handleLocationError(browserHasGeolocation, infoWindow, pos) {
-    infoWindow.setPosition(pos);
-    infoWindow.setContent(browserHasGeolocation ?
-            'Error: The Geolocation service failed.' :
-            'Error: Your browser doesn\'t support geolocation.');
-    infoWindow.open(map);
 }
 
 /** List results of nearby search on page*/
