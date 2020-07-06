@@ -51,7 +51,7 @@ public final class Event {
     /**
     * A comparator for sorting events by the duration of their opening hours, in ascending order.
     */
-    public static final Comparator<Event> ORDER_BY_OPENING_HOURS = new Comparator<Event>() {
+    public static final Comparator<Event> OrderByOpeningHours = new Comparator<Event>() {
         @Override
         public int compare(Event a, Event b) {
         return Long.compare(a.openingHours.duration(), b.openingHours.duration());
