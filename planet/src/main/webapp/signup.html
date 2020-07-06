@@ -12,12 +12,20 @@
     <script src="js/authentication.js"></script>
   </head>
   <body>
-    <div class="container">
-      <form id="sign-up-form" class="col s12">
+    <div class="container row">
+        <div class="col s3">
+            <button data-target="sign-up-modal" class="modal-trigger btn waves-effect waves-light" style="width: 100%">Sign Up</button>
+        </div>
+        <div class="col s3">
+            <button data-target="sign-in-modal" class="modal-trigger btn waves-effect waves-light" style="width: 100%">Sign In</button>
+        </div>
+    </div>
+    <div id="sign-up-modal" class="modal">
+      <form id="sign-up-form" class="container">
         <h1 class="form-text">Sign Up</h1>
         <p class="form-text">Please fill in this form to get started</p>
         <hr>
-        <div class="row">
+        <div class="row" style="height: 20%">
           <div class="input-field col s6">
             <input id="first_name" class="input-sign-up" type="text" class="validate" required>
             <label for="first_name">First Name</label>
@@ -27,7 +35,7 @@
             <label for="last_name">Last Name</label>
           </div>
         </div>
-        <div class="row">
+        <div class="row" style="height: 20%">
           <div class="input-field col s6">
             <input id="email" class="input-sign-up" type="email" class="validate" required>
             <label for="email">Email</label>
@@ -37,25 +45,53 @@
             <label for="phone">Phone Number</label>
           </div>
         </div>
-        <div class="row">
+        <div class="row" style="height: 20%">
           <div class="input-field col s12">
             <input id="password" class="input-sign-up" type="password" class="validate" required>
             <label for="password">Password</label>
           </div>
         </div>
-        <div class="row">
+        <div class="row" style="height: 20%">
           <div class="input-field col s12">
             <input id="repeat-password" class="input-sign-up" type="password" class="validate" required>
             <label for="repeat-password">Confirm Password</label>
           </div>
         </div>
+        <div class="row" style="height: 20%">
+          <div class="input-field col s6"></div>
+          <div class="input-field col s3">
+            <button type="button" class="btn waves-effect waves-light" onclick="resetForm('input-sign-up')"style="background-color: indianred;">Cancel</button>
+          </div>
+          <div class="input-field col s3">
+            <button class="btn waves-effect waves-light" type="button" onclick="signUp()">Sign Up</button>
+          </div>
+        </div>
+      </form>  
+    </div>
+    <div id="sign-in-modal" class="modal">
+      <form id="sign-in-form" class="container">
+        <h1 class="form-text">Sign In</h1>
+        <p class="form-text">Please fill in this form to get logged in</p>
+        <hr>
+        <div class="row" style="height: 20%">
+          <div class="input-field col s6">
+            <input id="email-in" class="input-sign-in" type="email" class="validate" required>
+            <label for="email">Email</label>
+          </div>
+        </div>
+        <div class="row">
+          <div class="input-field col s6">
+            <input id="password-in" class="input-sign-in" type="password" class="validate" required>
+            <label for="password">Password</label>
+          </div>
+        </div>
         <div class="row">
           <div class="input-field col s6"></div>
           <div class="input-field col s3">
-            <button id="cancel-btn" type="button" class="btn waves-effect waves-light" onclick="resetForm()">Cancel</button>
+            <button type="button" class="btn waves-effect waves-light" onclick="resetForm('input-sign-in')" style="background-color: indianred;">Cancel</button>
           </div>
           <div class="input-field col s3">
-            <button class="btn waves-effect waves-light" type="submit" onclick="submitForm()">Sign Up</button>
+            <button class="btn waves-effect waves-light" type="button" onclick="signIn()">Sign In</button>
           </div>
         </div>
       </form>
