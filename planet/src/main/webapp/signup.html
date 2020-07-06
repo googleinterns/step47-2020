@@ -5,6 +5,7 @@
     <!--Import materialize.css-->
     <link type="text/css" rel="stylesheet" href="css/materialize.css"  media="screen,projection"/>
     <link rel="stylesheet" href="css/signup.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>  
     <meta charset="UTF-8">
     <title>Planet</title>
@@ -12,51 +13,117 @@
     <script src="js/authentication.js"></script>
   </head>
   <body>
-    <div class="container">
-      <form id="sign-up-form" class="col s12">
-        <h1 class="form-text">Sign Up</h1>
+    <div class="container row">
+        <div class="col s3">
+            <button data-target="sign-up-modal" class="modal-trigger btn waves-effect waves-light" style="width: 100%">Sign Up</button>
+        </div>
+        <div class="col s3">
+            <button data-target="sign-in-modal" class="modal-trigger btn waves-effect waves-light" style="width: 100%">Sign In</button>
+        </div>
+    </div>
+    <div id="sign-up-modal" class="modal" style="padding-bottom: 1vh;">
+      <br>
+      <span class="close-icon"><i class="small material-icons" onclick="closeModal('sign-up-modal')">close</i></span>
+      <br>
+      <form id="sign-up-form" class="container">
+        <h3 class="form-text">Sign Up</h1>
         <p class="form-text">Please fill in this form to get started</p>
         <hr>
-        <div class="row">
+        <div class="row form-row" style="height: 20%">
           <div class="input-field col s6">
             <input id="first_name" class="input-sign-up" type="text" class="validate" required>
-            <label for="first_name">First Name</label>
+            <label class ="form-label" for="first_name">First Name</label>
           </div>
           <div class="input-field col s6">
             <input id="last_name" class="input-sign-up" type="text" class="validate" required>
-            <label for="last_name">Last Name</label>
+            <label class ="form-label" for="last_name">Last Name</label>
           </div>
         </div>
-        <div class="row">
+        <div class="row form-row" style="height: 20%">
           <div class="input-field col s6">
             <input id="email" class="input-sign-up" type="email" class="validate" required>
-            <label for="email">Email</label>
+            <label class ="form-label" for="email">Email</label>
           </div>
           <div class="input-field col s6">
             <input id="phone" class="input-sign-up" type="tel" class="validate" required>
-            <label for="phone">Phone Number</label>
+            <label class ="form-label" for="phone">Phone Number</label>
           </div>
         </div>
-        <div class="row">
+        <div class="row form-row" style="height: 20%">
           <div class="input-field col s12">
             <input id="password" class="input-sign-up" type="password" class="validate" required>
-            <label for="password">Password</label>
+            <label class ="form-label" for="password">Password</label>
           </div>
         </div>
-        <div class="row">
+        <div class="row form-row" style="height: 20%">
           <div class="input-field col s12">
             <input id="repeat-password" class="input-sign-up" type="password" class="validate" required>
-            <label for="repeat-password">Confirm Password</label>
+            <label class ="form-label" for="repeat-password">Confirm Password</label>
           </div>
         </div>
-        <div class="row">
-          <div class="input-field col s6"></div>
-          <div class="input-field col s3">
-            <button id="cancel-btn" type="button" class="btn waves-effect waves-light" onclick="resetForm()">Cancel</button>
+        <div class="row form-row" style="height: 20%; margin-top: 1vh">
+          <div class="input-field col s4"></div>
+          <div class="input-field col s4">
+            <button type="button" class="btn sign-in-button waves-effect waves-light" 
+                onclick="resetForm('input-sign-up')" style="background-color: #f44336;">Cancel</button>
           </div>
-          <div class="input-field col s3">
-            <button class="btn waves-effect waves-light" type="submit" onclick="submitForm()">Sign Up</button>
+          <div class="input-field col s4">
+            <button class="btn sign-in-button waves-effect waves-light" type="button" 
+                onclick="signUp()" style="background-color: #4CAF50;">Sign Up</button>
           </div>
+        </div>
+        <div class="row form-row center-align" style="height: 20%; margin-top: 1vh">
+            Already have an account?
+            <a class="link-text" onclick="closeModal('sign-up-modal'); openModal('sign-in-modal')">Sign in</a>
+        </div>
+      </form>  
+    </div>
+    <div id="sign-in-modal" class="modal" style="padding-bottom: 1vh;">
+      <br>
+      <span class="close-icon"><i class="small material-icons" onclick="closeModal('sign-in-modal')">close</i></span>
+      <br>
+        <form id="sign-in-form" class="container">
+        <h3 class="form-text">Sign In</h1>
+        <p class="form-text">Please fill in this form to get logged in</p>
+        <hr>
+        <div class="row form-row" style="height: 20%">
+          <div class="input-field col s6">
+            <input id="email-in" class="input-sign-in" type="email" class="validate" required>
+            <label class ="form-label" for="email">Email</label>
+          </div>
+        </div>
+        <div class="row form-row">
+          <div class="input-field col s6">
+            <input id="password-in" class="input-sign-in" type="password" class="validate" required>
+            <label class ="form-label" for="password">Password</label>
+          </div>
+        </div>
+        <div class="row form-row">
+          <div class="input-field col s12">
+            <button class="btn sign-in-button waves-effect waves-light" type="button" 
+                onclick="signIn()" style="background-color: #4CAF50;">Sign In</button>
+          </div>
+        </div>
+        <div class="row form-row" style="margin: 0;">
+            <div class="input-field col s2"></div>
+            <div class="input-field col s8">
+                <button class="btn sign-in-button" type="button" onclick="signInWithGoogle()">Sign In with Google</button>
+            </div>
+            <div class="input-field col s2"></div>
+        </div>
+        <div class="row form-row" style="margin: 0;">
+            <div class="input-field col s2"></div>
+            <div class="input-field col s8">
+                <button class="btn sign-in-button" type="button" onclick="signInWithFacebook()">Sign In with Facebook</button>
+            </div>
+            <div class="input-field col s2"></div>
+        </div>
+        <div class="row form-row" style="margin: 0;">
+            <div class="input-field col s2"></div>
+            <div class="input-field col s8">
+                <button class="btn sign-in-button" type="button" onclick="signInWithGithub()">Sign In with Github</button>
+            </div>
+            <div class="input-field col s2"></div>
         </div>
       </form>
     </div>

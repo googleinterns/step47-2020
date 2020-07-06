@@ -41,6 +41,66 @@ button.btn.waves-effect.waves-light {
     width: 100%;
 }
 
-#cancel-btn.btn.waves-effect.waves-light {
-    background-color: indianred;
+.input-field.col.s12, .input-field.col.s6, .input-field.col.s4 {
+    margin: 0;
+    padding: 0;
+}
+
+.input-field.col.s8 {
+    margin-top: 1vh;
+    margin-bottom: 1vh;
+    padding: 0;
+}
+
+input.input-sign-up, input.input-sign-in {
+    margin: 0;
+}
+
+.close-icon {
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+
+.close-icon:hover {
+    background-color: lightgray;
+    cursor: pointer;
+}
+
+.modal {
+    width: 50%;
+    height: auto;
+}
+
+button.btn.sign-in-button {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    font-size: 1vw;
+    text-transform: none;
+    background-color: white;
+    color: black;
+    opacity: 0.7;
+}
+
+button.btn.sign-in-button:hover {
+    opacity: 1;
+}
+
+.row.form-row {
+    margin: 0;
+}
+
+.input-field.col label.form-label.active {
+    transform: translateY(-0.8vh) scale(0.8);
+    -webkit-transform: translateY(-0.8vh) scale(0.8);
+}
+
+.input-field.col label.form-label {
+    font-size: 1vw;
+    left: 0;
+}
+
+.link-text:hover {
+    cursor: pointer;
 }
