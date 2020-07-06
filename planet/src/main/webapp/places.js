@@ -16,6 +16,11 @@
 let map;
 let searchMarker;
 let infoWindow;
+let input;
+let searchBox;
+let markers = [];
+let placeInfo = [];
+let bounds;
 
 /** Initializes Map, implements search box and marks locations of searches */
 function initMap() {
@@ -24,7 +29,17 @@ function initMap() {
         center: TORONTO_COORDINATES,
         zoom: 8
     });
+    input = document.getElementById('pac-input');
+    searchBox = new google.maps.places.SearchBox(input);
+    // Set position of the search bar onto the map
+    map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+    
+    getCurrentLocation(); 
+    updateSearch();
+}
 
+/** Creates marker at user's current location if allowed */
+function getCurrentLocation(){
     // Gets users current location
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(function(position) {
@@ -40,7 +55,9 @@ function initMap() {
                 draggable: true
             });
             map.setCenter(pos);
-        }, function() {
+        }, 
+            // Set default marker to Toronto if user does not allow current location
+            function() {
             let searchMarker = new google.maps.Marker({
                 position: TORONTO_COORDINATES,
                 map: map,
@@ -52,28 +69,14 @@ function initMap() {
     } else {
         alert('Error: Your browser doesn\'t support geolocation.'); 
     }
-
-    let input = document.getElementById('pac-input');
-    let searchBox = new google.maps.places.SearchBox(input);
-
-    // Set position of the search bar onto the map
-    map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
-
-    updateSearch();
 }
 
-/** Create new markers and display new search */
+/** Update markers and places when new search is performed */
 function updateSearch() {    
-    input = document.getElementById('pac-input');
-    searchBox = new google.maps.places.SearchBox(input);
-
     // Bias the SearchBox results towards current map's viewport.
     map.addListener('bounds_changed', function() {
         searchBox.setBounds(map.getBounds());
     });
-
-    let markers = [];
-    let placeInfo = [];
 
     // Listener for when user selects new location
     searchBox.addListener('places_changed', function() {
@@ -85,63 +88,74 @@ function updateSearch() {
         markers.forEach(function(marker) {
             marker.setMap(null);
         });
+        // Clear array of old markers and place information
         markers = [];
         placeInfo = [];
 
-        // For each place, get the icon, name and location.
-        let bounds = new google.maps.LatLngBounds();
-        places.forEach(function(place) {
-            if (!place.geometry) {
-              console.log("Returned place contains no geometry");
-              return;
-            }
-            // Add search results to a list
-            placeInfo.push(place.name + "\n" + "Rating: " + place.rating + "\n"); 
-
-            let icon = {
-              url: place.icon,
-              size: new google.maps.Size(71, 71),
-              origin: new google.maps.Point(0, 0),
-              anchor: new google.maps.Point(17, 34),
-              scaledSize: new google.maps.Size(25, 25)
-            };
-
-            // Create a marker for each place
-            let marker = new google.maps.Marker({
-              map: map,
-              icon: icon,
-              title: place.name,
-              position: place.geometry.location
-            });
-
-            // Create an info window for each place
-            infoWindow = new google.maps.InfoWindow({
-                    content: ""
-            });
-
-            // Add markers to array
-            markers.push(marker);
-
-            // Display info window with name marker is clicked
-            google.maps.event.addDomListener(marker,'click', function() {
-                    infoWindow.setContent(place.name);
-                    infoWindow.open(map, this); 
-            });
-
-            if (place.geometry.viewport) {
-              bounds.union(place.geometry.viewport);
-            } else {
-              bounds.extend(place.geometry.location);
-            }
-        });
+        bounds = new google.maps.LatLngBounds();
+        placeDetails(places);
         map.fitBounds(bounds);
         listResults(placeInfo);
     });
 }
 
+/** Create markers and add details to each place */
+function placeDetails(places) {
+    // For each place, get the icon, name and location.
+    places.forEach(function(place) {
+        if (!place.geometry) {
+          console.log("Returned place contains no geometry");
+          return;
+        }
+        // Add search results to a list
+        placeInfo.push(place.name + "\n" + "Rating: " + place.rating + "\n"); 
+
+        createMarkers(place); 
+ 
+        if (place.geometry.viewport) {
+            bounds.union(place.geometry.viewport);
+        } else {
+            bounds.extend(place.geometry.location);
+        }
+    });   
+}
+
+/** Create marker and add info window to place */
+function createMarkers(place) {
+        // Set icon properties
+        let icon = { 
+            url: place.icon,
+            size: new google.maps.Size(71, 71),
+            origin: new google.maps.Point(0, 0),
+            anchor: new google.maps.Point(17, 34),
+            scaledSize: new google.maps.Size(25, 25)
+        };
+
+        // Create a marker for each place
+        let marker = new google.maps.Marker({
+            map: map,
+            icon: icon,
+            title: place.name,
+            position: place.geometry.location
+        });        
+        
+        // Add markers to array
+        markers.push(marker);
+
+        // Create an info window for each place
+        infoWindow = new google.maps.InfoWindow({
+                content: ""
+        });
+
+        // Display info window with name marker is clicked
+        google.maps.event.addDomListener(marker,'click', function() {
+                infoWindow.setContent(place.name);
+                infoWindow.open(map, this); 
+        });
+}
+
 /** List results of nearby search on page*/
 function listResults(results) {
-    const places = document.getElementById('places');
     let element = document.getElementById('results');
     // Clear results 
     element.innerHTML = ""; 
@@ -169,4 +183,9 @@ function listResults(results) {
     }
     // Add search keyword to header
     document.getElementById('greeting').innerHTML = "Find a place: " + document.getElementById('pac-input').value;
+}
+
+/** Fills search box with preset option from button */
+function searchOption(search) {
+    document.getElementById('pac-input').value = search;
 }
