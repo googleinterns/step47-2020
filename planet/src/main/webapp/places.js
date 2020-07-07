@@ -62,12 +62,18 @@ function getCurrentLocation(){
                 position: TORONTO_COORDINATES,
                 map: map,
                 animation: google.maps.Animation.DROP,
-                draggable: true
             });
             map.setCenter(TORONTO_COORDINATES);
             });
     } else {
         alert('Error: Your browser doesn\'t support geolocation.'); 
+        // Set default marker to Toronto
+        let searchMarker = new google.maps.Marker({
+            position: TORONTO_COORDINATES,
+            map: map,
+            animation: google.maps.Animation.DROP,
+        });
+        map.setCenter(TORONTO_COORDINATES);
     }
 }
 
@@ -81,7 +87,7 @@ function updateSearch() {
     // Listener for when user selects new location
     searchBox.addListener('places_changed', function() {
         let places = searchBox.getPlaces();
-        if (places.length == 0) {
+        if (places.length === 0) {
             return;
         }
         // Delete old markers
@@ -93,14 +99,14 @@ function updateSearch() {
         placeInfo = [];
 
         bounds = new google.maps.LatLngBounds();
-        placeDetails(places);
+        addPlaceDetails(places);
         map.fitBounds(bounds);
         listResults(placeInfo);
     });
 }
 
 /** Create markers and add details to each place */
-function placeDetails(places) {
+function addPlaceDetails(places) {
     // For each place, get the icon, name and location.
     places.forEach(function(place) {
         if (!place.geometry) {
@@ -147,7 +153,7 @@ function createMarkers(place) {
                 content: ""
         });
 
-        // Display info window with name marker is clicked
+        // Display info window with name when marker is clicked
         google.maps.event.addDomListener(marker,'click', function() {
                 infoWindow.setContent(place.name);
                 infoWindow.open(map, this); 
