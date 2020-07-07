@@ -25,6 +25,7 @@ const firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 const database = firebase.database();
+// An example of how to retrieve data from the database (demos puposes)
 database.ref('users').on('value', function(snapshot) {
     console.log(snapshot.val());
     updateListOfUsers(snapshot.val());
@@ -37,11 +38,11 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
+// This function is for demos purposes
 function updateListOfUsers(listOfUsers) {
     const listElement = document.getElementById('users-list');
     listElement.innerHTML = '';
     for (const user in listOfUsers) {
-        console.log(listOfUsers[user]);
         const newElement = document.createElement('li');
         newElement.innerText = listOfUsers[user].name;
         listElement.appendChild(newElement);
@@ -72,6 +73,7 @@ function signUp() {
     firebase.auth().createUserWithEmailAndPassword(email, password)
     .then(function() {
         const user = firebase.auth().currentUser;
+        // An example of how to add the user's data into the database (demos puposes)
         database.ref('users/' + user.uid).set({
             name: displayName,
             email: email,
