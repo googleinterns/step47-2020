@@ -126,7 +126,10 @@ function signIn() {
     const email = document.getElementById('email-in').value;
     resetForm('input-sign-in');
     firebase.auth().signInWithEmailAndPassword(email, password)
-    .then(checkUserSignIn).catch(function(error) {
+    .then(function() {
+        closeModal('sign-in-modal');
+        checkUserSignIn(); 
+    }).catch(function(error) {
         // Handle Errors here.
         console.log(error);
         const errorCode = error.code;
@@ -145,6 +148,10 @@ function signIn() {
     });
 }
 
+function signOut() {
+    firebase.auth().signOut().then(checkUserSignIn);
+}
+
 function signInWithGoogle() {
     signInWithProvider(new firebase.auth.GoogleAuthProvider());
 }
@@ -160,9 +167,8 @@ function signInWithGithub() {
 function signInWithProvider(provider) {
     firebase.auth().signInWithPopup(provider).then(function(result) {
         // The signed-in user info.
-        const user = result.user;
-        console.log(user);
-        // TODO: We will be adding more actions here 
+        closeModal('sign-in-modal');
+        checkUserSignIn();
     }).catch(function(error) {
         console.log(error);
         // TODO: We will be handling errors here
