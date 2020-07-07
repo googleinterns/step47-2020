@@ -47,13 +47,9 @@ public class ItineraryServlet extends HttpServlet {
 
         // Create an event called "hotel" with duration of 0
         String hotelAddress = request.getParameter("hotel-address");
-        Event hotel = new Event(123, 
-                                "Hotel", 
+        Event hotel = new Event( "Hotel", 
                                 hotelAddress, 
-                                0, 
-                                TimeRange.WHOLE_DAY, 
-                                "listName-none", 
-                                "userId-none");
+                                0);
 
         // Get list of events from Datastore
         List<Event> events = new ArrayList<>();

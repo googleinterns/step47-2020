@@ -9,15 +9,15 @@ function closeForm() {
 
 function handleHotelChange() {
     if (typeof(Storage) !== "undefined") {
-        sessionStorage.hotel = document.getElementById('hotel-address').value;
+        sessionStorage.setItem('hotel', document.getElementById('hotel-address').value);
     } else {
         alert ('Please update your browser'); 
     }
 }
 
 function renderHotel() {
-    if (sessionStorage.hotel) {
-        document.getElementById('hotel-address').value = sessionStorage.hotel;
+    if (sessionStorage.getItem('hotel')) {
+        document.getElementById('hotel-address').value = sessionStorage.getItem('hotel');
     }
 }
 
@@ -55,12 +55,12 @@ async function deleteEvent(id) {
 }
 
 async function generateItinerary() {
-    if (!sessionStorage.hotel) {
+    if (!sessionStorage.getItem('hotel')) {
         alert('Please input a valid hotel address');
         return;
     }
     const params = new URLSearchParams();
-    params.append("hotel-address", sessionStorage.hotel);
+    params.append("hotel-address", sessionStorage.getItem('hotel'));
     const itineraryResponse = await fetch('/generate-itinerary', {method: 'POST', body: params});
     const itinerary = await itineraryResponse.json();
     createItinerary(itinerary);
@@ -80,7 +80,7 @@ function createItinerary(items) {
     itineraryContainer.innerHTML = '';
 
     items.forEach((item) => {
-        // Only show one time stamp for hotel.
+        // Only show one time stamp for 0 length events.
         if (item.when.start === item.when.end) {
             itineraryContainer.innerHTML += '<li>' + item.name + ', ' + item.address + ', ' + 
                                 timeToString(item.when.start) + '</li>';

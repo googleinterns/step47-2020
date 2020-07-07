@@ -58,7 +58,7 @@ public final class ItineraryGenerator {
                                                         int[][] travelTimeGraph) {
         List<ItineraryItem> items = new ArrayList<>();
         int start = openningTime; 
-        for (int i = 0; i < events.size(); i++){  
+        for (int i = 0; i < events.size(); i++){
             Event event = events.get(i);
 
             // Add the event as an itinerary item if the remaining available time is longer than the
