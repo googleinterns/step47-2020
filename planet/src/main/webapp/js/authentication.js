@@ -24,11 +24,15 @@ const firebaseConfig = {
 };
 
 firebase.initializeApp(firebaseConfig);
+let currentUser = firebase.auth().currentUser;
 const database = firebase.database();
 // An example of how to retrieve data from the database (demos puposes)
 database.ref('users').on('value', function(snapshot) {
     updateListOfUsers(snapshot.val());
 });
+firebase.auth().onAuthStateChanged(function(){
+    checkUserSignIn();
+})
 
 document.addEventListener('DOMContentLoaded', function() {
     const elements = document.querySelectorAll('.modal');
@@ -37,14 +41,12 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     loadElement('signin.html', 'sign-in-modal');
     loadElement('signup.html', 'sign-up-modal');
-    checkUserSignIn();
-
 });
 
 function checkUserSignIn() {
-    const user = firebase.auth().currentUser;
-    if (user !== null) {
-        document.getElementById('profile-button').innerText = user.displayName;
+    currentUser = firebase.auth().currentUser;
+    if (currentUser !== null) {
+        document.getElementById('profile-button').innerText = currentUser.displayName;
         document.getElementById('profile-button').style.display = 'block';
         document.getElementById('sign-out-button').style.display = 'block';
         document.getElementById('sign-in-button').style.display = 'none';
@@ -92,9 +94,8 @@ function signUp() {
     }
     firebase.auth().createUserWithEmailAndPassword(email, password)
     .then(function() {
-        const user = firebase.auth().currentUser;
         // An example of how to add the user's data into the database (demos puposes)
-        database.ref('users/' + user.uid).set({
+        database.ref('users/' + currentUser.uid).set({
             name: displayName,
             email: email,
             phoneNumber: phoneNumber,
@@ -169,6 +170,16 @@ function signInWithProvider(provider) {
         // The signed-in user info.
         closeModal('sign-in-modal');
         checkUserSignIn();
+        const refrence = database.ref('users' + currentUser.uid);
+        refrence.once('value').then(function(snapshot) {
+            if (!snapshot.exists()) {
+                database.ref('users/' + currentUser.uid).set({
+                    name: currentUser.displayName,
+                    email: currentUser.email,
+                    phoneNumber: currentUser.phoneNumber,
+                });
+            }
+        })
     }).catch(function(error) {
         console.log(error);
         // TODO: We will be handling errors here
