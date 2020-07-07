@@ -35,6 +35,17 @@ public final class Event {
         this.userId = userId;
     }
 
+    // Constructor for the starting point event (hotel), which is not stored in the database
+    public Event(String name, String address, double duration) {
+        this.name = name;
+        this.address = address;
+        this.duration = duration;
+        this.id = 0; 
+        this.openingHours = null; 
+        this.listName = null;
+        this.userId = null;
+    }
+
     public int getDurationInMinutes(){
         return (int) (this.duration * 60);
     }

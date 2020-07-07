@@ -45,6 +45,12 @@ public class ItineraryServlet extends HttpServlet {
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         PreparedQuery results = datastore.prepare(query);
 
+        // Create an event called "hotel" with duration of 0
+        String hotelAddress = request.getParameter("hotel-address");
+        Event hotel = new Event( "Hotel", 
+                                hotelAddress, 
+                                0);
+
         // Get list of events from Datastore
         List<Event> events = new ArrayList<>();
         for (Entity entity : results.asIterable()) {
@@ -56,13 +62,18 @@ public class ItineraryServlet extends HttpServlet {
             int closingTime = Math.toIntExact((long)entity.getProperty("closingTime"));
             String listName = (String) entity.getProperty("listName");
             String userId = (String) entity.getProperty("userId");
-            Event event = new Event(id, name, address, duration, 
-                TimeRange.fromStartEnd(openingTime, closingTime), listName, userId);
+            Event event = new Event(id, 
+                                    name, 
+                                    address, 
+                                    duration, 
+                                    TimeRange.fromStartEnd(openingTime, closingTime), 
+                                    listName, 
+                                    userId);
             events.add(event);
         }
 
         ItineraryGenerator itineraryGenerator = new ItineraryGenerator();
-        List<ItineraryItem> itinerary = itineraryGenerator.generateItinerary(events);
+        List<ItineraryItem> itinerary = itineraryGenerator.generateItinerary(events, hotel);
 
         response.setContentType("application/json");
         String json = new Gson().toJson(itinerary);
