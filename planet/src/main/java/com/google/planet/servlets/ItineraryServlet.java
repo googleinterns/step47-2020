@@ -47,9 +47,9 @@ public class ItineraryServlet extends HttpServlet {
         PreparedQuery results = datastore.prepare(query);
 
         // Create an event called "hotel" with duration of 0
-        String hotelAddress = request.getParameter("hotel-address");
-        Event hotel = new Event( "Hotel", 
-                                hotelAddress, 
+        String startingAddress = request.getParameter("starting-address");
+        Event start = new Event( "Start", 
+                                startingAddress, 
                                 0);
 
         // Get list of events from Datastore
@@ -76,7 +76,7 @@ public class ItineraryServlet extends HttpServlet {
         }
 
         ItineraryGenerator itineraryGenerator = new ItineraryGenerator();
-        List<ItineraryItem> itinerary = itineraryGenerator.generateItinerary(events, hotel);
+        List<ItineraryItem> itinerary = itineraryGenerator.generateItinerary(events, start);
 
         response.setContentType("application/json");
         String json = new Gson().toJson(itinerary);

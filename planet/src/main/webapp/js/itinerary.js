@@ -7,17 +7,17 @@ function closeForm() {
     document.getElementById('add-event').style.display = 'none';
 }
 
-function handleHotelChange() {
+function handleStartingLocationChange() {
     if (typeof(Storage) !== 'undefined') {
-        sessionStorage.setItem('hotel', document.getElementById('hotel-address').value);
+        sessionStorage.setItem('start', document.getElementById('starting-address').value);
     } else {
         alert ('Please update your browser'); 
     }
 }
 
-function renderHotel() {
-    if (sessionStorage.getItem('hotel')) {
-        document.getElementById('hotel-address').value = sessionStorage.getItem('hotel');
+function renderStartingLocation() {
+    if (sessionStorage.getItem('start')) {
+        document.getElementById('starting-address').value = sessionStorage.getItem('start');
     }
 }
 
@@ -55,12 +55,12 @@ async function deleteEvent(id) {
 }
 
 async function generateItinerary() {
-    if (!sessionStorage.getItem('hotel')) {
-        alert('Please input a valid hotel address');
+    if (!sessionStorage.getItem('start')) {
+        alert('Please input a valid starting address');
         return;
     }
     const params = new URLSearchParams();
-    params.append('hotel-address', sessionStorage.getItem('hotel'));
+    params.append('starting-address', sessionStorage.getItem('start'));
     const itineraryResponse = await fetch('/generate-itinerary', {method: 'POST', body: params});
     const itinerary = await itineraryResponse.json();
     createItinerary(itinerary);
@@ -95,7 +95,6 @@ document.addEventListener('DOMContentLoaded', function() {
     let elems = document.querySelectorAll('select');
     let instances = M.FormSelect.init(elems, {});
 });
-
 
 // jQuery function that reorders the events
 $(function() { 
