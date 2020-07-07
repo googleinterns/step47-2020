@@ -7,6 +7,20 @@ function closeForm() {
     document.getElementById('add-event').style.display = 'none';
 }
 
+function handleHotelChange() {
+    if (typeof(Storage) !== "undefined") {
+        sessionStorage.setItem('hotel', document.getElementById('hotel-address').value);
+    } else {
+        alert ('Please update your browser'); 
+    }
+}
+
+function renderHotel() {
+    if (sessionStorage.getItem('hotel')) {
+        document.getElementById('hotel-address').value = sessionStorage.getItem('hotel');
+    }
+}
+
 async function renderEvents() {
     const eventsResponse = await fetch('/update-event');
     const events = await eventsResponse.json();
@@ -41,13 +55,19 @@ async function deleteEvent(id) {
 }
 
 async function generateItinerary() {
-    const itineraryResponse = await fetch('/generate-itinerary', {method: 'POST'});
+    if (!sessionStorage.getItem('hotel')) {
+        alert('Please input a valid hotel address');
+        return;
+    }
+    const params = new URLSearchParams();
+    params.append("hotel-address", sessionStorage.getItem('hotel'));
+    const itineraryResponse = await fetch('/generate-itinerary', {method: 'POST', body: params});
     const itinerary = await itineraryResponse.json();
     createItinerary(itinerary);
 }
 
 function timeToString(totalMinutes) {
-    const hours = totalMinutes / 60;
+    const hours = Math.floor(totalMinutes / 60);
     const minutes = totalMinutes % 60;
 
     const hoursString = hours < 10 ? ('0' + hours) : hours;
@@ -60,8 +80,14 @@ function createItinerary(items) {
     itineraryContainer.innerHTML = '';
 
     items.forEach((item) => {
-        itineraryContainer.innerHTML += '<li>' + item.name + ', ' + item.address + ', ' + timeToString(item.when.start) +
-            ' - ' + timeToString(item.when.end) + '</li>';
+        // Only show one time stamp for 0 length events.
+        if (item.when.start === item.when.end) {
+            itineraryContainer.innerHTML += '<li>' + item.name + ', ' + item.address + ', ' + 
+                                timeToString(item.when.start) + '</li>';
+        }else {
+            itineraryContainer.innerHTML += '<li>' + item.name + ', ' + item.address + ', ' + 
+                timeToString(item.when.start) + ' - ' + timeToString(item.when.end) + '</li>';
+        }
     });
 }
 
