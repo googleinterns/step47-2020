@@ -14,6 +14,8 @@
 
 package com.google.planet.data;
 
+import java.util.Comparator;
+
 public final class Event {
     private final long id;
     private final String name; 
@@ -45,5 +47,15 @@ public final class Event {
     public TimeRange getOpeningHours(){
         return this.openingHours;
     }
+
+    /**
+    * A comparator for sorting events by the duration of their opening hours, in ascending order.
+    */
+    public static final Comparator<Event> OrderByOpeningHours = new Comparator<Event>() {
+        @Override
+        public int compare(Event a, Event b) {
+        return Long.compare(a.openingHours.duration(), b.openingHours.duration());
+        }
+    };
 }
 

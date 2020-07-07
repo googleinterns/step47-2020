@@ -54,6 +54,15 @@ public final class TimeRange {
         return String.format("Range: [%d, %d)", start, start + duration);
     }
 
+    @Override
+    public boolean equals(Object other) {
+        return other instanceof TimeRange && equals(this, (TimeRange) other);
+    }
+    
+    private static boolean equals(TimeRange a, TimeRange b) {
+        return a.start == b.start && a.duration == b.duration;
+    }
+
     public static int getTimeInMinutes(int hours, int minutes) {
         if (hours < 8 || hours > 19) {
             throw new IllegalArgumentException("Hours can only be 8 through 19 (inclusive).");
