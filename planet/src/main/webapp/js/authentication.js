@@ -27,7 +27,6 @@ firebase.initializeApp(firebaseConfig);
 const database = firebase.database();
 // An example of how to retrieve data from the database (demos puposes)
 database.ref('users').on('value', function(snapshot) {
-    console.log(snapshot.val());
     updateListOfUsers(snapshot.val());
 });
 
@@ -38,11 +37,30 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     loadElement('signin.html', 'sign-in-modal');
     loadElement('signup.html', 'sign-up-modal');
+    checkUserSignIn();
+
 });
+
+function checkUserSignIn() {
+    const user = firebase.auth().currentUser;
+    if (user !== null) {
+        document.getElementById('profile-button').innerText = user.displayName;
+        document.getElementById('profile-button').style.display = 'block';
+        document.getElementById('sign-out-button').style.display = 'block';
+        document.getElementById('sign-in-button').style.display = 'none';
+    } else {
+        document.getElementById('sign-in-button').style.display = 'block';
+        document.getElementById('profile-button').style.display = 'none';
+        document.getElementById('sign-out-button').style.display = 'none';
+    }
+}
 
 // This function is for demos purposes
 function updateListOfUsers(listOfUsers) {
     const listElement = document.getElementById('users-list');
+    if (listElement === null) {
+        return;
+    }
     listElement.innerHTML = '';
     for (const user in listOfUsers) {
         const newElement = document.createElement('li');
@@ -107,7 +125,8 @@ function signIn() {
     const password = document.getElementById('password-in').value;
     const email = document.getElementById('email-in').value;
     resetForm('input-sign-in');
-    firebase.auth().signInWithEmailAndPassword(email, password).catch(function(error) {
+    firebase.auth().signInWithEmailAndPassword(email, password)
+    .then(checkUserSignIn).catch(function(error) {
         // Handle Errors here.
         console.log(error);
         const errorCode = error.code;
