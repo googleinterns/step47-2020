@@ -24,6 +24,12 @@ const firebaseConfig = {
 };
 
 firebase.initializeApp(firebaseConfig);
+const database = firebase.database();
+// An example of how to retrieve data from the database (demos puposes)
+database.ref('users').on('value', function(snapshot) {
+    console.log(snapshot.val());
+    updateListOfUsers(snapshot.val());
+});
 
 document.addEventListener('DOMContentLoaded', function() {
     const elements = document.querySelectorAll('.modal');
@@ -31,6 +37,17 @@ document.addEventListener('DOMContentLoaded', function() {
         opacity: 0.7
     });
 });
+
+// This function is for demos purposes
+function updateListOfUsers(listOfUsers) {
+    const listElement = document.getElementById('users-list');
+    listElement.innerHTML = '';
+    for (const user in listOfUsers) {
+        const newElement = document.createElement('li');
+        newElement.innerText = listOfUsers[user].name;
+        listElement.appendChild(newElement);
+    }
+}
 
 function resetForm(elementsClass) {
     const myFormInputs = document.getElementsByClassName(elementsClass);
@@ -48,13 +65,21 @@ function signUp() {
     const email = document.getElementById('email').value;
     const displayName = document.getElementById('first_name').value 
     + ' ' + document.getElementById('last_name').value;
+    const phoneNumber = document.getElementById('phone').value;
     resetForm('input-sign-up');
     if (password !== passwordConfirmation) {
         return;
     }
     firebase.auth().createUserWithEmailAndPassword(email, password)
     .then(function() {
-        return firebase.auth().currentUser.updateProfile({
+        const user = firebase.auth().currentUser;
+        // An example of how to add the user's data into the database (demos puposes)
+        database.ref('users/' + user.uid).set({
+            name: displayName,
+            email: email,
+            phoneNumber: phoneNumber,
+        });
+        return user.updateProfile({
             displayName: displayName,
         })
     }).catch(function(error) {
