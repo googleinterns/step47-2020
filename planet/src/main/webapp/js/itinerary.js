@@ -8,7 +8,7 @@ function closeForm() {
 }
 
 function handleHotelChange() {
-    if (typeof(Storage) !== "undefined") {
+    if (typeof(Storage) !== 'undefined') {
         sessionStorage.setItem('hotel', document.getElementById('hotel-address').value);
     } else {
         alert ('Please update your browser'); 
@@ -34,7 +34,7 @@ async function renderEvents() {
 
 function createEventElement(id, name, address, duration) {
     const eventElement = document.createElement('div');
-    eventElement.setAttribute("class", "card event");
+    eventElement.setAttribute('class', 'card event');
     eventElement.innerHTML = 
         `<div class="card-content">
           <span class="card-title">` + name + `</span>
@@ -60,7 +60,7 @@ async function generateItinerary() {
         return;
     }
     const params = new URLSearchParams();
-    params.append("hotel-address", sessionStorage.getItem('hotel'));
+    params.append('hotel-address', sessionStorage.getItem('hotel'));
     const itineraryResponse = await fetch('/generate-itinerary', {method: 'POST', body: params});
     const itinerary = await itineraryResponse.json();
     createItinerary(itinerary);

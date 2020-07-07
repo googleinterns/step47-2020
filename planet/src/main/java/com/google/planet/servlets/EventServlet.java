@@ -78,10 +78,7 @@ public class EventServlet extends HttpServlet {
         // Get the count of the current list (will need to add more filters, such as userid, listName, etc. later)
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         PreparedQuery entityStats = datastore.prepare(new Query("Event"));
-        long numOfEvents = 0;
-        for (Entity entity : entityStats.asIterable()) {
-            numOfEvents += 1;
-        }
+        int numOfEvents = entityStats.countEntities();
         long order = numOfEvents + 1;
 
         String listName = "current";
