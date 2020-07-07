@@ -1,3 +1,17 @@
+// Copyright 2020 Google LLC
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 
 function openForm() {
     document.getElementById('add-event').style.display = 'block';
@@ -21,18 +35,53 @@ function renderStartingLocation() {
     }
 }
 
-async function renderEvents() {
-    const eventsResponse = await fetch('/update-event');
-    const events = await eventsResponse.json();
 
-    events.forEach((event) => {
-        let eventElement = createEventElement (event.id, event.name, 
-            event.address, event.duration);
-        document.getElementById('events').appendChild(eventElement);
+
+
+function addEvent() {
+    const userId = firebase.auth().currentUser.uid;
+    const eventName = document.getElementById('add-event-name').value;
+    const eventAddress = document.getElementById('add-event-address').value;
+    const eventDuration = document.getElementById('add-event-duration').value;
+    const order = 0; 
+    const listName = 'current';
+    
+    // Set every event's opening hours to 8am - 5pm for now
+    const openingTime = TimeRange.getTimeInMinutes(8,0);
+    const closingTime = TimeRange.getTimeInMinutes(17,0);
+
+    const eventListRef = database.ref('users/' + userId + '/events');
+    const newEventRef = eventListRef.push();
+    
+    newEventRef.set({
+        name: eventName,
+        address: eventAddress,
+        duration: eventDuration,
+        openingTime: openingTime,
+        closingTime: closingTime,
+        order: order,
+        listName: listName,
+        userId: userId
     });
 }
 
-function createEventElement(id, name, address, duration) {
+function renderEvents(listName) {
+    const userId = firebase.auth().currentUser.uid;
+    const eventListRef = database.ref('users/' + userId + '/events');
+    eventListRef.orderByChild('listName').equalTo(listName).on('value', (snap) => {
+        const events = snap.val();
+        const eventsContainer = document.getElementById('events');
+        eventsContainer.innerHTML = '';
+        events.forEach((event) => {
+            let eventElement = createEventElement (event.name, 
+                event.address, event.duration);
+            eventsContainer.appendChild(eventElement);
+        });
+    });
+}
+
+ //<button onclick="deleteEvent(` + id + `)"> Delete </button>
+function createEventElement(name, address, duration) {
     const eventElement = document.createElement('div');
     eventElement.setAttribute('class', 'card event');
     eventElement.innerHTML = 
@@ -44,7 +93,7 @@ function createEventElement(id, name, address, duration) {
           <a>` + duration + ` hours </a>
         </div>
         <div>
-          <button onclick="deleteEvent(` + id + `)"> Delete </button>
+        
         </div>`;
     return eventElement;
 }
@@ -110,3 +159,29 @@ function reorderEvents(ui) {
         console.log('order is ' + i + ' for ' + this.innerHTML);
     });
 } 
+
+// This is a class representing a time range, it mirrors the TimeRange class in the server
+class TimeRange {
+    constructor(start, duration) {
+        this.start = start;
+        this.duration = duration;
+        this.end = start + duration;
+    }
+    getStartTime() {
+        return this.start;
+    }
+    getEndTime() {
+        return this.end;
+    }
+    static getTimeInMinutes(hours, minutes) {
+        if (hours < 8 || hours > 19) {
+            throw new Error("Hours can only be 8 through 19 (inclusive).");
+        }
+        if (minutes < 0 || minutes > 59) {
+            throw new Error("Minutes can only be 0 through 59 (inclusive).");
+        }
+        return (hours * 60) + minutes;
+    }
+}
+
+
