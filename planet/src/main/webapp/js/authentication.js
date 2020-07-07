@@ -30,6 +30,8 @@ document.addEventListener('DOMContentLoaded', function() {
     M.Modal.init(elements, {
         opacity: 0.7
     });
+    loadElement('signin.html', 'sign-in-modal');
+    loadElement('signup.html', 'sign-up-modal');
 });
 
 function resetForm(elementsClass) {
@@ -158,4 +160,12 @@ function openModal(modalElement) {
         return;
     }
     M.Modal.getInstance(modal).open();
+}
+
+function loadElement(href, elementId) {
+    const element = document.getElementById(elementId);
+    const xmlhttp = new XMLHttpRequest();
+    xmlhttp.open("GET", href, false);
+    xmlhttp.send();
+    element.innerHTML = xmlhttp.responseText;
 }
