@@ -39,10 +39,10 @@ function renderStartingLocation() {
 
 
 function addEvent() {
-    const userId = firebase.auth().currentUser.uid;
     const eventName = document.getElementById('add-event-name').value;
     const eventAddress = document.getElementById('add-event-address').value;
     const eventDuration = document.getElementById('add-event-duration').value;
+    const userId = firebase.auth().currentUser.uid;
     const order = 0; 
     const listName = 'current';
     
@@ -52,7 +52,6 @@ function addEvent() {
 
     const eventListRef = database.ref('users/' + userId + '/events');
     const newEventRef = eventListRef.push();
-    
     newEventRef.set({
         name: eventName,
         address: eventAddress,
@@ -63,7 +62,16 @@ function addEvent() {
         listName: listName,
         userId: userId
     });
+    closeForm();
 }
+
+firebase.auth().onAuthStateChanged(function(user) {
+  if (user) {
+    renderEvents('current');
+  } else {
+     console.log(loading);
+  }
+});
 
 function renderEvents(listName) {
     const userId = firebase.auth().currentUser.uid;
@@ -72,16 +80,17 @@ function renderEvents(listName) {
         const events = snap.val();
         const eventsContainer = document.getElementById('events');
         eventsContainer.innerHTML = '';
-        events.forEach((event) => {
-            let eventElement = createEventElement (event.name, 
-                event.address, event.duration);
+        for (let eventKey in events){
+            let eventElement = createEventElement (eventKey,
+                                                events[eventKey].name, 
+                                                events[eventKey].address, 
+                                                events[eventKey].duration);
             eventsContainer.appendChild(eventElement);
-        });
+        }
     });
 }
 
- //<button onclick="deleteEvent(` + id + `)"> Delete </button>
-function createEventElement(name, address, duration) {
+function createEventElement(ref, name, address, duration) {
     const eventElement = document.createElement('div');
     eventElement.setAttribute('class', 'card event');
     eventElement.innerHTML = 
@@ -91,16 +100,20 @@ function createEventElement(name, address, duration) {
         </div>
         <div class="card-action">
           <a>` + duration + ` hours </a>
-        </div>
-        <div>
-        
         </div>`;
+    const deleteButton = document.createElement('button');
+    deleteButton.innerText = 'Delete';
+    deleteButton.addEventListener('click', () => {
+        deleteEvent(ref);
+    });
+    eventElement.appendChild(deleteButton);
     return eventElement;
 }
 
-async function deleteEvent(id) {
-    await fetch('/update-event?id=' + id, {method: 'DELETE'});
-    window.location.reload(true); 
+function deleteEvent(ref) {
+    const userId = firebase.auth().currentUser.uid;
+    const toBeDeletedEventRef = database.ref('users/' + userId + '/events/' + ref);
+    toBeDeletedEventRef.remove();
 }
 
 async function generateItinerary() {

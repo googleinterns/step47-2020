@@ -38,15 +38,15 @@
                     <input type="text" id="starting-address" name="starting-address" onchange="handleStartingLocationChange()"> </input></p>
             <div id="add-event" class="add-event"> 
                 <a id="close-form" onclick="closeForm()"><i class="material-icons">close</i></a></br>
-                <form>   
+                <!-- <form>    -->
                 <p> Event Name:
-                    <input type="text" name="add-event-name" id="add-event-name" required></input> </p>
+                    <input type="text" name="add-event-name" id="add-event-name"></input> </p>
                 <p>Event Address:
-                    <input type="text" name="add-event-address" id="add-event-address" required></input></p>
+                    <input type="text" name="add-event-address" id="add-event-address"></input></p>
                 <p>Duration (in hours): 
-                    <input type="number" id="add-event-duration" name="add-event-duration" max="12" min="0.5" step = "0.5" required> </input></p>
-                <button class="btn waves-effect waves-light" onclick="addEvent()">Submit</button></br>
-                </form>
+                    <input type="number" id="add-event-duration" name="add-event-duration" max="12" min="0.5" step = "0.5"> </input></p>
+                <button class="btn waves-effect waves-light" onclick="addEvent();">Submit</button></br>
+                <!-- </form> -->
             </div> 
 
             <div id="events" >
