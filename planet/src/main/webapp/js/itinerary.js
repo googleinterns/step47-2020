@@ -73,11 +73,11 @@ async function addEvent() {
 // sign in.
 // Todo: discuss with teammates to decide what to show if user is not signed in.
 firebase.auth().onAuthStateChanged(function(user) {
-  if (user) {
-    renderEvents('currentList');
-  } else {
-     console.log('Please sign in');
-  }
+    if (user) {
+        renderEvents('currentList');
+    } else {
+        console.log('Please sign in');
+    }
 });
 
 function renderEvents(listName) {
