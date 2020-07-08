@@ -144,9 +144,28 @@ async function generateItinerary() {
         alert('Please input a valid starting address');
         return;
     }
-    const params = new URLSearchParams();
-    params.append('starting-address', sessionStorage.getItem('start'));
-    const itineraryResponse = await fetch('/generate-itinerary', {method: 'POST', body: params});
+    
+    const requestBody = [];
+    // Add the starting point as the first event
+    const startingPoint = {name: "Start", 
+                        address: sessionStorage.getItem('start'), 
+                        duration: 0,
+                        openingTime: TimeRange.getStartOfDay(),
+                        closingTime: TimeRange.getEndOfDay(),
+                        order: 0};
+    requestBody.push(startingPoint);
+    
+    // Add the rest of the events
+    const userId = firebase.auth().currentUser.uid;
+    const eventListRef = database.ref('users/' + userId + '/currentList');
+    const snap = await eventListRef.once('value');
+    snap.forEach(function(child) {
+        requestBody.push(child.val());
+    });
+    const itineraryResponse = await fetch('/generate-itinerary', 
+                        {method: 'POST', 
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify(requestBody) });
     const itinerary = await itineraryResponse.json();
     createItinerary(itinerary);
 }
@@ -214,6 +233,7 @@ class TimeRange {
     getEndTime() {
         return this.end;
     }
+    
     static getTimeInMinutes(hours, minutes) {
         if (hours < 8 || hours > 19) {
             throw new Error("Hours can only be 8 through 19 (inclusive).");
@@ -223,6 +243,11 @@ class TimeRange {
         }
         return (hours * 60) + minutes;
     }
+    static getStartOfDay() {
+        return this.getTimeInMinutes(8, 0);
+    } 
+    static getEndOfDay() {
+        return this.getTimeInMinutes(19, 59);
+    }
 }
-
 

@@ -45,16 +45,14 @@ public final class ItineraryGeneratorTest {
         List<Event> events = new ArrayList<>();
 
         Event hotel = new Event("Start", "address", 0);
-        Event event1 = new Event(123, "Event 1", "address", 1, 
-            TimeRange.fromStartEnd(TIME_0800AM, TIME_0500PM), 1, "listName", "userId");
-        Event event2 = new Event(123, "Event 2", "address", 2, 
-            TimeRange.fromStartEnd(TIME_0800AM, TIME_0500PM), 2, "listName", "userId");
-        Event event3 = new Event(123, "Event 3", "address", 3, 
-            TimeRange.fromStartEnd(TIME_0800AM, TIME_0500PM), 3, "listName", "userId");
+        Event event1 = new Event("Event 1", "address", 1, TIME_0800AM, TIME_0500PM, 1);
+        Event event2 = new Event("Event 2", "address", 2, TIME_0800AM, TIME_0500PM, 2);
+        Event event3 = new Event("Event 3", "address", 3, TIME_0800AM, TIME_0500PM, 3);
+        events.add(hotel);
         events.add(event1);
         events.add(event2);
         events.add(event3);
-        List<ItineraryItem> actual = itinerary.generateItinerary(events, hotel);
+        List<ItineraryItem> actual = itinerary.generateItinerary(events);
         List<ItineraryItem> expected = Arrays.asList(
             new ItineraryItem("Start", "address", TimeRange.fromStartEnd(480, 480)),
             new ItineraryItem("Event 1", "address", TimeRange.fromStartEnd(495, 555)),
@@ -72,13 +70,12 @@ public final class ItineraryGeneratorTest {
         List<Event> events = new ArrayList<>();
 
         Event hotel = new Event("Start", "address", 0);
-        Event event1 = new Event(123, "Event 1", "address", 3, 
-            TimeRange.fromStartEnd(TIME_0800AM, TIME_0500PM), 1, "listName", "userId");
-        Event event2 = new Event(123, "Event 2", "address", 9, 
-            TimeRange.fromStartEnd(TIME_0800AM, TIME_0500PM), 2, "listName", "userId");
+        Event event1 = new Event("Event 1", "address", 3, TIME_0800AM, TIME_0500PM, 1);
+        Event event2 = new Event("Event 2", "address", 9, TIME_0800AM, TIME_0500PM, 2);
+        events.add(hotel);
         events.add(event1);
         events.add(event2);
-        List<ItineraryItem> actual = itinerary.generateItinerary(events, hotel);
+        List<ItineraryItem> actual = itinerary.generateItinerary(events);
         List<ItineraryItem> expected = Arrays.asList();
 
         Assert.assertEquals(expected, actual);
