@@ -17,7 +17,11 @@ function openForm() {
     document.getElementById('add-event').style.display = 'block';
 }
 
+// Clear input values and close the form
 function closeForm() {
+    document.getElementById('add-event-name').value = '';
+    document.getElementById('add-event-address').value = '';
+    document.getElementById('add-event-duration').value = '';
     document.getElementById('add-event').style.display = 'none';
 }
 
@@ -35,22 +39,24 @@ function renderStartingLocation() {
     }
 }
 
-
-
-
-function addEvent() {
+// Add an event to the firebase realtime database
+// Todo: input validation, order, success/failure callbacks
+async function addEvent() {
     const eventName = document.getElementById('add-event-name').value;
     const eventAddress = document.getElementById('add-event-address').value;
     const eventDuration = document.getElementById('add-event-duration').value;
-    const userId = firebase.auth().currentUser.uid;
-    const order = 0; 
-    const listName = 'current';
+    const userId = firebase.auth().currentUser.uid; 
     
     // Set every event's opening hours to 8am - 5pm for now
     const openingTime = TimeRange.getTimeInMinutes(8,0);
     const closingTime = TimeRange.getTimeInMinutes(17,0);
 
-    const eventListRef = database.ref('users/' + userId + '/events');
+    const eventListRef = database.ref('users/' + userId + '/currentList');
+    // Get the order number by counting existing events
+    const snap = await eventListRef.once('value');
+    const order = snap.numChildren() + 1;
+
+    //Create a new event
     const newEventRef = eventListRef.push();
     newEventRef.set({
         name: eventName,
@@ -59,40 +65,42 @@ function addEvent() {
         openingTime: openingTime,
         closingTime: closingTime,
         order: order,
-        listName: listName,
-        userId: userId
     });
     closeForm();
 }
 
+// Check authentication status and render the list of events if the user has
+// sign in.
+// Todo: discuss with teammates to decide what to show if user is not signed in.
 firebase.auth().onAuthStateChanged(function(user) {
   if (user) {
-    renderEvents('current');
+    renderEvents('currentList');
   } else {
-     console.log(loading);
+     console.log('Please sign in');
   }
 });
 
 function renderEvents(listName) {
     const userId = firebase.auth().currentUser.uid;
-    const eventListRef = database.ref('users/' + userId + '/events');
-    eventListRef.orderByChild('listName').equalTo(listName).on('value', (snap) => {
-        const events = snap.val();
+    const eventListRef = database.ref('users/' + userId + '/' + listName);
+    eventListRef.orderByChild('order').on('value', (snap) => {
         const eventsContainer = document.getElementById('events');
         eventsContainer.innerHTML = '';
-        for (let eventKey in events){
-            let eventElement = createEventElement (eventKey,
-                                                events[eventKey].name, 
-                                                events[eventKey].address, 
-                                                events[eventKey].duration);
+        snap.forEach(function(child) {
+            let eventObject = child.val();
+            let eventElement = createEventElement (child.key,
+                                                eventObject.name, 
+                                                eventObject.address, 
+                                                eventObject.duration);
             eventsContainer.appendChild(eventElement);
-        }
+        });
     });
 }
 
 function createEventElement(ref, name, address, duration) {
     const eventElement = document.createElement('div');
     eventElement.setAttribute('class', 'card event');
+    eventElement.setAttribute('id', ref);
     eventElement.innerHTML = 
         `<div class="card-content">
           <span class="card-title">` + name + `</span>
@@ -112,8 +120,23 @@ function createEventElement(ref, name, address, duration) {
 
 function deleteEvent(ref) {
     const userId = firebase.auth().currentUser.uid;
-    const toBeDeletedEventRef = database.ref('users/' + userId + '/events/' + ref);
+    const eventListRef = database.ref('users/' + userId + '/currentList');
+    const toBeDeletedEventRef = eventListRef.child(ref);
     toBeDeletedEventRef.remove();
+
+    // Fix order after deleting the event
+    eventListRef.orderByChild('order').once('value', (snap) => {
+        const events = snap.val();
+        let count = 1;
+        for (let eventKey in events){
+            if (events[eventKey].order !== count){
+                eventListRef.child(eventKey).update({
+                    order: count
+                });
+            }
+            count += 1;
+        }
+    });
 }
 
 async function generateItinerary() {
@@ -158,18 +181,23 @@ document.addEventListener('DOMContentLoaded', function() {
     let instances = M.FormSelect.init(elems, {});
 });
 
-// jQuery function that reorders the events
+// jQuery function that reorders the events on the front end
 $(function() { 
     $( "#events" ).sortable({
-    update: function(event, ui) { 
-        reorderEvents(ui); 
-    }       
+        update: function() { 
+            reorderEvents(); 
+        }       
     }); 
 }); 
-          
-function reorderEvents(ui) { 
+
+// Reorder in firebase
+function reorderEvents() { 
     $('.event').each(function (i) {
-        console.log('order is ' + i + ' for ' + this.innerHTML);
+        const userId = firebase.auth().currentUser.uid;
+        const eventRef = database.ref('users/' + userId +'/currentList/' + this.id);
+        eventRef.update({
+            order: i+1
+        });
     });
 } 
 
