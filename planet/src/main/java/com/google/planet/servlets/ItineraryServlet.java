@@ -24,6 +24,7 @@ import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
+import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.planet.data.Event;
 import java.io.IOException;
 import javax.servlet.annotation.WebServlet;
@@ -41,14 +42,14 @@ import javax.servlet.http.HttpServletResponse;
 public class ItineraryServlet extends HttpServlet {
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        Query query = new Query("Event");
+        Query query = new Query("Event").addSort("order", SortDirection.ASCENDING);
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         PreparedQuery results = datastore.prepare(query);
 
         // Create an event called "hotel" with duration of 0
-        String hotelAddress = request.getParameter("hotel-address");
-        Event hotel = new Event( "Hotel", 
-                                hotelAddress, 
+        String startingAddress = request.getParameter("starting-address");
+        Event start = new Event( "Start", 
+                                startingAddress, 
                                 0);
 
         // Get list of events from Datastore
@@ -60,6 +61,7 @@ public class ItineraryServlet extends HttpServlet {
             double duration = (double) entity.getProperty("duration");
             int openingTime = Math.toIntExact((long)entity.getProperty("openingTime"));
             int closingTime = Math.toIntExact((long)entity.getProperty("closingTime"));
+            long order = (long)entity.getProperty("order");
             String listName = (String) entity.getProperty("listName");
             String userId = (String) entity.getProperty("userId");
             Event event = new Event(id, 
@@ -67,13 +69,14 @@ public class ItineraryServlet extends HttpServlet {
                                     address, 
                                     duration, 
                                     TimeRange.fromStartEnd(openingTime, closingTime), 
+                                    order,
                                     listName, 
                                     userId);
             events.add(event);
         }
 
         ItineraryGenerator itineraryGenerator = new ItineraryGenerator();
-        List<ItineraryItem> itinerary = itineraryGenerator.generateItinerary(events, hotel);
+        List<ItineraryItem> itinerary = itineraryGenerator.generateItinerary(events, start);
 
         response.setContentType("application/json");
         String json = new Gson().toJson(itinerary);

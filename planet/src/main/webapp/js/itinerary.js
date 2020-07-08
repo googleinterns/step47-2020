@@ -7,17 +7,17 @@ function closeForm() {
     document.getElementById('add-event').style.display = 'none';
 }
 
-function handleHotelChange() {
-    if (typeof(Storage) !== "undefined") {
-        sessionStorage.setItem('hotel', document.getElementById('hotel-address').value);
+function handleStartingLocationChange() {
+    if (typeof(Storage) !== 'undefined') {
+        sessionStorage.setItem('start', document.getElementById('starting-address').value);
     } else {
         alert ('Please update your browser'); 
     }
 }
 
-function renderHotel() {
-    if (sessionStorage.getItem('hotel')) {
-        document.getElementById('hotel-address').value = sessionStorage.getItem('hotel');
+function renderStartingLocation() {
+    if (sessionStorage.getItem('start')) {
+        document.getElementById('starting-address').value = sessionStorage.getItem('start');
     }
 }
 
@@ -34,7 +34,7 @@ async function renderEvents() {
 
 function createEventElement(id, name, address, duration) {
     const eventElement = document.createElement('div');
-    eventElement.setAttribute("class", "card");
+    eventElement.setAttribute('class', 'card event');
     eventElement.innerHTML = 
         `<div class="card-content">
           <span class="card-title">` + name + `</span>
@@ -55,12 +55,12 @@ async function deleteEvent(id) {
 }
 
 async function generateItinerary() {
-    if (!sessionStorage.getItem('hotel')) {
-        alert('Please input a valid hotel address');
+    if (!sessionStorage.getItem('start')) {
+        alert('Please input a valid starting address');
         return;
     }
     const params = new URLSearchParams();
-    params.append("hotel-address", sessionStorage.getItem('hotel'));
+    params.append('starting-address', sessionStorage.getItem('start'));
     const itineraryResponse = await fetch('/generate-itinerary', {method: 'POST', body: params});
     const itinerary = await itineraryResponse.json();
     createItinerary(itinerary);
@@ -96,4 +96,17 @@ document.addEventListener('DOMContentLoaded', function() {
     let instances = M.FormSelect.init(elems, {});
 });
 
-
+// jQuery function that reorders the events
+$(function() { 
+    $( "#events" ).sortable({
+    update: function(event, ui) { 
+        reorderEvents(ui); 
+    }       
+    }); 
+}); 
+          
+function reorderEvents(ui) { 
+    $('.event').each(function (i) {
+        console.log('order is ' + i + ' for ' + this.innerHTML);
+    });
+} 

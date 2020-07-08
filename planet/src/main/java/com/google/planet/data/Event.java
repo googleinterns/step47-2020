@@ -24,13 +24,15 @@ public final class Event {
     private final TimeRange openingHours;
     private final String listName; 
     private final String userId;
+    private final long order;
 
-    public Event(long id, String name, String address, double duration, TimeRange openingHours, String listName, String userId) {
+    public Event(long id, String name, String address, double duration, TimeRange openingHours, long order, String listName, String userId) {
         this.id = id;
         this.name = name;
         this.address = address;
         this.duration = duration;
         this.openingHours = openingHours;
+        this.order = order;
         this.listName = listName;
         this.userId = userId;
     }
@@ -44,6 +46,7 @@ public final class Event {
         this.openingHours = null; 
         this.listName = null;
         this.userId = null;
+        this.order = 0;
     }
 
     public int getDurationInMinutes(){
