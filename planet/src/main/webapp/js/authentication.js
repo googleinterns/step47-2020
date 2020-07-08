@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+
+// Declare global constantes and variables
 const firebaseConfig = {
     apiKey: 'AIzaSyCAZ83Nbjr6HIgz7BHM2cAG7ktLyPp2mVk',
     authDomain: 'ndabouz-step-2020-2.firebaseapp.com',
@@ -22,17 +24,11 @@ const firebaseConfig = {
     appId: '1:966794754966:web:e2f42bafdd3c5ec2c77bb7',
     measurementId: 'G-9W48MVBXLE'
 };
+let database;
+let currentUser;
 
+// Initialize the Firebase Application
 firebase.initializeApp(firebaseConfig);
-let currentUser = firebase.auth().currentUser;
-const database = firebase.database();
-// An example of how to retrieve data from the database (demos puposes)
-database.ref('users').on('value', function(snapshot) {
-    updateListOfUsers(snapshot.val());
-});
-firebase.auth().onAuthStateChanged(function(){
-    checkUserSignIn();
-})
 
 document.addEventListener('DOMContentLoaded', function() {
     const elements = document.querySelectorAll('.modal');
@@ -41,6 +37,9 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     loadElement('signin.html', 'sign-in-modal');
     loadElement('signup.html', 'sign-up-modal');
+    database = firebase.database();
+    currentUser = firebase.auth().currentUser;
+    firebase.auth().onAuthStateChanged(checkUserSignIn);
 });
 
 function checkUserSignIn() {
@@ -51,9 +50,9 @@ function checkUserSignIn() {
         document.getElementById('sign-out-button').style.display = 'block';
         document.getElementById('sign-in-button').style.display = 'none';
     } else {
-        document.getElementById('sign-in-button').style.display = 'block';
         document.getElementById('profile-button').style.display = 'none';
         document.getElementById('sign-out-button').style.display = 'none';
+        document.getElementById('sign-in-button').style.display = 'block';
     }
 }
 
@@ -90,19 +89,24 @@ function signUp() {
     const phoneNumber = document.getElementById('phone').value;
     resetForm('input-sign-up');
     if (password !== passwordConfirmation) {
+        alert('Passwords do not match')
         return;
     }
     firebase.auth().createUserWithEmailAndPassword(email, password)
     .then(function() {
         // An example of how to add the user's data into the database (demos puposes)
-        database.ref('users/' + currentUser.uid).set({
+        const user = firebase.auth().currentUser;
+        database.ref('users/' + user.uid).set({
             name: displayName,
             email: email,
             phoneNumber: phoneNumber,
         });
-        return user.updateProfile({
+        user.updateProfile({
             displayName: displayName,
-        })
+        }).then(function() {
+            closeModal('sign-up-modal');
+            checkUserSignIn();
+        });
     }).catch(function(error) {
         // Handle Errors here.
         console.log(error);
