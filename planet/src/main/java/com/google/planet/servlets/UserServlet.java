@@ -26,6 +26,7 @@ public class UserServlet extends HttpServlet {
     public void doGet(HttpServletRequest request, HttpServletResponse response)
       throws IOException {
         response.setContentType("text/html");
+        // This part is for demos purposes. We will be using RequestDispatcher to forward the request to another JSP file
         response.getWriter().println("<html>");
         response.getWriter().println("<head>");
         response.getWriter().println("</head>");
