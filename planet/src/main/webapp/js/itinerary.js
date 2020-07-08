@@ -40,7 +40,7 @@ function renderStartingLocation() {
 }
 
 // Add an event to the firebase realtime database
-// Todo: input validation, order, success/failure callbacks
+// Todo: input validation, success/failure callbacks
 async function addEvent() {
     const eventName = document.getElementById('add-event-name').value;
     const eventAddress = document.getElementById('add-event-address').value;
