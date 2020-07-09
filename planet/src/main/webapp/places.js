@@ -20,11 +20,12 @@ let input;
 let searchBox;
 let markers = [];
 let placeInfo = [];
+let imgList = [];
 let bounds;
+const TORONTO_COORDINATES = {lat:43.6532, lng:-79.3832}; 
 
 /** Initializes Map, implements search box and marks locations of searches */
 function initMap() {
-    const TORONTO_COORDINATES = {lat:43.6532, lng:-79.3832}; 
     map = new google.maps.Map(document.getElementById("map"), {
         center: TORONTO_COORDINATES,
         zoom: 8
@@ -33,13 +34,14 @@ function initMap() {
     searchBox = new google.maps.places.SearchBox(input);
     // Set position of the search bar onto the map
     map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
-    
+
     getCurrentLocation(); 
     updateSearch();
 }
 
 /** Creates marker at user's current location if allowed */
 function getCurrentLocation(){
+
     // Gets users current location
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(function(position) {
@@ -90,6 +92,7 @@ function updateSearch() {
         if (places.length === 0) {
             return;
         }
+
         // Delete old markers
         markers.forEach(function(marker) {
             marker.setMap(null);
@@ -97,13 +100,15 @@ function updateSearch() {
         // Clear array of old markers and place information
         markers = [];
         placeInfo = [];
+        imgList = [];
 
         bounds = new google.maps.LatLngBounds();
         addPlaceDetails(places);
         map.fitBounds(bounds);
-        listResults(placeInfo);
+        listResults();
     });
 }
+
 
 /** Create markers and add details to each place */
 function addPlaceDetails(places) {
@@ -113,8 +118,15 @@ function addPlaceDetails(places) {
           console.log("Returned place contains no geometry");
           return;
         }
-        // Add search results to a list
-        placeInfo.push(place.name + "\n" + "Rating: " + place.rating + "\n"); 
+
+        // Check if rating is defined
+        if (place.rating != undefined) {
+             // Add search results to a list
+            placeInfo.push(place.name + "\n" + "Rating: " + place.rating + "\n");  
+        }
+        else {
+            placeInfo.push(place.name + "\n");  
+        }
 
         createMarkers(place); 
  
@@ -123,7 +135,39 @@ function addPlaceDetails(places) {
         } else {
             bounds.extend(place.geometry.location);
         }
-    });   
+
+        // Get place id
+        let placeId = place['place_id']; 
+        let url = 'https://maps.googleapis.com/maps/api/place/details/json?placeid=' + placeId + '&key=AIzaSyDK36gDoYgOj4AlbCqh1IuaUuTlcpKF0ns&fields=photo';
+
+        // Creating a promise object to fix asynchronous fetch
+        const promise = new Promise((resolve, reject) => {
+            fetch(url).then(response => response.json()).then(function(response) {
+                photoReference = response.result.photos[0].photo_reference;
+                imgList.push(photoReference);
+               // This works if I call the function here, but I don't want it in the places loop
+               //listResults();
+
+            }).catch((error) => {
+                console.error('Error:', error);
+            });
+        });
+        // This line is not executing
+        promise.then(() => {
+            console.log("post promise");
+            //return;
+        });   
+    });
+
+}
+
+function getPhotoURL(photo_reference) {
+    let baseURL = 'https://maps.googleapis.com/maps/api/place/photo?';
+    let maxWidth = '400';
+    let maxHeight = '200';
+    let photoURL = baseURL + 'maxwidth=' + maxWidth + '&maxheight=' + maxHeight + '&photoreference=' + photo_reference + '&key=AIzaSyDK36gDoYgOj4AlbCqh1IuaUuTlcpKF0ns'; 
+
+    return photoURL; 
 }
 
 /** Create marker and add info window to place */
@@ -161,13 +205,15 @@ function createMarkers(place) {
 }
 
 /** List results of nearby search on page*/
-function listResults(results) {
+function listResults() {
     let element = document.getElementById('results');
     // Clear results 
     element.innerHTML = ""; 
 
+    console.log(imgList);
+
     // Displays search results on page
-    for (let i = 0; i < results.length; i++) {
+    for (let i = 0; i < placeInfo.length; i++) {
         // Create materialize card for each result by creating dom element in HTML
         let div1 = document.createElement('div');
         div1.classList.add('card'); 
@@ -180,7 +226,8 @@ function listResults(results) {
         div3.classList.add('card-content'); 
 
         let p = document.createElement('p');
-        let content = document.createTextNode(results[i]); 
+        let content = document.createTextNode(placeInfo[i]); 
+       
         p.appendChild(content); 
         div3.appendChild(p);
         div2.appendChild(div3);
