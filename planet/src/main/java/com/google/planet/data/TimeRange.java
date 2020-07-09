@@ -17,7 +17,7 @@ package com.google.planet.data;
 public final class TimeRange {
     public static final int START_OF_DAY = getTimeInMinutes(8, 0);
     public static final int END_OF_DAY = getTimeInMinutes(19, 59);
-    public static final TimeRange WHOLE_DAY = new TimeRange(0, 12 * 60);
+    public static final TimeRange WHOLE_DAY = new TimeRange(getTimeInMinutes(8,0), 12 * 60);
 
     private final int start;
     private final int duration;

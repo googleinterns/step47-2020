@@ -3,8 +3,7 @@
   <head lang="en">
     <meta charset="UTF-8">
     <title>Planet</title>
-    <link rel="stylesheet" href="style.css">
-    <script src="js/itinerary.js"></script>
+    <link rel="stylesheet" href="css/itinerary.css">
 
     <!--Import fonts and icons-->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -17,17 +16,24 @@
     <!-- Compiled and minified JavaScript -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
 
-    <!-- Include the jQuery library -->   
+    <!-- Include all the jQuery libraries -->   
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src ="https://code.jquery.com/jquery-1.10.2.js"></script>
+    <script src="https://code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
+
+    <!-- Include the JS file -->   
+    <script src="js/itinerary.js"></script>
 
     <!--Let browser know website is optimized for mobile-->    
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   </head>    
    
-  <body onload ="renderEvents()">   
+  <body onload ="renderEvents(); renderStartingLocation();">   
       <div id ="content">
-        <div id="events-container" >
+        <div id="events-container">
             <a class="btn-floating btn-large" onclick="openForm()"> <i class="material-icons">add</i> </a>
+            <p>Starting Address (Hotel/Home): 
+                    <input type="text" id="starting-address" name="starting-address" onchange="handleStartingLocationChange()"> </input></p>
             <div id="add-event" class="add-event"> 
                 <a id="close-form" onclick="closeForm()"><i class="material-icons">close</i></a></br>
                 <form action="/update-event" method="POST">   
@@ -36,13 +42,7 @@
                 <p>Event Address:
                     <input type="text" name="add-event-address" id="add-event-address" required></input></p>
                 <p>Duration (in hours): 
-                    <input type="number" id="add-event-duration" name="add-event-duration" max="12" min="0.5" step = "0.5"> </input></p>
-                <p>Preferred Timerange: 
-                    <select id="add-event-timerange" name="add-event-timerange">
-                    <option value="8am - 12pm">Morning (8am -12pm) </option>
-                    <option value="12pm - 4pm">Afternoon (12pm -4pm)</option>
-                    <option value="4pm - 8pm">Evening (4pm -8pm)</option>
-                    </select></p>
+                    <input type="number" id="add-event-duration" name="add-event-duration" max="12" min="0.5" step = "0.5" required> </input></p>
                 <button class="btn waves-effect waves-light" type="submit">Submit</button></br>
                 </form>
             </div> 
@@ -54,6 +54,5 @@
         </div>
         <div id="itinerary">
         </div>
-      </div>
   </body>
 </html>

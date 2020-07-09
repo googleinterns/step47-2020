@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 public final class ItineraryGenerator {
-    public List<ItineraryItem> generateItinerary(List<Event> events) { 
+    public List<ItineraryItem> generateItinerary(List<Event> events, Event startingPoint) { 
 
         // For the prototype, just find the shortest opening hours and 
         // schedule all events within that time range
@@ -28,6 +28,8 @@ public final class ItineraryGenerator {
         int START = events.get(0).getOpeningHours().start();
         int END = events.get(0).getOpeningHours().end();
 
+        // Add the starting point as the "first" event
+        events.add(0, startingPoint);
         int [][] travelTimeGraph = getTravelTimeGraph(events);
         List<ItineraryItem> items = scheduleItineraryInOrder(events, START, END, travelTimeGraph);
         return items;
