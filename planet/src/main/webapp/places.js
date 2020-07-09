@@ -21,10 +21,10 @@ let searchBox;
 let markers = [];
 let placeInfo = [];
 let bounds;
+const TORONTO_COORDINATES = {lat:43.6532, lng:-79.3832}; 
 
 /** Initializes Map, implements search box and marks locations of searches */
 function initMap() {
-    const TORONTO_COORDINATES = {lat:43.6532, lng:-79.3832}; 
     map = new google.maps.Map(document.getElementById("map"), {
         center: TORONTO_COORDINATES,
         zoom: 8
@@ -103,6 +103,32 @@ function updateSearch() {
         map.fitBounds(bounds);
         listResults(placeInfo);
     });
+
+    // Add onclick function to option buttons
+    document.getElementById('hotel').onclick = function() {
+        document.getElementById('pac-input').value = 'hotel';
+        setSearchByButton(); 
+    }
+    document.getElementById('food').onclick = function() {
+        document.getElementById('pac-input').value = 'food';
+        setSearchByButton(); 
+    }
+    document.getElementById('tourist').onclick = function() {
+        document.getElementById('pac-input').value = 'tourist attractions';
+        setSearchByButton(); 
+    }
+    document.getElementById('nature').onclick = function() {
+        document.getElementById('pac-input').value = 'nature';
+        setSearchByButton(); 
+    }
+}
+
+/** Search map when option button is clicked */
+function setSearchByButton() {
+    let input = document.getElementById('pac-input');
+    google.maps.event.trigger(input, 'focus', {});
+    google.maps.event.trigger(input, 'keydown', { keyCode: 13 });
+    google.maps.event.trigger(this, 'focus', {});
 }
 
 /** Create markers and add details to each place */
@@ -128,36 +154,36 @@ function addPlaceDetails(places) {
 
 /** Create marker and add info window to place */
 function createMarkers(place) {
-        // Set icon properties
-        let icon = { 
-            url: place.icon,
-            size: new google.maps.Size(71, 71),
-            origin: new google.maps.Point(0, 0),
-            anchor: new google.maps.Point(17, 34),
-            scaledSize: new google.maps.Size(25, 25)
-        };
+    // Set icon properties
+    let icon = { 
+        url: place.icon,
+        size: new google.maps.Size(71, 71),
+        origin: new google.maps.Point(0, 0),
+        anchor: new google.maps.Point(17, 34),
+        scaledSize: new google.maps.Size(25, 25)
+    };
 
-        // Create a marker for each place
-        let marker = new google.maps.Marker({
-            map: map,
-            icon: icon,
-            title: place.name,
-            position: place.geometry.location
-        });        
+    // Create a marker for each place
+    let marker = new google.maps.Marker({
+        map: map,
+        icon: icon,
+        title: place.name,
+        position: place.geometry.location
+    });        
         
-        // Add markers to array
-        markers.push(marker);
+    // Add markers to array
+    markers.push(marker);
 
-        // Create an info window for each place
-        infoWindow = new google.maps.InfoWindow({
-                content: ""
-        });
+    // Create an info window for each place
+    infoWindow = new google.maps.InfoWindow({
+        content: ""
+    });
 
-        // Display info window with name when marker is clicked
-        google.maps.event.addDomListener(marker,'click', function() {
-                infoWindow.setContent(place.name);
-                infoWindow.open(map, this); 
-        });
+    // Display info window with name when marker is clicked
+    google.maps.event.addDomListener(marker,'click', function() {
+        infoWindow.setContent(place.name);
+        infoWindow.open(map, this); 
+    });
 }
 
 /** List results of nearby search on page*/
@@ -189,9 +215,4 @@ function listResults(results) {
     }
     // Add search keyword to header
     document.getElementById('greeting').innerHTML = "Find a place: " + document.getElementById('pac-input').value;
-}
-
-/** Fills search box with preset option from button */
-function searchOption(search) {
-    document.getElementById('pac-input').value = search;
 }
