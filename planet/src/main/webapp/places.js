@@ -21,6 +21,7 @@ let searchBox;
 let markers = [];
 let placeInfo = [];
 let imgList = [];
+let promises = [];
 let bounds;
 const TORONTO_COORDINATES = {lat:43.6532, lng:-79.3832}; 
 
@@ -105,7 +106,6 @@ function updateSearch() {
         bounds = new google.maps.LatLngBounds();
         addPlaceDetails(places);
         map.fitBounds(bounds);
-        listResults();
     });
 }
 
@@ -139,28 +139,21 @@ function addPlaceDetails(places) {
         // Get place id
         let placeId = place['place_id']; 
         let url = 'https://maps.googleapis.com/maps/api/place/details/json?placeid=' + placeId + '&key=AIzaSyDK36gDoYgOj4AlbCqh1IuaUuTlcpKF0ns&fields=photo';
-
-        // Creating a promise object to fix asynchronous fetch
-        const promise = new Promise((resolve, reject) => {
-            fetch(url).then(response => response.json()).then(function(response) {
-                photoReference = response.result.photos[0].photo_reference;
-                imgList.push(photoReference);
-               // This works if I call the function here, but I don't want it in the places loop
-               //listResults();
-
-            }).catch((error) => {
-                console.error('Error:', error);
-            });
-        });
-        // This line is not executing
-        promise.then(() => {
-            console.log("post promise");
-            //return;
-        });   
+        
+        // Fetch url and add photo reference to a list
+        promises = [];
+        promises.push(fetch(url).then(response => response.json()).then(function(response) {
+            photoReference = response.result.photos[0].photo_reference;
+            imgList.push(photoReference);
+        }));
     });
-
+    // Wait for promises to complete 
+    Promise.all(promises).then(function() {
+        listResults();
+    })
 }
 
+/** Get URL for Place Photo Request  */
 function getPhotoURL(photo_reference) {
     let baseURL = 'https://maps.googleapis.com/maps/api/place/photo?';
     let maxWidth = '400';
@@ -172,36 +165,36 @@ function getPhotoURL(photo_reference) {
 
 /** Create marker and add info window to place */
 function createMarkers(place) {
-        // Set icon properties
-        let icon = { 
-            url: place.icon,
-            size: new google.maps.Size(71, 71),
-            origin: new google.maps.Point(0, 0),
-            anchor: new google.maps.Point(17, 34),
-            scaledSize: new google.maps.Size(25, 25)
-        };
+    // Set icon properties
+    let icon = { 
+        url: place.icon,
+        size: new google.maps.Size(71, 71),
+        origin: new google.maps.Point(0, 0),
+        anchor: new google.maps.Point(17, 34),
+        scaledSize: new google.maps.Size(25, 25)
+    };
 
-        // Create a marker for each place
-        let marker = new google.maps.Marker({
-            map: map,
-            icon: icon,
-            title: place.name,
-            position: place.geometry.location
-        });        
+    // Create a marker for each place
+    let marker = new google.maps.Marker({
+        map: map,
+        icon: icon,
+        title: place.name,
+        position: place.geometry.location
+    });        
         
-        // Add markers to array
-        markers.push(marker);
+    // Add markers to array
+    markers.push(marker);
 
-        // Create an info window for each place
-        infoWindow = new google.maps.InfoWindow({
-                content: ""
-        });
+    // Create an info window for each place
+    infoWindow = new google.maps.InfoWindow({
+            content: ""
+    });
 
-        // Display info window with name when marker is clicked
-        google.maps.event.addDomListener(marker,'click', function() {
-                infoWindow.setContent(place.name);
-                infoWindow.open(map, this); 
-        });
+    // Display info window with name when marker is clicked
+    google.maps.event.addDomListener(marker,'click', function() {
+        infoWindow.setContent(place.name);
+        infoWindow.open(map, this); 
+    });
 }
 
 /** List results of nearby search on page*/
@@ -209,8 +202,6 @@ function listResults() {
     let element = document.getElementById('results');
     // Clear results 
     element.innerHTML = ""; 
-
-    console.log(imgList);
 
     // Displays search results on page
     for (let i = 0; i < placeInfo.length; i++) {
@@ -227,9 +218,12 @@ function listResults() {
 
         let p = document.createElement('p');
         let content = document.createTextNode(placeInfo[i]); 
+        let img = document.createElement('img');
+        img.src = getPhotoURL(imgList[i]);
        
         p.appendChild(content); 
         div3.appendChild(p);
+        div3.appendChild(img);
         div2.appendChild(div3);
         div1.appendChild(div2); 
         element.appendChild(div1);
