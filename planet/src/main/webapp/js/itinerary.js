@@ -13,6 +13,16 @@
 // limitations under the License.
 
 
+import TimeRange from './TimeRange.js';
+// Declare global functions
+window.openForm = openForm;
+window.closeForm = closeForm;
+window.handleStartingLocationChange = handleStartingLocationChange;
+window.renderStartingLocation = renderStartingLocation;
+window.addEvent = addEvent;
+window.generateItinerary = generateItinerary;
+
+
 function openForm() {
     document.getElementById('add-event').style.display = 'block';
 }
@@ -220,34 +230,4 @@ function reorderEvents() {
     });
 } 
 
-// This is a class representing a time range, it mirrors the TimeRange class in the server
-class TimeRange {
-    constructor(start, duration) {
-        this.start = start;
-        this.duration = duration;
-        this.end = start + duration;
-    }
-    getStartTime() {
-        return this.start;
-    }
-    getEndTime() {
-        return this.end;
-    }
-    
-    static getTimeInMinutes(hours, minutes) {
-        if (hours < 8 || hours > 19) {
-            throw new Error("Hours can only be 8 through 19 (inclusive).");
-        }
-        if (minutes < 0 || minutes > 59) {
-            throw new Error("Minutes can only be 0 through 59 (inclusive).");
-        }
-        return (hours * 60) + minutes;
-    }
-    static getStartOfDay() {
-        return this.getTimeInMinutes(8, 0);
-    } 
-    static getEndOfDay() {
-        return this.getTimeInMinutes(19, 59);
-    }
-}
 
