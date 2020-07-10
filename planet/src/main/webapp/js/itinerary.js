@@ -69,9 +69,9 @@ function renderListOptions() {
     const selectListElement = document.getElementById('list-options');
     // Show the option "current list" regardless of what's stored in the database
     selectListElement.innerHTML = '<option value="currentList">Current List </option>';
-    eventListRef.once('value', function(snap) {
-        snap.forEach(function(childSnap) {
-            let childKey = childSnap.key;
+    eventListRef.once('value', function(eventsSnapshot) {
+        eventsSnapshot.forEach(function(childListSnapshot) {
+            let childKey = childListSnapshot.key;
             if (childKey !== 'currentList') {
                 let optionElement = document.createElement('option');
                 optionElement.value = childKey;
@@ -91,6 +91,7 @@ function renderListOptions() {
 function handleListOptionChange() {
     const listName = document.getElementById ('list-options').value;
     sessionStorage.setItem('listName', listName);
+    // You can only save currentList as other lists
     if (listName !== 'currentList') {
         document.getElementById('save-events-button').style.display = 'none';
     }else{
@@ -124,8 +125,8 @@ async function addEvent() {
 
     const eventListRef = database.ref('events/' + userId + '/' + listName);
     // Get the order number by counting existing events
-    const snap = await eventListRef.once('value');
-    const order = snap.numChildren() + 1;
+    const eventListSnapshot = await eventListRef.once('value');
+    const order = eventListSnapshot.numChildren() + 1;
 
     //Create a new event
     const newEventRef = eventListRef.push();
@@ -155,13 +156,13 @@ firebase.auth().onAuthStateChanged(function(user) {
 function renderEvents(listName) {
     const userId = firebase.auth().currentUser.uid;
     const eventListRef = database.ref('events/' + userId + '/' + listName);
-    eventListRef.orderByChild('order').on('value', (snap) => {
+    eventListRef.orderByChild('order').on('value', (eventListSnapshot) => {
         const eventsContainer = document.getElementById('events');
         eventsContainer.innerHTML = '';
-        snap.forEach(function(child) {
-            let eventObject = child.val();
+        eventListSnapshot.forEach(function(childEvent) {
+            let eventObject = childEvent.val();
             let eventElement = createEventElement (listName,
-                                                child.key,
+                                                childEvent.key,
                                                 eventObject.name, 
                                                 eventObject.address, 
                                                 eventObject.duration);
@@ -198,17 +199,18 @@ function deleteEvent(listName, ref) {
     toBeDeletedEventRef.remove();
 
     // Fix order after deleting the event
-    eventListRef.orderByChild('order').once('value', (snap) => {
-        const events = snap.val();
+    eventListRef.orderByChild('order').once('value', (eventListSnapshot) => {
         let count = 1;
-        for (let eventKey in events){
-            if (events[eventKey].order !== count){
+        eventListSnapshot.forEach(function(childEvent) {
+            let event = childEvent.val();
+            let eventKey = childEvent.key;
+            if (event.order !== count) {
                 eventListRef.child(eventKey).update({
                     order: count
                 });
             }
             count += 1;
-        }
+        });
     });
 }
 
@@ -221,12 +223,12 @@ async function saveEvents() {
     const userId = firebase.auth().currentUser.uid;
     const currentListRef = database.ref('events/' + userId + '/currentList');
     const newListRef = database.ref('events/' + userId + '/' + listName);
-    const snap = await currentListRef.once('value');
-    if (!snap){
+    const currentListSnapshot = await currentListRef.once('value');
+    if (!currentListSnapshot.val()) {
         alert('Cannot save an empty list');
         return;
     }
-    newListRef.set(snap.val());
+    newListRef.set(currentListSnapshot.val());
     // Clear current list
     currentListRef.remove();
     // Update the select tag options and close save events form
@@ -254,9 +256,9 @@ async function generateItinerary() {
     const userId = firebase.auth().currentUser.uid;
     const listName = document.getElementById('list-options').value;
     const eventListRef = database.ref('events/' + userId + '/' + listName);
-    const snap = await eventListRef.once('value');
-    snap.forEach(function(child) {
-        requestBody.push(child.val());
+    const eventListSnapshot = await eventListRef.once('value');
+    eventListSnapshot.forEach(function(childEvent) {
+        requestBody.push(childEvent.val());
     });
     const itineraryResponse = await fetch('/generate-itinerary', 
                         {method: 'POST', 
