@@ -107,6 +107,34 @@ function updateSearch() {
         addPlaceDetails(places);
         map.fitBounds(bounds);
     });
+
+    // Add onclick function to option buttons
+    document.getElementById('hotel').onclick = function() {
+        document.getElementById('pac-input').value = 'hotel';
+        setSearchByButton(); 
+    }
+    document.getElementById('food').onclick = function() {
+        document.getElementById('pac-input').value = 'food';
+        setSearchByButton(); 
+    }
+    document.getElementById('tourist').onclick = function() {
+        document.getElementById('pac-input').value = 'tourist attractions';
+        setSearchByButton(); 
+    }
+    document.getElementById('nature').onclick = function() {
+        document.getElementById('pac-input').value = 'nature';
+        setSearchByButton(); 
+    }
+}
+
+/** Search map when option button is clicked by triggering enter key */
+function setSearchByButton() {
+    const input = document.getElementById('pac-input');
+    // Set trigger event on search box 
+    google.maps.event.trigger(input, 'focus', {});
+    // Set event to trigger the enter key , allowing search to process
+    google.maps.event.trigger(input, 'keydown', { keyCode: 13 });
+    google.maps.event.trigger(this, 'focus', {});
 }
 
 
@@ -187,7 +215,7 @@ function createMarkers(place) {
 
     // Create an info window for each place
     infoWindow = new google.maps.InfoWindow({
-            content: ""
+        content: ""
     });
 
     // Display info window with name when marker is clicked
@@ -229,10 +257,5 @@ function listResults() {
         element.appendChild(div1);
     }
     // Add search keyword to header
-    document.getElementById('greeting').innerHTML = "Find a place: " + document.getElementById('pac-input').value;
-}
-
-/** Fills search box with preset option from button */
-function searchOption(search) {
-    document.getElementById('pac-input').value = search;
+    document.getElementById('greeting').innerHTML = 'Find a place: ' + document.getElementById('pac-input').value;
 }
