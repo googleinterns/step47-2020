@@ -19,9 +19,8 @@ let infoWindow;
 let input;
 let searchBox;
 let markers = [];
-let placeInfo = [];
-let imgList = [];
 let promises = [];
+let placeInfo = [];
 let bounds;
 const TORONTO_COORDINATES = {lat:43.6532, lng:-79.3832}; 
 
@@ -42,7 +41,6 @@ function initMap() {
 
 /** Creates marker at user's current location if allowed */
 function getCurrentLocation(){
-
     // Gets users current location
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(function(position) {
@@ -93,7 +91,6 @@ function updateSearch() {
         if (places.length === 0) {
             return;
         }
-
         // Delete old markers
         markers.forEach(function(marker) {
             marker.setMap(null);
@@ -101,7 +98,6 @@ function updateSearch() {
         // Clear array of old markers and place information
         markers = [];
         placeInfo = [];
-        imgList = [];
 
         bounds = new google.maps.LatLngBounds();
         addPlaceDetails(places);
@@ -137,7 +133,6 @@ function setSearchByButton() {
     google.maps.event.trigger(this, 'focus', {});
 }
 
-
 /** Create markers and add details to each place */
 function addPlaceDetails(places) {
     // For each place, get the icon, name and location.
@@ -146,18 +141,7 @@ function addPlaceDetails(places) {
           console.log("Returned place contains no geometry");
           return;
         }
-
-        // Check if rating is defined
-        if (place.rating != undefined) {
-             // Add search results to a list
-            placeInfo.push(place.name + "\n" + "Rating: " + place.rating + "\n");  
-        }
-        else {
-            placeInfo.push(place.name + "\n");  
-        }
-
         createMarkers(place); 
- 
         if (place.geometry.viewport) {
             bounds.union(place.geometry.viewport);
         } else {
@@ -166,16 +150,37 @@ function addPlaceDetails(places) {
 
         // Get place id
         let placeId = place['place_id']; 
-        let url = 'https://maps.googleapis.com/maps/api/place/details/json?placeid=' + placeId + '&key=AIzaSyDK36gDoYgOj4AlbCqh1IuaUuTlcpKF0ns&fields=photo';
+        let url = 'https://maps.googleapis.com/maps/api/place/details/json?placeid=' + placeId + 
+        '&key=AIzaSyDK36gDoYgOj4AlbCqh1IuaUuTlcpKF0ns&fields=photo,formatted_phone_number,formatted_address,opening_hours,website';        
+        let placeDetails = {Name: '', Rating: '', Address: '', Photo: '',Phone: '',Hours: '',Website: ''}; 
         
         // Fetch url and add photo reference to a list
         promises = [];
         promises.push(fetch(url).then(response => response.json()).then(function(response) {
-            photoReference = response.result.photos[0].photo_reference;
-            imgList.push(photoReference);
+            placeDetails['Name'] = place.name; 
+            // Check if place details exist
+            if (place.rating != undefined) {
+                placeDetails['Rating'] = place.rating;    
+            }
+            if (response.result.formatted_address != undefined) {
+                placeDetails['Address'] = response.result.formatted_address;
+            }
+            if (response.result.photos != undefined) {
+                placeDetails['Photo'] = response.result.photos[0].photo_reference;
+            }
+            if (response.result.formatted_phone_number != undefined) {
+                placeDetails['Phone'] = response.result.formatted_phone_number;
+            }
+            if (response.result.opening_hours != undefined){
+                placeDetails['Hours'] = response.result.opening_hours.weekday_text;
+            }
+            if (response.result.website != undefined) {
+                placeDetails['Website'] = response.result.website;
+            }
+            placeInfo.push(placeDetails);
         }));
     });
-    // Wait for promises to complete 
+    // Wait for promises to complete before proceeding
     Promise.all(promises).then(function() {
         listResults();
     })
@@ -186,7 +191,8 @@ function getPhotoURL(photo_reference) {
     let baseURL = 'https://maps.googleapis.com/maps/api/place/photo?';
     let maxWidth = '400';
     let maxHeight = '200';
-    let photoURL = baseURL + 'maxwidth=' + maxWidth + '&maxheight=' + maxHeight + '&photoreference=' + photo_reference + '&key=AIzaSyDK36gDoYgOj4AlbCqh1IuaUuTlcpKF0ns'; 
+    let photoURL = baseURL + 'maxwidth=' + maxWidth + '&maxheight=' + maxHeight 
+    + '&photoreference=' + photo_reference + '&key=AIzaSyDK36gDoYgOj4AlbCqh1IuaUuTlcpKF0ns'; 
 
     return photoURL; 
 }
@@ -237,21 +243,57 @@ function listResults() {
         let div1 = document.createElement('div');
         div1.classList.add('card'); 
         div1.classList.add('horizontal'); 
-
         let div2 = document.createElement('div');
         div2.classList.add('card-stacked');
-
         let div3 = document.createElement('div');
         div3.classList.add('card-content'); 
 
+        // Create elements to add to HTML
         let p = document.createElement('p');
-        let content = document.createTextNode(placeInfo[i]); 
+        let p1 = document.createElement('p');
+        let p2 = document.createElement('p');
+        let p3 = document.createElement('p');
+        let p4 = document.createElement('p');
+        let a = document.createElement('a');
+
+        // Set variables for place details
+        let name = document.createTextNode(placeInfo[i]['Name']);
+        let rating = document.createTextNode('Rating: ' + placeInfo[i]['Rating']);
+        let address = document.createTextNode(placeInfo[i]['Address']);
+        let phoneNumber = document.createTextNode('Phone Number: ' + placeInfo[i]['Phone']);
+        let openingHours = document.createTextNode('Opening Hours: ' + placeInfo[i]['Hours']);
         let img = document.createElement('img');
-        img.src = getPhotoURL(imgList[i]);
-       
-        p.appendChild(content); 
+
+        // Check for missing details, otherwise display through HTML
+        p.appendChild(name);        
+        p.setAttribute('id','place-name');
         div3.appendChild(p);
-        div3.appendChild(img);
+        if (placeInfo[i]['Rating'] != '') {
+            p1.appendChild(rating);
+           div3.appendChild(p1);
+        }     
+         if (placeInfo[i]['Photo'] != '') {
+            img.src = getPhotoURL(placeInfo[i]['Photo']);
+            div3.appendChild(img); 
+        }      
+        if (address != '') {
+            p2.appendChild(address);
+            div3.appendChild(p2);
+        }
+        if (placeInfo[i]['Phone'] != '') {
+            p3.appendChild(phoneNumber);
+            div3.appendChild(p3);         
+        }
+        if (placeInfo[i]['Hours'] != '') {
+            p4.appendChild(openingHours);    
+            div3.appendChild(p4);      
+        }
+        if (placeInfo[i]['Website'] != '') {
+            a.appendChild(document.createTextNode('Website'));
+            a.href = placeInfo[i]['Website'];
+            a.title = 'Website'; 
+            div3.appendChild(a);
+        }
         div2.appendChild(div3);
         div1.appendChild(div2); 
         element.appendChild(div1);
