@@ -125,7 +125,7 @@ function updateSearch() {
 
 /** Search map when option button is clicked */
 function setSearchByButton() {
-    let input = document.getElementById('pac-input');
+    const input = document.getElementById('pac-input');
     google.maps.event.trigger(input, 'focus', {});
     google.maps.event.trigger(input, 'keydown', { keyCode: 13 });
     google.maps.event.trigger(this, 'focus', {});
@@ -214,5 +214,5 @@ function listResults(results) {
         element.appendChild(div1);
     }
     // Add search keyword to header
-    document.getElementById('greeting').innerHTML = "Find a place: " + document.getElementById('pac-input').value;
+    document.getElementById('greeting').innerHTML = 'Find a place: ' + document.getElementById('pac-input').value;
 }
