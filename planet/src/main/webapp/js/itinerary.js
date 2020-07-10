@@ -63,8 +63,8 @@ async function addEvent() {
 
     const eventListRef = database.ref('users/' + userId + '/currentList');
     // Get the order number by counting existing events
-    const snap = await eventListRef.once('value');
-    const order = snap.numChildren() + 1;
+    const eventListSnapshot = await eventListRef.once('value');
+    const order = eventListSnapshot.numChildren() + 1;
 
     //Create a new event
     const newEventRef = eventListRef.push();
@@ -93,10 +93,10 @@ firebase.auth().onAuthStateChanged(function(user) {
 function renderEvents(listName) {
     const userId = firebase.auth().currentUser.uid;
     const eventListRef = database.ref('users/' + userId + '/' + listName);
-    eventListRef.orderByChild('order').on('value', (snap) => {
+    eventListRef.orderByChild('order').on('value', (eventListSnapshot) => {
         const eventsContainer = document.getElementById('events');
         eventsContainer.innerHTML = '';
-        snap.forEach(function(child) {
+        eventListSnapshot.forEach(function(child) {
             let eventObject = child.val();
             let eventElement = createEventElement (child.key,
                                                 eventObject.name, 
@@ -135,8 +135,8 @@ function deleteEvent(ref) {
     toBeDeletedEventRef.remove();
 
     // Fix order after deleting the event
-    eventListRef.orderByChild('order').once('value', (snap) => {
-        const events = snap.val();
+    eventListRef.orderByChild('order').once('value', (eventListSnapshot) => {
+        const events = eventListSnapshot.val();
         let count = 1;
         for (let eventKey in events){
             if (events[eventKey].order !== count){
@@ -168,8 +168,8 @@ async function generateItinerary() {
     // Add the rest of the events
     const userId = firebase.auth().currentUser.uid;
     const eventListRef = database.ref('users/' + userId + '/currentList');
-    const snap = await eventListRef.once('value');
-    snap.forEach(function(child) {
+    const eventListSnapshot = await eventListRef.once('value');
+    eventListSnapshot.forEach(function(child) {
         requestBody.push(child.val());
     });
     const itineraryResponse = await fetch('/generate-itinerary', 
