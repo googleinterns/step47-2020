@@ -110,12 +110,7 @@ async function addEvent() {
     const listName = document.getElementById('list-options').value;
 
     // Validate the input fields
-    if ((!eventDuration) || (!eventAddress) || (!eventDuration)) {
-        alert('Please make sure to fill out all fields correctly');
-        return;
-    }
-    if (eventDuration < 0 || eventDuration > 9) {
-        alert('Please make sure duration is between 0 to 9 hours (inclusive)');
+    if (!validateCustomEventInput(eventName, eventAddress, eventDuration)){
         return;
     }
     
@@ -139,6 +134,31 @@ async function addEvent() {
         order: order,
     });
     closeAddEventForm();
+}
+
+function validateCustomEventInput(name, address, duration) {
+    let isValid = true;
+    if (!name) {
+        alert('Please make sure to fill out the event name');
+        isValid = false;
+        return isValid;
+    }
+    if (!address) {
+        alert('Please make sure to fill out the event address');
+        isValid = false;
+        return isValid;
+    }
+    if (!duration) {
+        alert('Please make sure to fill out the event duration (0~9 hours inclusive)');
+        isValid = false;
+        return isValid;
+    }
+    if (duration < 0 || duration > 9) {
+        alert('Please make sure duration is between 0 to 9 hours (inclusive)');
+        isValid = false;
+        return isValid;
+    }
+    return isValid;
 }
 
 // Check authentication status and render the list of events if the user has
