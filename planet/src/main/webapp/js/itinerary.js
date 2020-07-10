@@ -13,6 +13,16 @@
 // limitations under the License.
 
 
+import TimeRange from './TimeRange.js';
+// Declare global functions
+window.openForm = openForm;
+window.closeForm = closeForm;
+window.handleStartingLocationChange = handleStartingLocationChange;
+window.renderStartingLocation = renderStartingLocation;
+window.addEvent = addEvent;
+window.generateItinerary = generateItinerary;
+
+
 function openForm() {
     document.getElementById('add-event').style.display = 'block';
 }
@@ -53,8 +63,8 @@ async function addEvent() {
 
     const eventListRef = database.ref('users/' + userId + '/currentList');
     // Get the order number by counting existing events
-    const snap = await eventListRef.once('value');
-    const order = snap.numChildren() + 1;
+    const eventListSnapshot = await eventListRef.once('value');
+    const order = eventListSnapshot.numChildren() + 1;
 
     //Create a new event
     const newEventRef = eventListRef.push();
@@ -83,10 +93,10 @@ firebase.auth().onAuthStateChanged(function(user) {
 function renderEvents(listName) {
     const userId = firebase.auth().currentUser.uid;
     const eventListRef = database.ref('users/' + userId + '/' + listName);
-    eventListRef.orderByChild('order').on('value', (snap) => {
+    eventListRef.orderByChild('order').on('value', (eventListSnapshot) => {
         const eventsContainer = document.getElementById('events');
         eventsContainer.innerHTML = '';
-        snap.forEach(function(child) {
+        eventListSnapshot.forEach(function(child) {
             let eventObject = child.val();
             let eventElement = createEventElement (child.key,
                                                 eventObject.name, 
@@ -125,8 +135,8 @@ function deleteEvent(ref) {
     toBeDeletedEventRef.remove();
 
     // Fix order after deleting the event
-    eventListRef.orderByChild('order').once('value', (snap) => {
-        const events = snap.val();
+    eventListRef.orderByChild('order').once('value', (eventListSnapshot) => {
+        const events = eventListSnapshot.val();
         let count = 1;
         for (let eventKey in events){
             if (events[eventKey].order !== count){
@@ -144,9 +154,28 @@ async function generateItinerary() {
         alert('Please input a valid starting address');
         return;
     }
-    const params = new URLSearchParams();
-    params.append('starting-address', sessionStorage.getItem('start'));
-    const itineraryResponse = await fetch('/generate-itinerary', {method: 'POST', body: params});
+    
+    const requestBody = [];
+    // Add the starting point as the first event
+    const startingPoint = {name: "Start", 
+                        address: sessionStorage.getItem('start'), 
+                        duration: 0,
+                        openingTime: TimeRange.getStartOfDay(),
+                        closingTime: TimeRange.getEndOfDay(),
+                        order: 0};
+    requestBody.push(startingPoint);
+    
+    // Add the rest of the events
+    const userId = firebase.auth().currentUser.uid;
+    const eventListRef = database.ref('users/' + userId + '/currentList');
+    const eventListSnapshot = await eventListRef.once('value');
+    eventListSnapshot.forEach(function(child) {
+        requestBody.push(child.val());
+    });
+    const itineraryResponse = await fetch('/generate-itinerary', 
+                        {method: 'POST', 
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify(requestBody) });
     const itinerary = await itineraryResponse.json();
     createItinerary(itinerary);
 }
@@ -200,29 +229,5 @@ function reorderEvents() {
         });
     });
 } 
-
-// This is a class representing a time range, it mirrors the TimeRange class in the server
-class TimeRange {
-    constructor(start, duration) {
-        this.start = start;
-        this.duration = duration;
-        this.end = start + duration;
-    }
-    getStartTime() {
-        return this.start;
-    }
-    getEndTime() {
-        return this.end;
-    }
-    static getTimeInMinutes(hours, minutes) {
-        if (hours < 8 || hours > 19) {
-            throw new Error("Hours can only be 8 through 19 (inclusive).");
-        }
-        if (minutes < 0 || minutes > 59) {
-            throw new Error("Minutes can only be 0 through 59 (inclusive).");
-        }
-        return (hours * 60) + minutes;
-    }
-}
 
 

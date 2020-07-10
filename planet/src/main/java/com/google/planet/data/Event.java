@@ -17,24 +17,20 @@ package com.google.planet.data;
 import java.util.Comparator;
 
 public final class Event {
-    private final long id;
     private final String name; 
     private final String address;
     private final double duration; // Duration in hours.
-    private final TimeRange openingHours;
-    private final String listName; 
-    private final String userId;
+    private final int openingTime;
+    private final int closingTime;
     private final long order;
 
-    public Event(long id, String name, String address, double duration, TimeRange openingHours, long order, String listName, String userId) {
-        this.id = id;
+    public Event(String name, String address, double duration, int openingTime, int closingTime, long order) {
         this.name = name;
         this.address = address;
         this.duration = duration;
-        this.openingHours = openingHours;
+        this.openingTime = openingTime;
+        this.closingTime = closingTime;
         this.order = order;
-        this.listName = listName;
-        this.userId = userId;
     }
 
     // Constructor for the starting point event (hotel), which is not stored in the database
@@ -42,10 +38,8 @@ public final class Event {
         this.name = name;
         this.address = address;
         this.duration = duration;
-        this.id = 0; 
-        this.openingHours = null; 
-        this.listName = null;
-        this.userId = null;
+        this.openingTime = TimeRange.START_OF_DAY; 
+        this.closingTime = TimeRange.END_OF_DAY;
         this.order = 0;
     }
 
@@ -59,16 +53,26 @@ public final class Event {
         return this.address;
     }
     public TimeRange getOpeningHours(){
-        return this.openingHours;
+        return TimeRange.fromStartEnd(this.openingTime, this.closingTime);
     }
 
     /**
     * A comparator for sorting events by the duration of their opening hours, in ascending order.
     */
-    public static final Comparator<Event> OrderByOpeningHours = new Comparator<Event>() {
+    public static final Comparator<Event> SortByOpeningHours = new Comparator<Event>() {
         @Override
         public int compare(Event a, Event b) {
-        return Long.compare(a.openingHours.duration(), b.openingHours.duration());
+            return Long.compare(a.getOpeningHours().duration(), b.getOpeningHours().duration());
+        }
+    };
+
+    /**
+    * A comparator for sorting events by the property order, in ascending order.
+    */
+    public static final Comparator<Event> SortByOrder = new Comparator<Event>() {
+        @Override
+        public int compare(Event a, Event b) {
+            return Long.compare(a.order, b.order);
         }
     };
 }

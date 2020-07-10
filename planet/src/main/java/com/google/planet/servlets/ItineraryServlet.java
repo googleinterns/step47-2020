@@ -14,6 +14,8 @@
 
 package com.google.planet.servlets;
 import com.google.gson.Gson;
+import java.lang.reflect.*;
+import com.google.gson.reflect.TypeToken;
 
 import com.google.planet.data.Event;
 import com.google.planet.data.ItineraryGenerator;
@@ -35,52 +37,33 @@ import java.lang.*;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.BufferedReader;
 
-/** Servlet that handles the game two truths and one lie */
 
 @WebServlet("/generate-itinerary")
 public class ItineraryServlet extends HttpServlet {
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        Query query = new Query("Event").addSort("order", SortDirection.ASCENDING);
-        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-        PreparedQuery results = datastore.prepare(query);
+        BufferedReader br = request.getReader();
+        String eventsJson = "";
 
-        // Create an event called "hotel" with duration of 0
-        String startingAddress = request.getParameter("starting-address");
-        Event start = new Event( "Start", 
-                                startingAddress, 
-                                0);
+        if (br != null) {
+            eventsJson = br.readLine();
 
-        // Get list of events from Datastore
-        List<Event> events = new ArrayList<>();
-        for (Entity entity : results.asIterable()) {
-            long id = entity.getKey().getId();
-            String name = (String) entity.getProperty("name");
-            String address = (String) entity.getProperty("address");
-            double duration = (double) entity.getProperty("duration");
-            int openingTime = Math.toIntExact((long)entity.getProperty("openingTime"));
-            int closingTime = Math.toIntExact((long)entity.getProperty("closingTime"));
-            long order = (long)entity.getProperty("order");
-            String listName = (String) entity.getProperty("listName");
-            String userId = (String) entity.getProperty("userId");
-            Event event = new Event(id, 
-                                    name, 
-                                    address, 
-                                    duration, 
-                                    TimeRange.fromStartEnd(openingTime, closingTime), 
-                                    order,
-                                    listName, 
-                                    userId);
-            events.add(event);
+            // Convert the json string to a list of events using Gson
+            Type eventListType = new TypeToken<ArrayList<Event>>(){}.getType();
+            List<Event> events = new Gson().fromJson(eventsJson, eventListType);
+
+            ItineraryGenerator itineraryGenerator = new ItineraryGenerator();
+            List<ItineraryItem> itinerary = itineraryGenerator.generateItinerary(events);
+
+            response.setContentType("application/json");
+            String json = new Gson().toJson(itinerary);
+            response.getWriter().println(json);
+        } else {
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            response.getWriter().println("");
         }
-
-        ItineraryGenerator itineraryGenerator = new ItineraryGenerator();
-        List<ItineraryItem> itinerary = itineraryGenerator.generateItinerary(events, start);
-
-        response.setContentType("application/json");
-        String json = new Gson().toJson(itinerary);
-        response.getWriter().println(json);
   }
 }
 
