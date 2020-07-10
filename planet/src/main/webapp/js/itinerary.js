@@ -26,7 +26,6 @@ window.addEvent = addEvent;
 window.saveEvents = saveEvents;
 window.generateItinerary = generateItinerary;
 
-
 function openAddEventForm() {
     document.getElementById('add-event').style.display = 'block';
 }
