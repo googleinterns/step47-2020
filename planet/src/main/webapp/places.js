@@ -123,10 +123,12 @@ function updateSearch() {
     }
 }
 
-/** Search map when option button is clicked */
+/** Search map when option button is clicked by triggering enter key */
 function setSearchByButton() {
     const input = document.getElementById('pac-input');
+    // Set trigger event on search box 
     google.maps.event.trigger(input, 'focus', {});
+    // Set event to trigger the enter key , allowing search to process
     google.maps.event.trigger(input, 'keydown', { keyCode: 13 });
     google.maps.event.trigger(this, 'focus', {});
 }
