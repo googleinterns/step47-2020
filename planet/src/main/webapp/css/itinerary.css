@@ -9,8 +9,8 @@ h1,h2,h3,h4,h5,h6{
 #content-places {
     width: 25%;
     float: left;
-    margin-left: auto;
-    margin-right: auto;
+    padding-left: 1vw;
+    padding-right: 1vw;
     color: #263238;
     text-align: center;
     height: 100vh;
@@ -54,7 +54,7 @@ h1,h2,h3,h4,h5,h6{
     cursor:pointer;
 }
 
-#event-requests {
-    padding-left: 20%;
-    padding-right: 20%;
+.place-button {
+    float: right;
+    cursor: pointer;
 }

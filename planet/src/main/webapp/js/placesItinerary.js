@@ -31,15 +31,18 @@ export function renderPlaces() {
 
 function createPlaceElement(ref, name, address) {
     const placeElement = document.createElement('div');
-    placeElement.setAttribute('class', 'card place');
+    placeElement.setAttribute('class', 'card place yellow lighten-4');
     placeElement.setAttribute('id', ref);
-    placeElement.innerHTML = 
+
+    const addButton = document.createElement('a');
+    addButton.setAttribute('class', ' place-button');
+    addButton.innerHTML = `<i class="material-icons small">playlist_add</i>`;
+    placeElement.appendChild(addButton);
+
+    placeElement.innerHTML += 
         `<div class="card-content">
           <span class="card-title">` + name + `</span>
           <p>` + address +`</p>
         </div>`;
-    const addButton = document.createElement('button');
-    addButton.innerText = 'Add';
-    placeElement.appendChild(addButton);
     return placeElement;
 }
