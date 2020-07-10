@@ -24,6 +24,11 @@ h1,h2,h3,h4,h5,h6{
     z-index: 999;
 }
 
+.save-events-form {
+    display: none;
+    z-index: 999;
+}
+
 #close-form {
     position:absolute;
     right: 2rem;
