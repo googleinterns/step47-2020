@@ -15,24 +15,37 @@
 
 import TimeRange from './TimeRange.js';
 // Declare global functions
-window.openForm = openForm;
-window.closeForm = closeForm;
+window.openAddEventForm = openAddEventForm;
+window.closeAddEventForm = closeAddEventForm;
+window.openSaveEventsForm = openSaveEventsForm;
+window.closeSaveEventsForm = closeSaveEventsForm;
 window.handleStartingLocationChange = handleStartingLocationChange;
 window.renderStartingLocation = renderStartingLocation;
+window.handleListOptionChange = handleListOptionChange;
 window.addEvent = addEvent;
+window.saveEvents = saveEvents;
 window.generateItinerary = generateItinerary;
 
-
-function openForm() {
+function openAddEventForm() {
     document.getElementById('add-event').style.display = 'block';
 }
 
 // Clear input values and close the form
-function closeForm() {
+function closeAddEventForm() {
     document.getElementById('add-event-name').value = '';
     document.getElementById('add-event-address').value = '';
     document.getElementById('add-event-duration').value = '';
     document.getElementById('add-event').style.display = 'none';
+}
+
+function openSaveEventsForm() {
+    document.getElementById('save-events-form').style.display = 'block';
+    document.getElementById('save-events-button').style.display = 'none';
+}
+
+function closeSaveEventsForm() {
+    document.getElementById('save-events-button').style.display = 'inline-block';
+    document.getElementById('save-events-form').style.display = 'none';
 }
 
 function handleStartingLocationChange() {
@@ -49,6 +62,43 @@ function renderStartingLocation() {
     }
 }
 
+function renderListOptions() {
+    const userId = firebase.auth().currentUser.uid;
+    const eventListRef = database.ref('events/' + userId);
+    const selectListElement = document.getElementById('list-options');
+    // Show the option "current list" regardless of what's stored in the database
+    selectListElement.innerHTML = '<option value="currentList">Current List </option>';
+    eventListRef.once('value', function(eventsSnapshot) {
+        eventsSnapshot.forEach(function(childListSnapshot) {
+            let childKey = childListSnapshot.key;
+            if (childKey !== 'currentList') {
+                let optionElement = document.createElement('option');
+                optionElement.value = childKey;
+                optionElement.innerText = childKey;
+                selectListElement.add(optionElement);
+                // Update the selected value
+                if (childKey === sessionStorage.getItem('listName')) {        
+                    optionElement.selected = true;
+                }
+            }
+        });
+        // Initialize the select tag again since options are dynamically loaded
+        M.FormSelect.init(selectListElement, {});
+    });
+}
+
+function handleListOptionChange() {
+    const listName = document.getElementById ('list-options').value;
+    sessionStorage.setItem('listName', listName);
+    // You can only save currentList as other lists
+    if (listName !== 'currentList') {
+        document.getElementById('save-events-button').style.display = 'none';
+    }else{
+        document.getElementById('save-events-button').style.display = 'inline-block';
+    }
+    renderEvents(listName);
+}
+
 // Add an event to the firebase realtime database
 // Todo: input validation, success/failure callbacks
 async function addEvent() {
@@ -56,12 +106,18 @@ async function addEvent() {
     const eventAddress = document.getElementById('add-event-address').value;
     const eventDuration = document.getElementById('add-event-duration').value;
     const userId = firebase.auth().currentUser.uid; 
+    const listName = document.getElementById('list-options').value;
+
+    // Validate the input fields
+    if (!validateCustomEventInput(eventName, eventAddress, eventDuration)){
+        return;
+    }
     
     // Set every event's opening hours to 8am - 5pm for now
     const openingTime = TimeRange.getTimeInMinutes(8,0);
     const closingTime = TimeRange.getTimeInMinutes(17,0);
 
-    const eventListRef = database.ref('users/' + userId + '/currentList');
+    const eventListRef = database.ref('events/' + userId + '/' + listName);
     // Get the order number by counting existing events
     const eventListSnapshot = await eventListRef.once('value');
     const order = eventListSnapshot.numChildren() + 1;
@@ -76,7 +132,32 @@ async function addEvent() {
         closingTime: closingTime,
         order: order,
     });
-    closeForm();
+    closeAddEventForm();
+}
+
+function validateCustomEventInput(name, address, duration) {
+    let isValid = true;
+    if (!name) {
+        alert('Please make sure to fill out the event name');
+        isValid = false;
+        return isValid;
+    }
+    if (!address) {
+        alert('Please make sure to fill out the event address');
+        isValid = false;
+        return isValid;
+    }
+    if (!duration) {
+        alert('Please make sure to fill out the event duration (0~9 hours inclusive)');
+        isValid = false;
+        return isValid;
+    }
+    if (duration < 0 || duration > 9) {
+        alert('Please make sure duration is between 0 to 9 hours (inclusive)');
+        isValid = false;
+        return isValid;
+    }
+    return isValid;
 }
 
 // Check authentication status and render the list of events if the user has
@@ -84,7 +165,8 @@ async function addEvent() {
 // Todo: discuss with teammates to decide what to show if user is not signed in.
 firebase.auth().onAuthStateChanged(function(user) {
     if (user) {
-        renderEvents('currentList');
+        renderListOptions();
+        renderEvents(document.getElementById('list-options').value);
     } else {
         console.log('Please sign in');
     }
@@ -92,13 +174,14 @@ firebase.auth().onAuthStateChanged(function(user) {
 
 function renderEvents(listName) {
     const userId = firebase.auth().currentUser.uid;
-    const eventListRef = database.ref('users/' + userId + '/' + listName);
+    const eventListRef = database.ref('events/' + userId + '/' + listName);
     eventListRef.orderByChild('order').on('value', (eventListSnapshot) => {
         const eventsContainer = document.getElementById('events');
         eventsContainer.innerHTML = '';
-        eventListSnapshot.forEach(function(child) {
-            let eventObject = child.val();
-            let eventElement = createEventElement (child.key,
+        eventListSnapshot.forEach(function(childEvent) {
+            let eventObject = childEvent.val();
+            let eventElement = createEventElement (listName,
+                                                childEvent.key,
                                                 eventObject.name, 
                                                 eventObject.address, 
                                                 eventObject.duration);
@@ -107,7 +190,7 @@ function renderEvents(listName) {
     });
 }
 
-function createEventElement(ref, name, address, duration) {
+function createEventElement(listName, ref, name, address, duration) {
     const eventElement = document.createElement('div');
     eventElement.setAttribute('class', 'card event');
     eventElement.setAttribute('id', ref);
@@ -122,31 +205,54 @@ function createEventElement(ref, name, address, duration) {
     const deleteButton = document.createElement('button');
     deleteButton.innerText = 'Delete';
     deleteButton.addEventListener('click', () => {
-        deleteEvent(ref);
+        deleteEvent(listName, ref);
     });
     eventElement.appendChild(deleteButton);
     return eventElement;
 }
 
-function deleteEvent(ref) {
+function deleteEvent(listName, ref) {
     const userId = firebase.auth().currentUser.uid;
-    const eventListRef = database.ref('users/' + userId + '/currentList');
+    const eventListRef = database.ref('events/' + userId + '/' + listName);
     const toBeDeletedEventRef = eventListRef.child(ref);
     toBeDeletedEventRef.remove();
 
     // Fix order after deleting the event
     eventListRef.orderByChild('order').once('value', (eventListSnapshot) => {
-        const events = eventListSnapshot.val();
         let count = 1;
-        for (let eventKey in events){
-            if (events[eventKey].order !== count){
+        eventListSnapshot.forEach(function(childEvent) {
+            let event = childEvent.val();
+            let eventKey = childEvent.key;
+            if (event.order !== count) {
                 eventListRef.child(eventKey).update({
                     order: count
                 });
             }
             count += 1;
-        }
+        });
     });
+}
+
+async function saveEvents() {
+    const listName = document.getElementById('save-events-name').value;
+    if (!listName) {
+        alert('Please input a list name!');
+        return;
+    }
+    const userId = firebase.auth().currentUser.uid;
+    const currentListRef = database.ref('events/' + userId + '/currentList');
+    const newListRef = database.ref('events/' + userId + '/' + listName);
+    const currentListSnapshot = await currentListRef.once('value');
+    if (!currentListSnapshot.val()) {
+        alert('Cannot save an empty list');
+        return;
+    }
+    newListRef.set(currentListSnapshot.val());
+    // Clear current list
+    currentListRef.remove();
+    // Update the select tag options and close save events form
+    renderListOptions();
+    closeSaveEventsForm();
 }
 
 async function generateItinerary() {
@@ -167,10 +273,11 @@ async function generateItinerary() {
     
     // Add the rest of the events
     const userId = firebase.auth().currentUser.uid;
-    const eventListRef = database.ref('users/' + userId + '/currentList');
+    const listName = document.getElementById('list-options').value;
+    const eventListRef = database.ref('events/' + userId + '/' + listName);
     const eventListSnapshot = await eventListRef.once('value');
-    eventListSnapshot.forEach(function(child) {
-        requestBody.push(child.val());
+    eventListSnapshot.forEach(function(childEvent) {
+        requestBody.push(childEvent.val());
     });
     const itineraryResponse = await fetch('/generate-itinerary', 
                         {method: 'POST', 
@@ -205,6 +312,7 @@ function createItinerary(items) {
     });
 }
 
+// Initialize the select tags
 document.addEventListener('DOMContentLoaded', function() {
     let elems = document.querySelectorAll('select');
     let instances = M.FormSelect.init(elems, {});
@@ -223,11 +331,10 @@ $(function() {
 function reorderEvents() { 
     $('.event').each(function (i) {
         const userId = firebase.auth().currentUser.uid;
-        const eventRef = database.ref('users/' + userId +'/currentList/' + this.id);
+        const listName = document.getElementById('list-options').value;
+        const eventRef = database.ref('events/' + userId +'/' + listName + '/' + this.id);
         eventRef.update({
             order: i+1
         });
     });
 } 
-
-
