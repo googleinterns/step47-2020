@@ -45,10 +45,10 @@ public class ItineraryServlet extends HttpServlet {
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         BufferedReader br = request.getReader();
-		String eventsJson = "";
+        String eventsJson = "";
 
-		if (br != null){
-			eventsJson = br.readLine();
+        if (br != null) {
+            eventsJson = br.readLine();
 
             // Convert the json string to a list of events using Gson
             Type eventListType = new TypeToken<ArrayList<Event>>(){}.getType();
@@ -60,8 +60,8 @@ public class ItineraryServlet extends HttpServlet {
             response.setContentType("application/json");
             String json = new Gson().toJson(itinerary);
             response.getWriter().println(json);
-		}else{
-            response.setContentType("application/json");
+        } else {
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             response.getWriter().println("");
         }
   }
