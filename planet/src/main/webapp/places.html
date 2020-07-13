@@ -20,13 +20,13 @@
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <nav>
         <div class="nav-wrapper indigo darken-2">
-            <a href="places.html" class="brand-logo" style="padding-left: 25px">planet</a>
+            <a href="places.html" class="brand-logo" style="padding-left: 25px">Planet</a>
             <ul class="right hide-on-med-and-down">
                 <li><a href="saved.html">Saved</a></li>
                 <li><a href="itinerary.html">Itinerary</a></li>
-                <li><a onclick="openModal('sign-in-modal')">Sign In</a></li>
-                <li><a onclick="openModal('sign-up-modal')"><i class="material-icons right">account_circle</i>Sign
-                        Up</a></li>
+                <li><a id="sign-out-button" style="display: none;" onclick="signOut()">Sign Out</a></li>
+                <li><a id="profile-button" style="display: none;"></a></li>
+                <li><a id="sign-in-button" style="display: none;" onclick="openModal('sign-in-modal')"><i class="material-icons right">account_circle</i>Sign In</a></li>
             </ul>
         </div>
     </nav>
