@@ -42,8 +42,14 @@ function createPlaceElement(ref, name, address) {
 
     const addButton = document.createElement('div');
     addButton.setAttribute('class', 'place-button');
-    addButton.setAttribute('onclick', 'openAddPlaceForm(event, "' + ref + '")');
-    addButton.innerHTML = `<i class="material-icons small">playlist_add</i>`;
+    
+    const eventFromThisPlace = document.getElementById(ref);
+    if (eventFromThisPlace) {
+        addButton.innerHTML = `<i class="material-icons small">playlist_add_check</i>`;
+    }else {
+        addButton.setAttribute('onclick', 'openAddPlaceForm(event, "' + ref + '")');
+        addButton.innerHTML = `<i class="material-icons small">playlist_add</i>`;
+    }
     placeElement.appendChild(addButton);
 
     placeElement.innerHTML += 
@@ -53,7 +59,6 @@ function createPlaceElement(ref, name, address) {
         </div>`;
     return placeElement;
 }
-
 
 function openAddPlaceForm(event, ref) {
     const addPlaceForm = document.getElementById('add-place-to-event-form');
@@ -94,7 +99,7 @@ async function submitPlace(ref) {
     const placeRef = database.ref('places/' + ref); 
     const placeSnapshot = await placeRef.once('value');
     const placeDetails = placeSnapshot.val();
-    
+
     const newEventRef = eventListRef.child(ref);
     newEventRef.set({
         name: placeDetails.name,
