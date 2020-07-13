@@ -14,6 +14,7 @@
 
 
 import TimeRange from './TimeRange.js';
+import {renderPlaces} from './placesItinerary.js';
 // Declare global functions
 window.openAddEventForm = openAddEventForm;
 window.closeAddEventForm = closeAddEventForm;
@@ -166,6 +167,7 @@ function validateCustomEventInput(name, address, duration) {
 firebase.auth().onAuthStateChanged(function(user) {
     if (user) {
         renderListOptions();
+        renderPlaces();
         renderEvents(document.getElementById('list-options').value);
     } else {
         console.log('Please sign in');
