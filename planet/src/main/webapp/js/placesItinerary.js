@@ -19,7 +19,7 @@ window.closeAddPlaceForm = closeAddPlaceForm;
 export function renderPlaces() {
     const userId = firebase.auth().currentUser.uid;
     const placesRef = database.ref('users/' + userId + '/places');
-    placesRef.on('value', (placesSnapshot) => {
+    placesRef.once('value', (placesSnapshot) => {
         const placesContainer = document.getElementById('places');
         placesContainer.innerHTML = '';
         placesSnapshot.forEach((childPlace) => {
@@ -110,6 +110,7 @@ async function submitPlace(ref) {
         order: order,
     });
     closeAddPlaceForm();
+    renderPlaces();
 }
 
 function validatePlaceDuration(duration) {
