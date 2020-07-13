@@ -18,6 +18,11 @@
         </div>
     </div>
     <div class="row form-row">
+        <p class="right-align" style="width: 100%;">
+            <a class="link-text">Forgot Password?</a>
+        </p>
+    </div>
+    <div class="row form-row">
         <div class="input-field col s12">
             <button class="btn sign-in-button waves-effect waves-light" type="button" onclick="signIn()"
                 style="background-color: #4CAF50;">Sign In</button>
@@ -46,5 +51,9 @@
                 Github</button>
         </div>
         <div class="input-field col s2"></div>
+    </div>
+    <div class="row form-row" style="height: 20%; margin-top: 1vh">
+        <p class="center-align" style="margin: 0; width: 100%;">No Account? 
+        <a class="link-text" onclick="closeModal('sign-in-modal'); openModal('sign-up-modal')">Create One</a></p>
     </div>
 </form>
