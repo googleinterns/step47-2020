@@ -263,6 +263,14 @@ function listResults() {
         let phoneNumber = document.createTextNode('Phone Number: ' + placeInfo[i]['Phone']);
         let openingHours = document.createTextNode('Opening Hours: ' + placeInfo[i]['Hours']);
         let img = document.createElement('img');
+        
+        // Create and add save icon 
+        let icon = document.createElement('i');
+        icon.innerHTML = 'favorite_border';
+        icon.classList.add('material-icons');
+        icon.classList.add('small');
+        icon.setAttribute('onclick','savePlace(this);');
+        div3.append(icon);
 
         // Check for missing details, otherwise display through HTML
         p.appendChild(name);        
@@ -294,10 +302,23 @@ function listResults() {
             a.title = 'Website'; 
             div3.appendChild(a);
         }
+
         div2.appendChild(div3);
         div1.appendChild(div2); 
         element.appendChild(div1);
     }
     // Add search keyword to header
     document.getElementById('greeting').innerHTML = 'Find a place: ' + document.getElementById('pac-input').value;
+}
+
+/** Toggle save icon on click */
+function savePlace(x) {
+    if(x.innerHTML === "favorite_border") {
+        // Set as saved
+        x.innerHTML = "favorite";
+    }
+    else {
+        // Set as unsaved
+        x.innerHTML = "favorite_border";
+    }
 }
