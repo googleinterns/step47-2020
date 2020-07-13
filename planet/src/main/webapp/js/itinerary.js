@@ -167,8 +167,8 @@ function validateCustomEventInput(name, address, duration) {
 firebase.auth().onAuthStateChanged(function(user) {
     if (user) {
         renderListOptions();
-        renderPlaces();
         renderEvents(document.getElementById('list-options').value);
+        renderPlaces();
     } else {
         console.log('Please sign in');
     }
