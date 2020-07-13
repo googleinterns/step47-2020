@@ -29,6 +29,7 @@ let currentUser;
 
 // Initialize the Firebase Application
 firebase.initializeApp(firebaseConfig);
+const database = firebase.database();
 
 document.addEventListener('DOMContentLoaded', function() {
     const elements = document.querySelectorAll('.modal');
@@ -53,20 +54,6 @@ function checkUserSignIn() {
         document.getElementById('profile-button').style.display = 'none';
         document.getElementById('sign-out-button').style.display = 'none';
         document.getElementById('sign-in-button').style.display = 'block';
-    }
-}
-
-// This function is for demos purposes
-function updateListOfUsers(listOfUsers) {
-    const listElement = document.getElementById('users-list');
-    if (listElement === null) {
-        return;
-    }
-    listElement.innerHTML = '';
-    for (const user in listOfUsers) {
-        const newElement = document.createElement('li');
-        newElement.innerText = listOfUsers[user].name;
-        listElement.appendChild(newElement);
     }
 }
 
