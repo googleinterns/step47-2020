@@ -4,3 +4,13 @@
     margin-right: auto;
     margin-top: 2%;
 }
+
+.tabs .tab .tab-link:hover {
+    cursor: pointer;
+    opacity: 1;
+}
+
+.tabs .tab .tab-link {
+    opacity: 0.8;
+    color: white;
+}
