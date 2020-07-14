@@ -114,16 +114,13 @@ async function submitPlace(ref) {
 }
 
 function validatePlaceDuration(duration) {
-    let isValid = true;
     if (!duration) {
         alert('Please make sure to fill out the duration (0~9 hours inclusive)');
-        isValid = false;
-        return isValid;
+        return false;
     }
     if (duration < 0 || duration > 9) {
         alert('Please make sure duration is between 0 to 9 hours (inclusive)');
-        isValid = false;
-        return isValid;
+        return false;
     }
-    return isValid;
+    return true;
 }
