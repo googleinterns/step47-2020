@@ -302,7 +302,6 @@ function listResults() {
             a.title = 'Website'; 
             div3.appendChild(a);
         }
-
         div2.appendChild(div3);
         div1.appendChild(div2); 
         element.appendChild(div1);
