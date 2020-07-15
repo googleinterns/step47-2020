@@ -95,7 +95,7 @@ async function submitPlace(ref) {
     const eventListSnapshot = await eventListRef.once('value');
     const order = eventListSnapshot.numChildren() + 1;
 
-    //Create a new event based on the place
+    // Create a new event based on the place
     const placeRef = database.ref('places/' + ref); 
     const placeSnapshot = await placeRef.once('value');
     const placeDetails = placeSnapshot.val();
@@ -109,6 +109,17 @@ async function submitPlace(ref) {
         closingTime: placeDetails.closingTime,
         order: order,
     });
+
+    // Update the place's visitors
+    // This will add the user id to the visitors list, along with the most recent timestamp 
+    // In the future, the timestamp should be modified to when the users indicate they will visit 
+    // the place, rather than when they add the place as an event
+    const date = new Date();
+    const timestamp = date.getTime();
+    placeRef.child('visitors').update({
+        [userId]: timestamp
+    });
+
     closeAddPlaceForm();
     renderPlaces();
 }
