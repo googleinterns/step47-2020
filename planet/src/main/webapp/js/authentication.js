@@ -29,7 +29,6 @@ let currentUser;
 
 // Initialize the Firebase Application
 firebase.initializeApp(firebaseConfig);
-//const database = firebase.database();
 
 document.addEventListener('DOMContentLoaded', function() {
     const elements = document.querySelectorAll('.modal');
