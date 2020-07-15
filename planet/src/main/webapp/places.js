@@ -352,7 +352,8 @@ function savePlace(x) {
     else {
         // Set as unsaved
         x.innerHTML = "favorite_border";
-        // will add code to delete place from database here
+        // Delete place from database
+        deletePlace('test');
     }
 }
 
@@ -364,4 +365,9 @@ function updateDatabase(placeID, name, address, open, close) {
         openingTime: open,
         closingTime: close
     });
+}
+
+/** Delete place from database when unsaved by user */
+function deletePlace(placeID) {
+    database.ref('places/' + placeID).remove(); 
 }
