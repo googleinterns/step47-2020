@@ -9,13 +9,13 @@ html, body {
 }
 
 header {
-    padding:0; 
+    padding: 0; 
 }
 
 #greeting {
     margin: 0.86vh;
     font-size: 2.6vh;
-    padding:0.86vh;
+    padding: 0.86vh;
 }
 
 #description {
@@ -71,4 +71,12 @@ header {
 .btn-floating {
     margin: 0.86vh; 
     transition: background-color 0.3s;
+}
+
+.card-content {
+    text-align: center;
+}
+
+#place-name {
+    font-weight: bold;
 }
