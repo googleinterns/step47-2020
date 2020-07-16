@@ -80,13 +80,34 @@ function resetForm(elementsClass) {
     }
 }
 
-function signUp() {
+async function generateUsername(displayName) {
+    const names = displayName.split(' ');
+    const existingUsernames = [];
+    let username = names[0].toLowerCase() + '.' + names[1].toLowerCase();
+    // Get all the existing username that start with "username"
+    const usersRef = database.ref('users').orderByChild('username')
+        .startAt(username).endAt(username + 'uf8ff');
+    const usersSnapshot = await usersRef.once('value'); 
+    // Save the usernames in the array
+    for (const object in usersSnapshot.val()) {
+        existingUsernames.push(usersSnapshot.val()[object]['username']);
+    }
+    // Generate a username that doesn't exist in the array
+    while(existingUsernames.includes(username)) {
+        let counter = parseInt((Math.random() * 9).toFixed());
+        username += counter;
+    }
+    return username;
+}
+
+async function signUp() {
     const password = document.getElementById('password').value;
     const passwordConfirmation = document.getElementById('repeat-password').value;
     const email = document.getElementById('email').value;
     const displayName = document.getElementById('first_name').value 
     + ' ' + document.getElementById('last_name').value;
     const phoneNumber = document.getElementById('phone').value;
+    const username = await generateUsername(displayName);
     resetForm('input-sign-up');
     if (password !== passwordConfirmation) {
         alert('Passwords do not match')
@@ -100,6 +121,7 @@ function signUp() {
             name: displayName,
             email: email,
             phoneNumber: phoneNumber,
+            username: username,
         });
         user.updateProfile({
             displayName: displayName,
