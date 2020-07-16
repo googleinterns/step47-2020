@@ -29,7 +29,6 @@ let currentUser;
 
 // Initialize the Firebase Application
 firebase.initializeApp(firebaseConfig);
-const database = firebase.database();
 
 document.addEventListener('DOMContentLoaded', function() {
     const elements = document.querySelectorAll('.modal');
@@ -87,6 +86,15 @@ async function generateUsername(displayName) {
     return username;
 }
 
+function addUserToDatabase(uid, name, phoneNumber, email, username) {
+    database.ref('users/' + uid).set({
+        name: name,
+        email: email,
+        phoneNumber: phoneNumber,
+        username: username,
+    });
+}
+
 async function signUp() {
     const password = document.getElementById('password').value;
     const passwordConfirmation = document.getElementById('repeat-password').value;
@@ -102,14 +110,8 @@ async function signUp() {
     }
     firebase.auth().createUserWithEmailAndPassword(email, password)
     .then(function() {
-        // An example of how to add the user's data into the database (demos puposes)
         const user = firebase.auth().currentUser;
-        database.ref('users/' + user.uid).set({
-            name: displayName,
-            email: email,
-            phoneNumber: phoneNumber,
-            username: username,
-        });
+        addUserToDatabase(user.uid, displayName, email, phoneNumber, username);
         user.updateProfile({
             displayName: displayName,
         }).then(function() {
@@ -187,12 +189,11 @@ function signInWithProvider(provider) {
         const refrence = database.ref('users' + currentUser.uid);
         refrence.once('value').then(function(snapshot) {
             if (!snapshot.exists()) {
-                database.ref('users/' + currentUser.uid).set({
-                    name: currentUser.displayName,
-                    email: currentUser.email,
-                    phoneNumber: currentUser.phoneNumber,
-                    username: username,
-                });
+                addUserToDatabase(currentUser.uid,
+                    currentUser.displayName,
+                    currentUser.phoneNumber,
+                    currentUser.email,
+                    username);
             }
         })
     }).catch(function(error) {
