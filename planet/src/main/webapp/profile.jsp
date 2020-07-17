@@ -30,11 +30,12 @@
                 <img class="circle responsive-img" src="/images/profile-pic.png" style="height: 25vh"/>
             </div>
             <div class="col s8" style="position: absolute; bottom: 0; left: 30%;">
-                <h2 style="margin: 0"><%= request.getAttribute("username") %></h2>
-                <div class="row valign-wrapper">
-                    <i class="tiny material-icons col" style="padding-right: 0;">place</i>
-                    <p class="col" style="padding-left: 0;">Waterloo, Canada</p>
+                <h2 id="display-name" style="margin: 0"></h2>
+                <div id="location" class="valign-wrapper">
+                    <i class="tiny material-icons col" style="padding: 0;">place</i>
+                    <p id="city" class="col" style="padding-left: 0; margin: 0"></p>
                 </div>
+                <div id="bio"></div>
             </div>
         </div>
         <div>
