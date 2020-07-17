@@ -235,6 +235,15 @@ function deleteEvent(listName, ref) {
         });
     });
 
+    // Check if this is an event created from a place, and if so, 
+    // remove the user id from the visitors list 
+    const placeRef = database.ref('places/' + ref);
+    placeRef.once('value', (placeSnapshot) => {
+        if (placeSnapshot.val()) {
+            placeRef.child('visitors').child(userId).remove();
+        }
+    });
+
     // Render places again since the icons might need to change
     renderPlaces();
 }
