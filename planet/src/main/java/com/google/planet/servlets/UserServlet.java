@@ -1,5 +1,6 @@
 package com.google.planet.servlets;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 
 import javax.servlet.RequestDispatcher;
@@ -9,27 +10,55 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/user")
+import com.google.auth.oauth2.GoogleCredentials;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.FirebaseOptions;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+@WebServlet("/user/*")
 public class UserServlet extends HttpServlet {
-    static public String userName;
-    static public String userEmail;
-    static public String userPhone;
 
-    @Override
-    public void doPost(HttpServletRequest request, HttpServletResponse response)
-      throws IOException {
-        UserServlet.userName = request.getParameter("name");
-        UserServlet.userEmail = request.getParameter("email");
-        UserServlet.userPhone = request.getParameter("phone");
-        response.sendRedirect("/user");
-    }
-
-    @Override
-    public void doGet(HttpServletRequest request, HttpServletResponse response)
+  @Override
+  public void doGet(HttpServletRequest request, HttpServletResponse response)
       throws IOException, ServletException {
-        response.setContentType("text/html");
-        // This part is for demos purposes. We will be using RequestDispatcher to forward the request to another JSP file
-        RequestDispatcher reauestDispatcher = request.getRequestDispatcher("profile.jsp");
-        reauestDispatcher.include(request, response);
+    final String username = request.getPathInfo().substring(1);
+    UserServlet.initializeFirebase();
+    final FirebaseDatabase database = FirebaseDatabase.getInstance();
+    final DatabaseReference reference = database.getReference("/users");
+    reference.orderByChild("username").equalTo(username).addListenerForSingleValueEvent(
+    new ValueEventListener() {
+      @Override
+      public void onDataChange(DataSnapshot dataSnapshot) {
+        if (!dataSnapshot.exists()) {
+          System.out.println("Profile Not Found");
+          return;
+        }
+      }
+      
+      @Override
+      public void onCancelled(DatabaseError databaseError) {
+        // This method has to be overrided that's why I'm adding it
+      }     
+    });
+    request.setAttribute("username", username);
+    final RequestDispatcher requestDispatcher = request.getRequestDispatcher("/profile.jsp");
+    requestDispatcher.forward(request, response);
+  }
+
+  public static void initializeFirebase() throws IOException {
+    try {
+      FirebaseApp.getInstance();
+    } catch (IllegalStateException exception) {
+      final FileInputStream refreshToken = new FileInputStream("service-key/ndabouz-step-2020-2-b7a5e859eaaf.json");
+      final FirebaseOptions options = new FirebaseOptions.Builder()
+          .setCredentials(GoogleCredentials.fromStream(refreshToken))
+          .setDatabaseUrl("https://ndabouz-step-2020-2.firebaseio.com/")
+          .build();
+      FirebaseApp.initializeApp(options);
     }
+  }
 }
