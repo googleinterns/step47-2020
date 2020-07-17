@@ -40,11 +40,12 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedReader;
 
 import com.google.maps.GeoApiContext;
-import com.google.maps.GeocodingApi;
+import com.google.maps.DistanceMatrixApi;
 import com.google.maps.GaeRequestHandler;
 import com.google.gson.GsonBuilder;
 import com.google.maps.model.GeocodingResult;
-import com.google.maps.model.LatLng;
+import com.google.maps.model.DistanceMatrix;
+import com.google.maps.model.DistanceMatrixRow;
 
 
 @WebServlet("/generate-itinerary")
@@ -54,7 +55,7 @@ public class ItineraryServlet extends HttpServlet {
         BufferedReader br = request.getReader();
         String eventsJson = "";
         // Test direction
-        //getDistanceMatrix();
+        getEventsDistanceMatrix();
 
         if (br != null) {
             eventsJson = br.readLine();
@@ -75,29 +76,26 @@ public class ItineraryServlet extends HttpServlet {
         }
   }
 
-    // private boolean getDistanceMatrix() {
-    //     String ERROR_MESSAGE = "Couldn't find specified custom location, falling back to co-ordinates";
-    //     String locationName = "Toronto";
-    //     String GoogleApiKey = "AIzaSyDK36gDoYgOj4AlbCqh1IuaUuTlcpKF0ns";
-    //     if (locationName == null || locationName.equals("")) {
-    //         System.out.println(ERROR_MESSAGE);
-    //         return false;
-    //     }
+    private boolean getEventsDistanceMatrix() {
+        String ERROR_MESSAGE = "Couldn't find specified custom location, falling back to co-ordinates";
+        String GoogleApiKey = "AIzaSyDK36gDoYgOj4AlbCqh1IuaUuTlcpKF0ns";
+        String[] origins = new String[] {"Boston"};
+        String[] destinations = new String[] {"China"};
 
-    //     GeoApiContext context = new GeoApiContext.Builder(new GaeRequestHandler.Builder())
-    //                         .apiKey(GoogleApiKey)
-    //                         .build();
-    //    try {
-    //         GeocodingResult[] request = GeocodingApi.newRequest(context).address(locationName).await();
-    //         LatLng location = request[0].geometry.location;
-    //         double latitude = location.lat;
-    //         double longitude = location.lng;
-    //         System.out.println("Found custom location to be: " + request[0].formattedAddress);
-    //         return true;
-    //     } catch (Exception e) {
-    //         System.out.println(ERROR_MESSAGE);
-    //         return false;
-    //     }
-    // }
+        GeoApiContext context = new GeoApiContext.Builder(new GaeRequestHandler.Builder())
+                            .apiKey(GoogleApiKey)
+                            .build();
+       try {
+            DistanceMatrix result = DistanceMatrixApi.getDistanceMatrix(context,
+                                                         origins,
+                                                         destinations).await();
+            DistanceMatrixRow[] rows = result.rows;
+            System.out.println(rows.toString());
+            return true;
+        } catch (Exception e) {
+            System.out.println(ERROR_MESSAGE);
+            return false;
+        }
+    }
 }
 
