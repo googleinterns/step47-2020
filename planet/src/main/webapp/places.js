@@ -172,13 +172,6 @@ function addPlaceDetails() {
 
 /** Callback function to handle place details response */
 function callback(place, status) {
-
-    // List results when all callbacks are finished
-    count ++ 
-    if (count === places.length) {
-        listResults();
-    }
-    
     if (status == google.maps.places.PlacesServiceStatus.OK) {
         // Add place details to dictionary
         let placeDetails = {Name: '', Rating: '', Address: '', Photo: '',Phone: '',Hours: '',
@@ -212,6 +205,12 @@ function callback(place, status) {
             placeDetails['Website'] = place.url;
         }
         placeInfo.push(placeDetails);
+    }    
+    
+    // List results when all callbacks are finished
+    count ++ 
+    if (count === places.length) {
+        listResults();
     }
 }
 
