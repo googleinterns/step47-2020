@@ -1,29 +1,36 @@
 <!DOCTYPE html>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="com.google.planet.servlets.UserServlet" %>
+<% String username = (String) request.getAttribute("username"); %>
 <html>
 
 <head>
-    <script src="js/profile.js"></script>
+    <!-- Include the firebase and local JS files -->  
+    <script src="https://www.gstatic.com/firebasejs/4.1.3/firebase.js"></script> 
+    <script src="/js/authentication.js"></script>
+    <script src="/js/profile.js"></script>
     <link href='//fonts.googleapis.com/css?family=Marmelad' rel='stylesheet' type='text/css'>
     <!-- Compiled and minified CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
     <!--Import Google Icon Font-->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link rel="stylesheet" href="css/profile.css">
+    <link rel="stylesheet" href="/css/profile.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta charset="UTF-8">
-    <title><%= UserServlet.userName %></title>
+    <title>Profile</title>
 </head>
 
-<body>
-    <div class="profile-container">
+<body onload="loadUserInformation('<%= username %>')">
+    <div id="not-found-message" style="display: none; font-size: 30px; font-family: initial;">
+        Profile Not Found
+    </div>
+    <div id="profile-page" style="display: none;" class="profile-container">
         <div class="row card" style="height: 25vh; background-color: #bbdefb;">
             <div class="col s4">
-                <img class="circle responsive-img" src="images/profile-pic.png" style="height: 25vh"/>
+                <img class="circle responsive-img" src="/images/profile-pic.png" style="height: 25vh"/>
             </div>
             <div class="col s8" style="position: absolute; bottom: 0; left: 30%;">
-                <h2 style="margin: 0"><%= UserServlet.userName %></h2>
+                <h2 style="margin: 0"><%= request.getAttribute("username") %></h2>
                 <div class="row valign-wrapper">
                     <i class="tiny material-icons col" style="padding-right: 0;">place</i>
                     <p class="col" style="padding-left: 0;">Waterloo, Canada</p>
