@@ -229,6 +229,9 @@ function openModal(modalElement) {
 
 function loadElement(href, elementId) {
     const element = document.getElementById(elementId);
+    if (element === null) {
+        return;
+    }
     const xmlhttp = new XMLHttpRequest();
     xmlhttp.open("GET", href, false);
     xmlhttp.send();
