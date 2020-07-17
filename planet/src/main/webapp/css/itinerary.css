@@ -47,6 +47,14 @@ h1,h2,h3,h4,h5,h6{
     z-index: 999;
 }
 
+#add-place-to-event-form {
+    position: absolute;
+    display: none;
+    background: white;
+    border: solid 1px;
+    z-index: 999;
+}
+
 #close-form {
     position:absolute;
     right: 2rem;
