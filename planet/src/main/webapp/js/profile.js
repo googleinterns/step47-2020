@@ -56,3 +56,13 @@ function switchSection(linkId, sectionId) {
     activateLink(linkId);
     diplaySection(sectionId);
 }
+
+async function loadUserInformation(username) {
+    const usersReference = database.ref('/users');
+    const userSnapshot = await usersReference.orderByChild('username').equalTo(username).once('value');
+    if (userSnapshot.val() === null) {
+        document.getElementById('not-found-message').style.display = 'block';
+        return;
+    }
+    document.getElementById('profile-page').style.display = 'block';
+}
