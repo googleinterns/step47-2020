@@ -14,3 +14,14 @@
     opacity: 0.8;
     color: white;
 }
+
+a {
+    color: blue;
+    font-size: medium;
+    opacity: 0.8;
+}
+
+a:hover {
+    cursor: pointer;
+    opacity: 1;
+}
