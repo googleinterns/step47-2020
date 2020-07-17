@@ -65,4 +65,51 @@ async function loadUserInformation(username) {
         return;
     }
     document.getElementById('profile-page').style.display = 'block';
+    let user;
+    let userId;
+    for (const object in userSnapshot.val()) {
+        userId = object;
+        user = userSnapshot.val()[object];
+    }
+    updateProfileHeader(
+        userId,
+        user['name'],
+        user['location'],
+        user['bio']
+    );
+}
+
+function updateProfileHeader(userId, displayName, location, bio) {
+    document.getElementById('display-name').innerText = displayName;
+    renderLocation(location, userId);
+    renderBio(location, userId);
+}
+
+function renderLocation(location, userId) {
+    if (location !== undefined) {
+        document.getElementById('city').innerText = location;
+        return;
+    } 
+    if (userId !== currentUser.uid) {
+        document.getElementById('city').innerText = 'Uknown, World';
+        return;
+    }
+    const addLocationLink = document.createElement('a');
+    addLocationLink.innerText = 'Add Location';
+    document.getElementById('location').innerHTML = '';
+    document.getElementById('location').appendChild(addLocationLink);
+}
+
+function renderBio(bio, userId) {
+    if (bio !== undefined) {
+        document.getElementById('bio').innerText = bio;
+        return;
+    } 
+    if (userId !== currentUser.uid) {
+        document.getElementById('bio').innerText = 'No Bio';
+        return;
+    }
+    const addBioLink = document.createElement('a');
+    addBioLink.innerText = 'Add Bio';
+    document.getElementById('bio').appendChild(addBioLink);
 }
