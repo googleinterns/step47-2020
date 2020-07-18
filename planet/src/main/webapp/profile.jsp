@@ -21,10 +21,10 @@
 </head>
 
 <body onload="loadUserInformation('<%= username %>')">
-    <div id="not-found-message" style="display: none; font-size: 30px; font-family: initial;">
+    <div id="not-found-message" style="font-size: 30px; font-family: initial;">
         Profile Not Found
     </div>
-    <div id="profile-page" style="display: none;" class="profile-container">
+    <div id="profile-page" class="profile-container">
         <div class="row card" style="background-color: #bbdefb;">
             <div class="col s3 valign-wrapper">
                 <img class="center-align circle responsive-img" src="/images/profile-pic.png"/>

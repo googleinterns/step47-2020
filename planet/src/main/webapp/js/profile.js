@@ -61,10 +61,10 @@ async function loadUserInformation(username) {
     const usersReference = database.ref('/users');
     const userSnapshot = await usersReference.orderByChild('username').equalTo(username).once('value');
     if (userSnapshot.val() === null) {
-        document.getElementById('not-found-message').style.display = 'block';
+        document.getElementById('profile-page').remove();
         return;
     }
-    document.getElementById('profile-page').style.display = 'block';
+    document.getElementById('not-found-message').remove();
     let user;
     let userId;
     for (const object in userSnapshot.val()) {
