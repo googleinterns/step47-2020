@@ -25,16 +25,13 @@
         Profile Not Found
     </div>
     <div id="profile-page" style="display: none;" class="profile-container">
-        <div class="row card" style="height: 25vh; background-color: #bbdefb;">
-            <div class="col s4">
-                <img class="circle responsive-img" src="/images/profile-pic.png" style="height: 25vh"/>
+        <div class="row card" style="background-color: #bbdefb;">
+            <div class="col s3 valign-wrapper">
+                <img class="center-align circle responsive-img" src="/images/profile-pic.png"/>
             </div>
-            <div class="col s8" style="position: absolute; bottom: 0; left: 30%;">
-                <h2 id="display-name" style="margin: 0"></h2>
-                <div id="location" class="valign-wrapper">
-                    <i class="tiny material-icons col" style="padding: 0;">place</i>
-                    <p id="city" class="col" style="padding-left: 0; margin: 0"></p>
-                </div>
+            <div class="col s8" style="position: absolute; bottom: 0; left: 25%;">
+                <h2 id="display-name" style="margin: 0; font-size: 3vw;"></h2>
+                <div id="location" class="valign-wrapper"></div>
                 <div id="bio"></div>
             </div>
         </div>
