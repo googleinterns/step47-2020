@@ -82,20 +82,26 @@ async function loadUserInformation(username) {
 function updateProfileHeader(userId, displayName, location, bio) {
     document.getElementById('display-name').innerText = displayName;
     renderLocation(location, userId);
-    renderBio(location, userId);
+    renderBio(bio, userId);
 }
 
 function renderLocation(location, userId) {
     if (location !== undefined) {
-        document.getElementById('city').innerText = location;
+        document.getElementById('location').innerHTML =
+            '<i class="tiny material-icons col" style="padding: 0;">place</i>\
+            <p class="col" style="padding-left: 0; margin: 0">' + location + '</p>';
         return;
     } 
     if (userId !== currentUser.uid) {
-        document.getElementById('city').innerText = 'Uknown, World';
+        document.getElementById('location').innerHTML =
+            '<i class="tiny material-icons col" style="padding: 0;">place</i>\
+            <p class="col" style="padding-left: 0; margin: 0">Somewhere, World</p>';
         return;
     }
     const addLocationLink = document.createElement('a');
     addLocationLink.innerText = 'Add Location';
+    // This is an example, later the user will be selecting the city
+    addLocationLink.addEventListener('click', addLocationToDatabse);
     document.getElementById('location').innerHTML = '';
     document.getElementById('location').appendChild(addLocationLink);
 }
@@ -110,6 +116,26 @@ function renderBio(bio, userId) {
         return;
     }
     const addBioLink = document.createElement('a');
+    // This is an example, later the user will be writing the bio
+    addBioLink.addEventListener('click', addBioToDatabse);
     addBioLink.innerText = 'Add Bio';
     document.getElementById('bio').appendChild(addBioLink);
+}
+
+function addLocationToDatabse() {
+    const userReference = database.ref('users/' + currentUser.uid);
+    userReference.update({
+        location: 'Waterloo, Canada'
+    }).then(() => {
+        renderLocation('Waterloo, Canada', currentUser.uid);
+    });
+}
+
+function addBioToDatabse() {
+    const userReference = database.ref('users/' + currentUser.uid);
+    userReference.update({
+        bio: 'This is my bio'
+    }).then(() => {
+        renderBio('This is my bio', currentUser.uid);
+    });
 }
