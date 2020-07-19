@@ -82,28 +82,35 @@ async function loadUserInformation(username) {
 }
 
 function updateProfileHeader(userId, displayName, location, bio) {
-    document.getElementById('display-name').innerText = displayName;
+    renderName(displayName, userId);
     renderLocation(location, userId);
     renderBio(bio, userId);
 }
 
+function renderName(displayName, userId) {
+    document.getElementById('display-name').innerText = displayName;
+    if (userId === currentUser.uid) {
+        addEditIcon('name-container', 'edit-name');
+    }
+}
+
 function renderLocation(location, userId) {
     if (location !== undefined) {
-        document.getElementById('location').innerHTML =
-            '<i class="tiny material-icons col" style="padding: 0;">place</i>\
-            <p class="col" style="padding-left: 0; margin: 0">' + location + '</p>';
+        addLocation(location);
+        if (userId === currentUser.uid) {
+            addEditIcon('location-container', 'edit-location');
+        }
         return;
     } 
     if (userId !== currentUser.uid) {
-        document.getElementById('location').innerHTML =
-            '<i class="tiny material-icons col" style="padding: 0;">place</i>\
-            <p class="col" style="padding-left: 0; margin: 0">Somewhere, World</p>';
+        addLocation('Somewhere, World');
+        removeEditIcon ('edit-location');
         return;
     }
     const addLocationLink = document.createElement('a');
     addLocationLink.innerText = 'Add Location';
-    // This is an example, later the user will be selecting the city
     addLocationLink.addEventListener('click', addLocationToDatabse);
+    removeEditIcon('edit-location');
     document.getElementById('location').innerHTML = '';
     document.getElementById('location').appendChild(addLocationLink);
 }
@@ -111,15 +118,19 @@ function renderLocation(location, userId) {
 function renderBio(bio, userId) {
     if (bio !== undefined) {
         document.getElementById('bio').innerText = bio;
+        if (userId === currentUser.uid) {
+            addEditIcon('bio-container', 'edit-bio');
+        }
         return;
     } 
     if (userId !== currentUser.uid) {
         document.getElementById('bio').innerText = 'No Bio';
+        removeEditIcon ('edit-bio');
         return;
     }
     const addBioLink = document.createElement('a');
-    // This is an example, later the user will be writing the bio
     addBioLink.addEventListener('click', addBioToDatabse);
+    removeEditIcon ('edit-bio');
     addBioLink.innerText = 'Add Bio';
     document.getElementById('bio').appendChild(addBioLink);
 }
@@ -140,4 +151,45 @@ function addBioToDatabse() {
     }).then(() => {
         renderBio('This is my bio', currentUser.uid);
     });
+}
+
+function addLocation(location) {
+    const locationElement = document.getElementById('location');
+    const placeIcon = document.createElement('i');
+    placeIcon.classList.add('tiny', 'material-icons', 'col');
+    placeIcon.style.padding = '0';
+    placeIcon.innerHTML = 'place'; 
+    const text = document.createElement('p');
+    text.style.paddingLeft = '0';
+    text.style.margin = '0';
+    text.classList.add('col');
+    text.innerText = location;
+    locationElement.innerHTML = '';
+    locationElement.appendChild(placeIcon);
+    locationElement.appendChild(text);
+}
+
+function addEditIcon(elementId, iconId) {
+    const element = document.getElementById(elementId);
+    if (element === null) {
+        return;
+    }
+    const editIcon = document.createElement('i');
+    editIcon.classList.add('tiny', 'material-icons', 'col');
+    editIcon.style.padding = '0';
+    editIcon.title = 'Edit';
+    editIcon.classList.add('edit-icon');
+    editIcon.innerHTML = 'edit';
+    const iconContainer = document.createElement('span');
+    iconContainer.classList.add('col', 's1');
+    iconContainer.id = iconId;
+    iconContainer.appendChild(editIcon);
+    element.appendChild(iconContainer);
+}
+
+function removeEditIcon(iconId) {
+    const icon = document.getElementById(iconId);
+    if (icon !== null) {
+        icon.remove();
+    }
 }
