@@ -243,12 +243,6 @@ function openProfile() {
         return;
     }
     database.ref('users/' + currentUser.uid).once('value').then(function(snapshot) {
-        const params = new URLSearchParams();
-        params.append('email', snapshot.val().email);
-        params.append('name', snapshot.val().name);
-        params.append('phone', snapshot.val().phoneNumber);
-        fetch('user', {method: 'POST', body: params}).then(() => {
-            window.location.href = '/user';
-        });
+        window.location.href = '/user/' + snapshot.val().username;
     });
 }
