@@ -29,10 +29,16 @@
             <div class="col s3 valign-wrapper">
                 <img class="center-align circle responsive-img" src="/images/profile-pic.png"/>
             </div>
-            <div class="col s8" style="position: absolute; bottom: 0; left: 25%;">
-                <h2 id="display-name" style="margin: 0; font-size: 3vw;"></h2>
-                <div id="location" class="valign-wrapper"></div>
-                <div id="bio"></div>
+            <div class="col s9" style="position: absolute; bottom: 0; left: 25%;">
+                <div id="name-container" class="row valign-wrapper" style="margin: 0">
+                    <h2 id="display-name" class="col s11" style="margin: 0; font-size: 3vw;"></h2>
+                </div>
+                <div id="location-container" class="row valign-wrapper" style="margin: 0">
+                    <div id="location" class="col s11 valign-wrapper" style="margin: 0"></div>
+                </div>
+                <div id="bio-container" class="row valign-wrapper" style="margin: 0">
+                    <div id="bio" class="col s11" style="margin: 0"></div>
+                </div>
             </div>
         </div>
         <div>
