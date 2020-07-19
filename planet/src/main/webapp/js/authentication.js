@@ -24,8 +24,8 @@ const firebaseConfig = {
     appId: '1:966794754966:web:e2f42bafdd3c5ec2c77bb7',
     measurementId: 'G-9W48MVBXLE'
 };
-let database;
 let currentUser;
+let database;
 
 // Initialize the Firebase Application
 firebase.initializeApp(firebaseConfig);
@@ -56,20 +56,6 @@ function checkUserSignIn() {
     }
 }
 
-// This function is for demos purposes
-function updateListOfUsers(listOfUsers) {
-    const listElement = document.getElementById('users-list');
-    if (listElement === null) {
-        return;
-    }
-    listElement.innerHTML = '';
-    for (const user in listOfUsers) {
-        const newElement = document.createElement('li');
-        newElement.innerText = listOfUsers[user].name;
-        listElement.appendChild(newElement);
-    }
-}
-
 function resetForm(elementsClass) {
     const myFormInputs = document.getElementsByClassName(elementsClass);
     if (myFormInputs === null) {
@@ -80,13 +66,43 @@ function resetForm(elementsClass) {
     }
 }
 
-function signUp() {
+async function generateUsername(displayName) {
+    const names = displayName.split(' ');
+    const existingUsernames = [];
+    let username = names[0].toLowerCase() + '.' + names[1].toLowerCase();
+    // Get all the existing username that start with "username"
+    const usersRef = database.ref('users').orderByChild('username')
+        .startAt(username).endAt(username + 'uf8ff');
+    const usersSnapshot = await usersRef.once('value'); 
+    // Save the usernames in the array
+    for (const object in usersSnapshot.val()) {
+        existingUsernames.push(usersSnapshot.val()[object]['username']);
+    }
+    // Generate a username that doesn't exist in the array
+    while(existingUsernames.includes(username)) {
+        let counter = parseInt((Math.random() * 9).toFixed());
+        username += counter;
+    }
+    return username;
+}
+
+function addUserToDatabase(uid, name, phoneNumber, email, username) {
+    database.ref('users/' + uid).set({
+        name: name,
+        email: email,
+        phoneNumber: phoneNumber,
+        username: username,
+    });
+}
+
+async function signUp() {
     const password = document.getElementById('password').value;
     const passwordConfirmation = document.getElementById('repeat-password').value;
     const email = document.getElementById('email').value;
     const displayName = document.getElementById('first_name').value 
     + ' ' + document.getElementById('last_name').value;
     const phoneNumber = document.getElementById('phone').value;
+    const username = await generateUsername(displayName);
     resetForm('input-sign-up');
     if (password !== passwordConfirmation) {
         alert('Passwords do not match')
@@ -94,13 +110,8 @@ function signUp() {
     }
     firebase.auth().createUserWithEmailAndPassword(email, password)
     .then(function() {
-        // An example of how to add the user's data into the database (demos puposes)
         const user = firebase.auth().currentUser;
-        database.ref('users/' + user.uid).set({
-            name: displayName,
-            email: email,
-            phoneNumber: phoneNumber,
-        });
+        addUserToDatabase(user.uid, displayName, email, phoneNumber, username);
         user.updateProfile({
             displayName: displayName,
         }).then(function() {
@@ -170,18 +181,19 @@ function signInWithGithub() {
 }
 
 function signInWithProvider(provider) {
-    firebase.auth().signInWithPopup(provider).then(function(result) {
+    firebase.auth().signInWithPopup(provider).then(async function() {
         // The signed-in user info.
         closeModal('sign-in-modal');
         checkUserSignIn();
+        const username = await generateUsername(currentUser.displayName);
         const refrence = database.ref('users' + currentUser.uid);
         refrence.once('value').then(function(snapshot) {
             if (!snapshot.exists()) {
-                database.ref('users/' + currentUser.uid).set({
-                    name: currentUser.displayName,
-                    email: currentUser.email,
-                    phoneNumber: currentUser.phoneNumber,
-                });
+                addUserToDatabase(currentUser.uid,
+                    currentUser.displayName,
+                    currentUser.phoneNumber,
+                    currentUser.email,
+                    username);
             }
         })
     }).catch(function(error) {

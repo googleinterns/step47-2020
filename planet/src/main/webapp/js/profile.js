@@ -62,9 +62,11 @@ async function loadUserInformation(username) {
     const userSnapshot = await usersReference.orderByChild('username').equalTo(username).once('value');
     if (userSnapshot.val() === null) {
         document.getElementById('profile-page').remove();
+        document.getElementById('not-found-message').style.display = 'block';
         return;
     }
     document.getElementById('not-found-message').remove();
+    document.getElementById('profile-page').style.display = 'block';
     let user;
     let userId;
     for (const object in userSnapshot.val()) {
