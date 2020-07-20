@@ -85,7 +85,7 @@ function updateProfileHeader(userId, displayName, location, bio) {
     renderName(displayName);
     renderLocation(location, userId);
     renderBio(bio, userId);
-    if(userId === currentUser.uid) {
+    if (userId === currentUser.uid) {
         addEditButton();
     }
 }
@@ -111,6 +111,7 @@ function renderLocation(location, userId) {
 }
 
 function renderBio(bio, userId) {
+    document.getElementById('bio').innerHTML = '';
     if (bio !== undefined) {
         document.getElementById('bio').innerText = bio;
         return;
@@ -120,7 +121,7 @@ function renderBio(bio, userId) {
         return;
     }
     const addBioLink = document.createElement('a');
-    addBioLink.addEventListener('click', addBioToDatabse);
+    addBioLink.addEventListener('click', addNewBio);
     addBioLink.innerText = 'Add Bio';
     document.getElementById('bio').appendChild(addBioLink);
 }
@@ -134,12 +135,55 @@ function addLocationToDatabse() {
     });
 }
 
-function addBioToDatabse() {
+function addNewBio() {
+    // Create the text area
+    const textArea = document.createElement('textarea');
+    textArea.placeholder = 'Describe yourself ...';
+    textArea.style.borderRadius = '5px';
+    textArea.style.fontFamily = 'cursive';
+    textArea.style.backgroundColor = 'white';
+    textArea.id = 'bio-textarea';
+    // Create the save button
+    const saveButton = document.createElement('button');
+    saveButton.classList.add('col', 'header-buttons');
+    saveButton.innerText = 'Save';
+    saveButton.addEventListener('click', saveBio);
+    // Create the cancel button
+    const cancelButton = document.createElement('button');
+    cancelButton.classList.add('header-buttons', 'col');
+    cancelButton.innerText = 'Cancel';
+    cancelButton.addEventListener('click', cancelBioEditing);
+    // Create a button container
+    const buttonsContainer = document.createElement('div');
+    buttonsContainer.classList.add('row');
+    buttonsContainer.style.margin = '0';
+    buttonsContainer.appendChild(saveButton);
+    buttonsContainer.appendChild(cancelButton);
+    // Render the text area and the buttons
+    document.getElementById('bio').innerHTML = '';
+    document.getElementById('bio').appendChild(textArea);
+    document.getElementById('bio').appendChild(buttonsContainer);
+}
+
+function saveBio() {
+    const textArea = document.getElementById('bio-textarea');
+    if (textArea !== null && textArea.value !== '') {
+        addBioToDatabse(textArea.value);
+        return;
+    }
+    cancelBioEditing();
+}
+
+function cancelBioEditing() {
+    renderBio(undefined, currentUser.uid);
+}
+
+function addBioToDatabse(bio) {
     const userReference = database.ref('users/' + currentUser.uid);
     userReference.update({
-        bio: 'This is my bio'
+        bio: bio
     }).then(() => {
-        renderBio('This is my bio', currentUser.uid);
+        renderBio(bio, currentUser.uid);
     });
 }
 
@@ -171,6 +215,7 @@ function addEditButton() {
 
     const button = document.createElement('button');
     button.id = 'edit-button';
+    button.classList.add('header-buttons');
     button.appendChild(editIcon);
     
     const buttonText = document.createElement('span');
