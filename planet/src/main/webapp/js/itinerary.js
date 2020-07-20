@@ -98,6 +98,7 @@ function handleListOptionChange() {
         document.getElementById('save-events-button').style.display = 'inline-block';
     }
     renderEvents(listName);
+    renderPlaces();
 }
 
 // Add an event to the firebase realtime database
@@ -167,8 +168,8 @@ function validateCustomEventInput(name, address, duration) {
 firebase.auth().onAuthStateChanged(function(user) {
     if (user) {
         renderListOptions();
+        renderEvents(sessionStorage.getItem('listName'));
         renderPlaces();
-        renderEvents(document.getElementById('list-options').value);
     } else {
         console.log('Please sign in');
     }
@@ -233,6 +234,18 @@ function deleteEvent(listName, ref) {
             count += 1;
         });
     });
+
+    // Check if this is an event created from a place, and if so, 
+    // remove the user id from the visitors list 
+    const placeRef = database.ref('places/' + ref);
+    placeRef.once('value', (placeSnapshot) => {
+        if (placeSnapshot.val()) {
+            placeRef.child('visitors').child(userId).remove();
+        }
+    });
+
+    // Render places again since the icons might need to change
+    renderPlaces();
 }
 
 async function saveEvents() {
