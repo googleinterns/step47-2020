@@ -161,7 +161,7 @@ function addPlaceDetails() {
         // Make request with fields
         var place = {
             placeId: place.place_id,
-            fields: ['name','rating','formatted_phone_number','formatted_address',
+            fields: ['place_id','name','rating','formatted_phone_number','formatted_address',
             'opening_hours','photos','url']
         };
         // Call Places Details Request
@@ -174,9 +174,9 @@ function addPlaceDetails() {
 function callback(place, status) {
     if (status == google.maps.places.PlacesServiceStatus.OK) {
         // Add place details to dictionary
-        let placeDetails = {Name: '', Rating: '', Address: '', Photo: '',Phone: '',Hours: '',
-        Website: '',Opening: '',Closing: ''}; 
-
+        let placeDetails = {PlaceID: '',Name: '', Rating: '', Address: '', Photo: '',Phone: '',
+        Hours: '', Website: '',Opening: '',Closing: ''}; 
+        placeDetails['PlaceID'] = place.place_id;
         placeDetails['Name'] = place.name; 
         // Check if place details exist
         if (place.rating) {
@@ -292,6 +292,7 @@ function listResults() {
         icon.classList.add('material-icons');
         icon.classList.add('small');
         icon.setAttribute('onclick','savePlace(this);');
+        icon.setAttribute('name',placeInfo[i]['PlaceID']);
         div3.append(icon);
 
         // Check for missing details, otherwise display through HTML
@@ -348,32 +349,32 @@ function listResults() {
 
 /** Toggle save icon on click */
 function savePlace(x) {
+    let placeID = $(x).attr('name');
+    let userID = 'userID';
     if(x.innerHTML === "favorite_border") {
         // Set as saved
         x.innerHTML = "favorite";
         // Save place to database
-        let name = document.getElementById('place-name').innerHTML; 
-        let address = document.getElementById('place-address').innerHTML; 
-        updateDatabase('test', name, address); 
+        updateDatabase(placeID); 
     }
     else {
         // Set as unsaved
         x.innerHTML = "favorite_border";
         // Delete place from database
-        deletePlace('test');
+        deletePlace(placeID, userID);
     }
 }
 
 /** Update database and add place with information */
-function updateDatabase(placeID, name, address) {
-    // Add placeID to list of places
-    database.ref('places/' + placeID).set({
-        name: name,
-        address: address,
-    });
-
-    // Add userID to saved place
+function updateDatabase(placeID) {
+    // Add placeID with userID (temporary variable)
     database.ref('places/' + placeID + '/users').set({
         user_ID: 'userID'
     });
+}
+
+/** Delete user from places when unsaved by user */
+function deletePlace(placeID, userID) {
+    database.ref('places/' + placeID + '/users' + userID).remove();
+    console.log('removed');
 }
