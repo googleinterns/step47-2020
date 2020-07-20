@@ -27,6 +27,8 @@ window.addEvent = addEvent;
 window.saveEvents = saveEvents;
 window.generateItinerary = generateItinerary;
 
+const database = firebase.database();
+
 function openAddEventForm() {
     document.getElementById('add-event').style.display = 'block';
 }

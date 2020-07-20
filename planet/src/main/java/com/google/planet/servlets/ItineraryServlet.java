@@ -39,23 +39,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedReader;
 
-import com.google.maps.GeoApiContext;
-import com.google.maps.DistanceMatrixApi;
-import com.google.maps.GaeRequestHandler;
-import com.google.gson.GsonBuilder;
-import com.google.maps.model.GeocodingResult;
-import com.google.maps.model.DistanceMatrix;
-import com.google.maps.model.DistanceMatrixRow;
-
-
 @WebServlet("/generate-itinerary")
 public class ItineraryServlet extends HttpServlet {
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         BufferedReader br = request.getReader();
         String eventsJson = "";
-        // Test direction
-        getEventsDistanceMatrix();
 
         if (br != null) {
             eventsJson = br.readLine();
@@ -75,27 +64,5 @@ public class ItineraryServlet extends HttpServlet {
             response.getWriter().println("");
         }
   }
-
-    private boolean getEventsDistanceMatrix() {
-        String ERROR_MESSAGE = "Couldn't find specified custom location, falling back to co-ordinates";
-        String GoogleApiKey = "AIzaSyDK36gDoYgOj4AlbCqh1IuaUuTlcpKF0ns";
-        String[] origins = new String[] {"Boston"};
-        String[] destinations = new String[] {"China"};
-
-        GeoApiContext context = new GeoApiContext.Builder(new GaeRequestHandler.Builder())
-                            .apiKey(GoogleApiKey)
-                            .build();
-       try {
-            DistanceMatrix result = DistanceMatrixApi.getDistanceMatrix(context,
-                                                         origins,
-                                                         destinations).await();
-            DistanceMatrixRow[] rows = result.rows;
-            System.out.println(rows.toString());
-            return true;
-        } catch (Exception e) {
-            System.out.println(ERROR_MESSAGE);
-            return false;
-        }
-    }
 }
 
