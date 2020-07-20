@@ -25,11 +25,11 @@
         Profile Not Found
     </div>
     <div id="profile-page" class="profile-container" style="display: none">
-        <div class="row card" style="background-color: #bbdefb;">
+        <div id="profile-header" class="row card" style="background-color: #bbdefb;">
             <div class="col s3 valign-wrapper">
                 <img class="center-align circle responsive-img" src="/images/profile-pic.png"/>
             </div>
-            <div class="col s9" style="position: absolute; bottom: 0; left: 25%;">
+            <div class="col s7" style="position: absolute; bottom: 0; left: 25%;">
                 <div id="name-container" class="row valign-wrapper" style="margin: 0">
                     <h2 id="display-name" class="col s11" style="margin: 0; font-size: 3vw;"></h2>
                 </div>

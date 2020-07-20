@@ -82,35 +82,30 @@ async function loadUserInformation(username) {
 }
 
 function updateProfileHeader(userId, displayName, location, bio) {
-    renderName(displayName, userId);
+    renderName(displayName);
     renderLocation(location, userId);
     renderBio(bio, userId);
+    if(userId === currentUser.uid) {
+        addEditButton();
+    }
 }
 
-function renderName(displayName, userId) {
+function renderName(displayName) {
     document.getElementById('display-name').innerText = displayName;
-    if (userId === currentUser.uid) {
-        addEditIcon('name-container', 'edit-name');
-    }
 }
 
 function renderLocation(location, userId) {
     if (location !== undefined) {
         addLocation(location);
-        if (userId === currentUser.uid) {
-            addEditIcon('location-container', 'edit-location');
-        }
         return;
     } 
     if (userId !== currentUser.uid) {
         addLocation('Somewhere, World');
-        removeEditIcon ('edit-location');
         return;
     }
     const addLocationLink = document.createElement('a');
     addLocationLink.innerText = 'Add Location';
     addLocationLink.addEventListener('click', addLocationToDatabse);
-    removeEditIcon('edit-location');
     document.getElementById('location').innerHTML = '';
     document.getElementById('location').appendChild(addLocationLink);
 }
@@ -118,19 +113,14 @@ function renderLocation(location, userId) {
 function renderBio(bio, userId) {
     if (bio !== undefined) {
         document.getElementById('bio').innerText = bio;
-        if (userId === currentUser.uid) {
-            addEditIcon('bio-container', 'edit-bio');
-        }
         return;
     } 
     if (userId !== currentUser.uid) {
         document.getElementById('bio').innerText = 'No Bio';
-        removeEditIcon ('edit-bio');
         return;
     }
     const addBioLink = document.createElement('a');
     addBioLink.addEventListener('click', addBioToDatabse);
-    removeEditIcon ('edit-bio');
     addBioLink.innerText = 'Add Bio';
     document.getElementById('bio').appendChild(addBioLink);
 }
@@ -169,27 +159,28 @@ function addLocation(location) {
     locationElement.appendChild(text);
 }
 
-function addEditIcon(elementId, iconId) {
-    const element = document.getElementById(elementId);
+function addEditButton() {
+    const element = document.getElementById('profile-header');
     if (element === null) {
         return;
     }
     const editIcon = document.createElement('i');
     editIcon.classList.add('tiny', 'material-icons', 'col');
     editIcon.style.padding = '0';
-    editIcon.title = 'Edit';
-    editIcon.classList.add('edit-icon');
     editIcon.innerHTML = 'edit';
-    const iconContainer = document.createElement('span');
-    iconContainer.classList.add('col', 's1');
-    iconContainer.id = iconId;
-    iconContainer.appendChild(editIcon);
-    element.appendChild(iconContainer);
-}
 
-function removeEditIcon(iconId) {
-    const icon = document.getElementById(iconId);
-    if (icon !== null) {
-        icon.remove();
-    }
+    const button = document.createElement('button');
+    button.id = 'edit-button';
+    button.appendChild(editIcon);
+    
+    const buttonText = document.createElement('span');
+    buttonText.innerText = 'Edit Profile';
+    button.appendChild(buttonText);
+    
+    const buttonContainer = document.createElement('div');
+    buttonContainer.classList.add('col', 's3');
+    buttonContainer.style.position = 'absolute';
+    buttonContainer.style.left = '75%';
+    buttonContainer.appendChild(button);
+    element.appendChild(buttonContainer);
 }

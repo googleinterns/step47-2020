@@ -25,3 +25,12 @@ a:hover {
     cursor: pointer;
     opacity: 1;
 }
+
+#edit-button {
+    position: absolute;
+    right: 0;
+}
+
+#edit-button:hover {
+    cursor: pointer;
+}
