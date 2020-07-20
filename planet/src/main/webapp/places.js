@@ -152,7 +152,7 @@ function addPlaceDetails(places) {
         let placeId = place['place_id']; 
         let url = 'https://maps.googleapis.com/maps/api/place/details/json?placeid=' + placeId + 
         '&key=AIzaSyDK36gDoYgOj4AlbCqh1IuaUuTlcpKF0ns&fields=photo,formatted_phone_number,formatted_address,opening_hours,website';        
-        let placeDetails = {Name: '', Rating: '', Address: '', Photo: '',Phone: '',Hours: '',Website: ''}; 
+        let placeDetails = {Name: '', Rating: '', Address: '', Photo: '',Phone: '',Hours: '',Website: '',Opening: '',Closing: ''}; 
         
         // Fetch url and add photo reference to a list
         promises = [];
@@ -173,10 +173,19 @@ function addPlaceDetails(places) {
             }
             if (response.result.opening_hours != undefined){
                 placeDetails['Hours'] = response.result.opening_hours.weekday_text;
+                // Open and closing time for Monday (MVP purposes)
+                if (response.result.opening_hours.periods[1] != undefined) {
+                    placeDetails['Opening'] = response.result.opening_hours.periods[1].open.time;
+                    if (response.result.opening_hours.periods[1].close != undefined) {
+                        placeDetails['Closing'] = response.result.opening_hours.periods[1].close.time;
+                    }
+                }
             }
             if (response.result.website != undefined) {
                 placeDetails['Website'] = response.result.website;
             }
+
+           
             placeInfo.push(placeDetails);
         }));
     });
@@ -254,6 +263,8 @@ function listResults() {
         let p2 = document.createElement('p');
         let p3 = document.createElement('p');
         let p4 = document.createElement('p');
+        let p5 = document.createElement('p');
+        let p6 = document.createElement('p');
         let a = document.createElement('a');
 
         // Set variables for place details
@@ -262,6 +273,8 @@ function listResults() {
         let address = document.createTextNode(placeInfo[i]['Address']);
         let phoneNumber = document.createTextNode('Phone Number: ' + placeInfo[i]['Phone']);
         let openingHours = document.createTextNode('Opening Hours: ' + placeInfo[i]['Hours']);
+        let open = document.createTextNode(placeInfo[i]['Opening']);
+        let close = document.createTextNode(placeInfo[i]['Closing']);
         let img = document.createElement('img');
         
         // Create and add save icon 
@@ -278,7 +291,8 @@ function listResults() {
         div3.appendChild(p);
         if (placeInfo[i]['Rating'] != '') {
             p1.appendChild(rating);
-           div3.appendChild(p1);
+            p1.setAttribute('id','place-rating');
+            div3.appendChild(p1);
         }     
          if (placeInfo[i]['Photo'] != '') {
             img.src = getPhotoURL(placeInfo[i]['Photo']);
@@ -286,15 +300,28 @@ function listResults() {
         }      
         if (address != '') {
             p2.appendChild(address);
+            p2.setAttribute('id','place-address');
             div3.appendChild(p2);
         }
         if (placeInfo[i]['Phone'] != '') {
             p3.appendChild(phoneNumber);
+            p3.setAttribute('id','phone-number');
             div3.appendChild(p3);         
         }
         if (placeInfo[i]['Hours'] != '') {
-            p4.appendChild(openingHours);    
+            p4.appendChild(openingHours); 
+            p4.setAttribute('id','opening-hours');   
             div3.appendChild(p4);      
+        }
+        if (placeInfo[i]['Opening'] != '') {
+            p5.appendChild(open);
+            p5.setAttribute('id','openingTime');
+            div3.appendChild(p5);
+        }
+        if (placeInfo[i]['Closing'] != '') {
+            p6.appendChild(close);
+            p6.setAttribute('id','closingTime');
+            div3.appendChild(p6); 
         }
         if (placeInfo[i]['Website'] != '') {
             a.appendChild(document.createTextNode('Website'));
@@ -315,9 +342,32 @@ function savePlace(x) {
     if(x.innerHTML === "favorite_border") {
         // Set as saved
         x.innerHTML = "favorite";
+        // Save place to database
+        let name = document.getElementById('place-name').innerHTML; 
+        let address = document.getElementById('place-address').innerHTML; 
+        let open = document.getElementById('openingTime').innerHTML;
+        let close = document.getElementById('closingTime').innerHTML;
+        updateDatabase('test', name, address, open, close); 
     }
     else {
         // Set as unsaved
         x.innerHTML = "favorite_border";
+        // Delete place from database
+        deletePlace('test');
     }
+}
+
+/** Update database and add place with information */
+function updateDatabase(placeID, name, address, open, close) {
+    database.ref('places/' + placeID).set({
+        name: name,
+        address: address,
+        openingTime: open,
+        closingTime: close
+    });
+}
+
+/** Delete place from database when unsaved by user */
+function deletePlace(placeID) {
+    database.ref('places/' + placeID).remove(); 
 }
