@@ -29,6 +29,8 @@ function diplaySection(sectionId) {
             document.getElementById('posts-section').style.display = 'none';
             document.getElementById('events-section').style.display = 'block';
             break;
+        default:
+            console.log('Unhandled section id:' + sectionId);
     }
 }
 
@@ -49,6 +51,8 @@ function activateLink(tabId) {
             document.getElementById('posts-link').classList.remove('active');
             document.getElementById('events-link').classList.add('active');
             break;
+        default:
+            console.log('Unhandled link id:' + linkId);
     }
 }
 
