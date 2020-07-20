@@ -354,9 +354,7 @@ function savePlace(x) {
         // Save place to database
         let name = document.getElementById('place-name').innerHTML; 
         let address = document.getElementById('place-address').innerHTML; 
-        let open = document.getElementById('openingTime').innerHTML;
-        let close = document.getElementById('closingTime').innerHTML;
-        updateDatabase('test', name, address, open, close); 
+        updateDatabase('test', name, address); 
     }
     else {
         // Set as unsaved
@@ -367,11 +365,15 @@ function savePlace(x) {
 }
 
 /** Update database and add place with information */
-function updateDatabase(placeID, name, address, open, close) {
+function updateDatabase(placeID, name, address) {
+    // Add placeID to list of places
     database.ref('places/' + placeID).set({
         name: name,
         address: address,
-        openingTime: open,
-        closingTime: close
+    });
+
+    // Add userID to saved place
+    database.ref('places/' + placeID + '/users').set({
+        user_ID: 'userID'
     });
 }
