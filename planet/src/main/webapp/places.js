@@ -356,8 +356,6 @@ function savePlace(x) {
         let address = document.getElementById('place-address').innerHTML; 
         let open = document.getElementById('openingTime').innerHTML;
         let close = document.getElementById('closingTime').innerHTML;
-        console.log(name);
-        console.log(address);
         updateDatabase('test', name, address, open, close); 
     }
     else {
