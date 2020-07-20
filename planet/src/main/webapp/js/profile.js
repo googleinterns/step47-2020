@@ -95,6 +95,7 @@ function renderName(displayName) {
 }
 
 function renderLocation(location, userId) {
+    document.getElementById('location').classList.add('valign-wrapper');
     if (location !== undefined) {
         addLocation(location);
         return;
@@ -105,7 +106,7 @@ function renderLocation(location, userId) {
     }
     const addLocationLink = document.createElement('a');
     addLocationLink.innerText = 'Add Location';
-    addLocationLink.addEventListener('click', addLocationToDatabse);
+    addLocationLink.addEventListener('click', addNewLocation);
     document.getElementById('location').innerHTML = '';
     document.getElementById('location').appendChild(addLocationLink);
 }
@@ -126,12 +127,69 @@ function renderBio(bio, userId) {
     document.getElementById('bio').appendChild(addBioLink);
 }
 
-function addLocationToDatabse() {
+function addNewLocation() {
+    document.getElementById('location').classList.remove('valign-wrapper');
+    const inputFields = document.createElement('div');
+    // Create two input fields
+    const city = createLocationInput('city-input', 'City');
+    const country = createLocationInput('country-input', 'Country');
+    // Create a comma
+    const text = document.createElement('span');
+    text.style.marginRight = '5px';
+    text.innerText = ',';
+    inputFields.appendChild(city);
+    inputFields.appendChild(text);
+    inputFields.appendChild(country);
+    // Create the save button
+    const saveButton = createHeaderButton('Save', saveLocation);
+    // Create the cancel button
+    const cancelButton = createHeaderButton('Cancel', cancelLocationEditing);
+    // Create a button container
+    const buttonsContainer = document.createElement('div');
+    buttonsContainer.classList.add('row');
+    buttonsContainer.style.margin = '0';
+    buttonsContainer.appendChild(saveButton);
+    buttonsContainer.appendChild(cancelButton);
+    // Render the inputs
+    document.getElementById('location').innerHTML = '';
+    document.getElementById('location').appendChild(inputFields);
+    document.getElementById('location').appendChild(buttonsContainer);
+}
+
+function createLocationInput(inputId, placeHolder) {
+    const input = document.createElement('input');
+    input.placeholder = placeHolder;
+    input.type = 'text';
+    input.style.borderRadius = '3px';
+    input.style.backgroundColor = 'white';
+    input.style.height = 'auto';
+    input.style.width = '30%';
+    input.style.margin = '0';
+    input.id = inputId;
+    return input;
+}
+
+function saveLocation() {
+    const city = document.getElementById('city-input');
+    const country = document.getElementById('country-input');
+    if (city !== null && country !== null && 
+        city.value !== '' && country.value !== '') {
+        addLocationToDatabse(city.value + ', ' + country.value);
+        return;
+    }
+    cancelLocationEditing();
+}
+
+function cancelLocationEditing() {
+    renderLocation(undefined, currentUser.uid);
+}
+
+function addLocationToDatabse(location) {
     const userReference = database.ref('users/' + currentUser.uid);
     userReference.update({
-        location: 'Waterloo, Canada'
+        location: location
     }).then(() => {
-        renderLocation('Waterloo, Canada', currentUser.uid);
+        renderLocation(location, currentUser.uid);
     });
 }
 
@@ -144,15 +202,9 @@ function addNewBio() {
     textArea.style.backgroundColor = 'white';
     textArea.id = 'bio-textarea';
     // Create the save button
-    const saveButton = document.createElement('button');
-    saveButton.classList.add('col', 'header-buttons');
-    saveButton.innerText = 'Save';
-    saveButton.addEventListener('click', saveBio);
+    const saveButton = createHeaderButton('Save', saveBio);
     // Create the cancel button
-    const cancelButton = document.createElement('button');
-    cancelButton.classList.add('header-buttons', 'col');
-    cancelButton.innerText = 'Cancel';
-    cancelButton.addEventListener('click', cancelBioEditing);
+    const cancelButton = createHeaderButton('Cancel', cancelBioEditing);
     // Create a button container
     const buttonsContainer = document.createElement('div');
     buttonsContainer.classList.add('row');
@@ -228,4 +280,12 @@ function addEditButton() {
     buttonContainer.style.left = '75%';
     buttonContainer.appendChild(button);
     element.appendChild(buttonContainer);
+}
+
+function createHeaderButton(buttonText, clickHandler) {
+    const headerButton = document.createElement('button');
+    headerButton.classList.add('col', 'header-buttons');
+    headerButton.innerText = buttonText;
+    headerButton.addEventListener('click', clickHandler);
+    return headerButton;
 }
