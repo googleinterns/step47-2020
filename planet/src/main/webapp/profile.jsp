@@ -8,7 +8,8 @@
     <!-- Include the firebase and local JS files -->  
     <script src="https://www.gstatic.com/firebasejs/4.1.3/firebase.js"></script> 
     <script src="/js/authentication.js"></script>
-    <script src="/js/profile.js"></script>
+    <script type="module" src="/js/headerRenderer.js"></script>
+    <script type="module" src="/js/profile.js"></script>
     <link href='//fonts.googleapis.com/css?family=Marmelad' rel='stylesheet' type='text/css'>
     <!-- Compiled and minified CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
