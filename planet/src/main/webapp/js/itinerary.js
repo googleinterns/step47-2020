@@ -304,8 +304,13 @@ async function generateItinerary() {
                         {method: 'POST', 
                         headers: {'Content-Type': 'application/json'},
                         body: JSON.stringify(requestBody) });
-    const itinerary = await itineraryResponse.json();
-    createItinerary(itinerary);
+    const itineraryObject = await itineraryResponse.json();
+    if (itineraryObject.errorMessage) {
+        createItinerary([]); //Clear the previous itinerary
+        alert(itineraryObject.errorMessage);
+    }else{
+        createItinerary(itineraryObject.itineraryItems);
+    }
 }
 
 function timeToString(totalMinutes) {

@@ -28,12 +28,19 @@ import com.google.maps.model.DistanceMatrixElement;
 import com.google.maps.model.Duration;
 
 public final class ItineraryGenerator {
-    public List<ItineraryItem> generateItinerary(List<Event> events) { 
+    private String errorMessage;
+    
+    public Itinerary generateItinerary(List<Event> events) {
+        errorMessage = null; 
+        
         // Return an empty list if events are empty or only contains the starting point event
         if (events.size() <= 1) { 
-            return Arrays.asList();
+            errorMessage = "Itinerary can only be generated with at least one event!";
+            Itinerary itinerary = new Itinerary(Arrays.asList(), errorMessage);
+            return itinerary;
         }
-        // For the prototype, just find the shortest opening hours and 
+
+        // For the MVP, just find the shortest opening hours and 
         // schedule all events within that time range
         Collections.sort(events, Event.SortByOpeningHours);
         int START = events.get(0).getOpeningHours().start();
@@ -41,8 +48,13 @@ public final class ItineraryGenerator {
 
         Collections.sort(events, Event.SortByOrder);
         int [][] travelTimeGraph = getEventsDistanceMatrix(events);
+        if (errorMessage != null) { 
+            Itinerary itinerary = new Itinerary(Arrays.asList(), errorMessage);
+            return itinerary;
+        }
         List<ItineraryItem> items = scheduleItineraryInOrder(events, START, END, travelTimeGraph);
-        return items;
+        Itinerary itinerary = new Itinerary(items, errorMessage);
+        return itinerary;
     }
 
     // Function that creates a graph with the events as vertices and the travelling
@@ -74,7 +86,7 @@ public final class ItineraryGenerator {
             }
             return travelTimeGraph;
         } catch (Exception e) {
-            System.out.println(e);
+            errorMessage = "Oops, one of your addresses is invalid, please use a valid address.";
             return travelTimeGraph;
         }
     }
@@ -111,12 +123,10 @@ public final class ItineraryGenerator {
                     start += event.getDurationInMinutes() + travelTimeGraph[i][i+1];
                 }
             }else {
-                System.out.println("Sorry, you have too many events in a day!");
+                errorMessage = "Sorry, you have too many events in a day!";
                 return Arrays.asList();
             }
         }
         return items;
     }
 }
-
-
