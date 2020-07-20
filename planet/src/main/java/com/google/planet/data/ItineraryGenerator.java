@@ -18,19 +18,14 @@ import java.util.List;
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Collections;
-
-
+import java.util.stream.*;
 import com.google.maps.GeoApiContext;
 import com.google.maps.DistanceMatrixApi;
 import com.google.maps.GaeRequestHandler;
-import com.google.gson.GsonBuilder;
-import com.google.maps.model.GeocodingResult;
 import com.google.maps.model.DistanceMatrix;
 import com.google.maps.model.DistanceMatrixRow;
 import com.google.maps.model.DistanceMatrixElement;
 import com.google.maps.model.Duration;
-import com.google.maps.DistanceMatrixApiRequest;
-import com.google.maps.*;
 
 public final class ItineraryGenerator {
     public List<ItineraryItem> generateItinerary(List<Event> events) { 
@@ -45,51 +40,55 @@ public final class ItineraryGenerator {
         int END = events.get(0).getOpeningHours().end();
 
         Collections.sort(events, Event.SortByOrder);
-        int [][] travelTimeGraph = getTravelTimeGraph(events);
-        getEventsDistanceMatrix();
+        int [][] travelTimeGraph = getEventsDistanceMatrix(events);
         List<ItineraryItem> items = scheduleItineraryInOrder(events, START, END, travelTimeGraph);
         return items;
     }
 
     // Function that creates a graph with the events as vertices and the travelling
     // time between the events as edges.
-    // For the prototype, all travelling times are set to 15 minutes 
-    private boolean getEventsDistanceMatrix() {
-        String GoogleApiKey = "AIzaSyDK36gDoYgOj4AlbCqh1IuaUuTlcpKF0ns";
-        String[] origins = new String[] {"Vancouver+BC", "San+Francisco" };
-        String[] destinations = new String[] {"Vancouver+BC", "San+Francisco"};
+    // For the MVP, real time traffic is NOT used.
+    // TODO: handle invalid addresses
+    private int[][] getEventsDistanceMatrix(List<Event> events) {
+        int numOfNodes = events.size();
+        int[][] travelTimeGraph = new int[numOfNodes][numOfNodes];
 
+        String GoogleApiKey = "AIzaSyDK36gDoYgOj4AlbCqh1IuaUuTlcpKF0ns";
+        String[] origins = getListOfAddresses(events);
+        String[] destinations = getListOfAddresses(events);
         GeoApiContext context = new GeoApiContext.Builder(new GaeRequestHandler.Builder())
                             .apiKey(GoogleApiKey)
                             .build();
        try {
-            DistanceMatrix result = DistanceMatrixApi.getDistanceMatrix(context,
+            DistanceMatrix distanceMatrix = DistanceMatrixApi.getDistanceMatrix(context,
                                                          origins,
                                                          destinations).await();
-            DistanceMatrixRow[] rows = result.rows;
-            DistanceMatrixElement[] elements = rows[0].elements;
-            Duration duration = elements[1].duration;
-            System.out.println(duration.humanReadable);
-            return true;
+
+            for (int i = 0; i < distanceMatrix.rows.length; i++) {
+                DistanceMatrixRow currentRow = distanceMatrix.rows[i];
+                for (int j = 0; j < currentRow.elements.length; j++) {
+                    DistanceMatrixElement currentElement = currentRow.elements[j];
+                    Duration duration = currentElement.duration;
+                    travelTimeGraph[i][j] = getTravelDurationInMinutes(duration);
+                }
+            }
+            return travelTimeGraph;
         } catch (Exception e) {
             System.out.println(e);
-            return false;
+            return travelTimeGraph;
         }
     }
 
-    private int[][] getTravelTimeGraph(List<Event> events) {
-        int numOfNodes = events.size();
-        int[][] travelTimeGraph = new int[numOfNodes][numOfNodes];
-        for (int i = 0; i < travelTimeGraph.length; i++) {
-            for (int j = 0; j < travelTimeGraph[i].length; j++) {
-                if (i == j) {
-                    travelTimeGraph[i][j] = 0;
-                }else{
-                    travelTimeGraph[i][j] = 15;
-                }
-            }
-        }
-        return travelTimeGraph;
+    private String[] getListOfAddresses(List<Event> events) {
+        String[] addressList = events.stream()
+                                .map(event -> event.getAddress())
+                                .toArray(String[]::new);
+        return addressList;
+    }
+
+    private int getTravelDurationInMinutes(Duration duration) {
+        int travelDurationInMinutes = (int) Math.round(duration.inSeconds / 60);
+        return travelDurationInMinutes;
     }
 
     // Function that creates an itinerary by scheduling each event in order.
