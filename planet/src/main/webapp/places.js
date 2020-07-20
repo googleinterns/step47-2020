@@ -210,6 +210,7 @@ function callback(place, status) {
     // List results when all callbacks are finished
     count ++ 
     if (count === places.length) {
+        count = 0; 
         listResults();
     }
 }
