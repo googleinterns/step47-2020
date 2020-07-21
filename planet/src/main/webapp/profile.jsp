@@ -58,10 +58,6 @@
         </div>
         <div class="profile-content">
             <div id="about-section" class="row card" style="display: block;">
-                <div id="titles-container" class="col s3">
-                </div>
-                <div id="details-container" class="col s7">
-                </div>
             </div>
             <div id="posts-section" style="display: none;">
                 <!--This test will be deleted later -->
