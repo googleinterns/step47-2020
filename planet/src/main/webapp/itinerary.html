@@ -36,9 +36,10 @@
             <div class="nav-wrapper indigo darken-2">
                 <a href="places.html" class="brand-logo" style="padding-left: 25px">planet</a>
                 <ul class="right hide-on-med-and-down">
-                    <li><a href="itinerary.html">Itinerary</a></li>
-                    <li><a onclick="openModal('sign-in-modal')">Sign In</a></li>
-                    <li><a onclick="openModal('sign-up-modal')"><i class="material-icons right">account_circle</i>Sign Up</a></li>
+                     <li><a href="itinerary.html">Itinerary</a></li>
+                    <li><a id="sign-out-button" style="display: none;" onclick="signOut()">Sign Out</a></li>
+                    <li><a id="profile-button" style="display: none;"></a></li>
+                    <li><a id="sign-in-button" style="display: none;" onclick="openModal('sign-in-modal')"><i class="material-icons right">account_circle</i>Sign In</a></li>
                 </ul>
             </div>  
         </nav>
@@ -86,5 +87,7 @@
             <div id="itinerary">
             </div>
         </div>
+        <div id="sign-in-modal" class="modal" style="padding-bottom: 1vh;"></div>
+        <div id="sign-up-modal" class="modal" style="padding-bottom: 1vh;"></div>
     </body>
 </html>
