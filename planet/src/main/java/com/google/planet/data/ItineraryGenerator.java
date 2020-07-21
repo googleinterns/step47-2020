@@ -81,7 +81,11 @@ public final class ItineraryGenerator {
                 DistanceMatrixRow currentRow = distanceMatrix.rows[i];
                 for (int j = 0; j < currentRow.elements.length; j++) {
                     DistanceMatrixElement currentElement = currentRow.elements[j];
-                    travelTimeGraph[i][j] = currentElement.duration;
+                    if (currentElement.duration != null) {
+                        travelTimeGraph[i][j] = currentElement.duration;
+                    } else {
+                        errorMessage = "Oops, one of your addresses is invalid, please use a valid address.";
+                    }
                 }
             }
             return travelTimeGraph;
