@@ -350,32 +350,26 @@ function listResults() {
 /** Toggle save icon on click */
 function savePlace(x) {
     let placeID = $(x).attr('name');
-    let userID = 'userID';
+    let userID = currentUser.uid; 
     if(x.innerHTML === "favorite_border") {
         // Set as saved
         x.innerHTML = "favorite";
-        // Save place to database
-        updateDatabase(placeID); 
+        updateDatabase(placeID, userID); 
     }
     else {
         // Set as unsaved
         x.innerHTML = "favorite_border";
-        // Delete place from database
         deletePlace(placeID, userID);
     }
 }
 
-/** Update database and add place with information */
-function updateDatabase(placeID) {
-    // Add placeID with userID (temporary variable)
-    database.ref('places/' + placeID + '/users').set({
-        user_ID: 'userID'
-    });
+/** Update database and add placeID when place is saved by user */
+function updateDatabase(placeID, userID) {
+    // Add placeID to current userID in user tree
+    database.ref('users/' + userID + '/places').child(placeID).set(placeID);
 }
 
-/** Delete user from places when unsaved by user */
+/** Delete placeID from current user when place is unsaved by user */
 function deletePlace(placeID, userID) {
-    // Temporary deletion path, will update when actual user ID is used
-    // Different from update path -> don't want to delete entire list of users
-    database.ref('places/' + placeID + '/users' + user_ID).remove();
+    database.ref('users/' + userID + '/places').child(placeID).remove();
 }
