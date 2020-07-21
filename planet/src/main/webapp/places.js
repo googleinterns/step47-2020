@@ -28,7 +28,7 @@ const TORONTO_COORDINATES = {lat:43.6532, lng:-79.3832};
 
 /** Initializes Map, implements search box and marks locations of searches */
 function initMap() {
-    // Create a map centered in Pyrmont, Sydney (Australia).
+    // Create a map centered in Toronto
     map = new google.maps.Map(document.getElementById('map'), {
         center: TORONTO_COORDINATES,
         zoom: 8
@@ -375,6 +375,7 @@ function updateDatabase(placeID) {
 
 /** Delete user from places when unsaved by user */
 function deletePlace(placeID, userID) {
-    database.ref('places/' + placeID + '/users' + userID).remove();
-    console.log('removed');
+    // Temporary deletion path, will update when actual user ID is used
+    // Different from update path -> don't want to delete entire list of users
+    database.ref('places/' + placeID + '/users' + user_ID).remove();
 }
