@@ -47,6 +47,7 @@ public final class ItineraryGenerator {
 
     // Function that creates a graph with the events as vertices and the travelling
     // time between the events as edges.
+    // The order of this graph will be the same as the order of the events.
     // For the MVP, real time traffic is NOT used.
     // TODO: handle invalid addresses
     private Duration[][] getEventsDistanceMatrix(List<Event> events) {
