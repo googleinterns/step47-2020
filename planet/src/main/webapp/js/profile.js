@@ -13,6 +13,7 @@
 // limitations under the License.
 
 import {HeaderRenderer} from './headerRenderer.js';
+import {ProfileEventsRenderer} from './profile-events-renderer.js';
 
 window.loadUserInformation = loadUserInformation;
 window.switchSection = switchSection;
@@ -84,4 +85,5 @@ async function loadUserInformation(username) {
         user['location'],
         user['bio']
     );
+    ProfileEventsRenderer.init();
 }
