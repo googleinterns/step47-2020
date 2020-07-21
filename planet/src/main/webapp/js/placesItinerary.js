@@ -16,6 +16,8 @@
 window.openAddPlaceForm = openAddPlaceForm;
 window.closeAddPlaceForm = closeAddPlaceForm;
 
+const database = firebase.database();
+
 export function renderPlaces() {
     const userId = firebase.auth().currentUser.uid;
     const placesRef = database.ref('users/' + userId + '/places');
