@@ -18,24 +18,40 @@ import {AboutSectionRenderer} from './about-section-renderer.js';
 window.loadUserInformation = loadUserInformation;
 window.switchSection = switchSection;
 
+let user;
+let userId;
+
 function diplaySection(sectionId) {
     switch(sectionId) {
         case 'about-section':
             document.getElementById('about-section').style.display = 'block';
-            document.getElementById('posts-section').style.display = 'none';
-            document.getElementById('events-section').style.display = 'none';
+            AboutSectionRenderer.init(
+                user['work'],
+                user['school'],
+                user['dateOfBirth'],
+                user['phoneNumber'],
+                user['email'],
+                user['origin'] 
+            );
+            hideSection('posts-section');
+            hideSection('events-section');
             break;
         case 'posts-section':
-            document.getElementById('about-section').style.display = 'none';
+            hideSection('about-section');
             document.getElementById('posts-section').style.display = 'block';
-            document.getElementById('events-section').style.display = 'none';
+            hideSection('events-section');
             break;
         case 'events-section':
-            document.getElementById('about-section').style.display = 'none';
-            document.getElementById('posts-section').style.display = 'none';
+            hideSection('about-section');
+            hideSection('posts-section');
             document.getElementById('events-section').style.display = 'block';
             break;
     }
+}
+
+function hideSection(sectionId) {
+    document.getElementById(sectionId).innerHTML = '';
+    document.getElementById(sectionId).style.display = 'none';
 }
 
 function activateLink(tabId) {
@@ -74,8 +90,6 @@ async function loadUserInformation(username) {
     }
     document.getElementById('not-found-message').remove();
     document.getElementById('profile-page').style.display = 'block';
-    let user;
-    let userId;
     for (const object in userSnapshot.val()) {
         userId = object;
         user = userSnapshot.val()[object];
@@ -87,11 +101,11 @@ async function loadUserInformation(username) {
         user['bio']
     );
     AboutSectionRenderer.init(
-        'Google',
-        'Polytechnique Montreal',
-        'August 27, 1998',
-        '4383407515',
-        'nbl.dabouz@gmail.com',
-        'Algeria'
+        user['work'],
+        user['school'],
+        user['dateOfBirth'],
+        user['phone'],
+        user['email'],
+        user['origin']
     );
 }
