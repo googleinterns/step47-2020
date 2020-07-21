@@ -40,7 +40,7 @@ public final class ItineraryGenerator {
         int END = events.get(0).getOpeningHours().end();
 
         Collections.sort(events, Event.SortByOrder);
-        int [][] travelTimeGraph = getEventsDistanceMatrix(events);
+        Duration [][] travelTimeGraph = getEventsDistanceMatrix(events);
         List<ItineraryItem> items = scheduleItineraryInOrder(events, START, END, travelTimeGraph);
         return items;
     }
@@ -49,9 +49,9 @@ public final class ItineraryGenerator {
     // time between the events as edges.
     // For the MVP, real time traffic is NOT used.
     // TODO: handle invalid addresses
-    private int[][] getEventsDistanceMatrix(List<Event> events) {
+    private Duration[][] getEventsDistanceMatrix(List<Event> events) {
         int numOfNodes = events.size();
-        int[][] travelTimeGraph = new int[numOfNodes][numOfNodes];
+        Duration[][] travelTimeGraph = new Duration[numOfNodes][numOfNodes];
 
         String GoogleApiKey = "AIzaSyDK36gDoYgOj4AlbCqh1IuaUuTlcpKF0ns";
         String[] origins = getListOfAddresses(events);
@@ -68,8 +68,7 @@ public final class ItineraryGenerator {
                 DistanceMatrixRow currentRow = distanceMatrix.rows[i];
                 for (int j = 0; j < currentRow.elements.length; j++) {
                     DistanceMatrixElement currentElement = currentRow.elements[j];
-                    Duration duration = currentElement.duration;
-                    travelTimeGraph[i][j] = getTravelDurationInMinutes(duration);
+                    travelTimeGraph[i][j] = currentElement.duration;
                 }
             }
             return travelTimeGraph;
@@ -93,7 +92,7 @@ public final class ItineraryGenerator {
 
     // Function that creates an itinerary by scheduling each event in order.
     private List<ItineraryItem> scheduleItineraryInOrder(List<Event> events, int openningTime, int endingTime, 
-                                                        int[][] travelTimeGraph) {
+                                                        Duration[][] travelTimeGraph) {
         List<ItineraryItem> items = new ArrayList<>();
         int start = openningTime; 
         for (int i = 0; i < events.size(); i++){
@@ -108,7 +107,7 @@ public final class ItineraryGenerator {
 
                 // Update the next event's start time
                 if (i != events.size() - 1) { 
-                    start += event.getDurationInMinutes() + travelTimeGraph[i][i+1];
+                    start += event.getDurationInMinutes() + getTravelDurationInMinutes(travelTimeGraph[i][i+1]);
                 }
             }else {
                 System.out.println("Sorry, you have too many events in a day!");
@@ -118,5 +117,3 @@ public final class ItineraryGenerator {
         return items;
     }
 }
-
-
