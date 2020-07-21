@@ -12,33 +12,63 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-export const ProfileEventsRenderer = {
-    init: () => {
+let userId;
+let listIndex = 1;
+let eventsList = [];
+let listName = 'List X';
+
+export const ProfileEventsRenderer = { 
+    init: async (uid) => {
+        userId = uid;
+        await readListFromDatabase();
         renderSlideButton('keyboard_arrow_left');
-        renderList([
-            {name: 'Event 1'},
-            {name: 'Event 2'},
-            {name: 'Event 3'},
-            {name: 'Event 4'},
-        ], 'List 1');
+        renderList(eventsList, listName);
         renderSlideButton('keyboard_arrow_right');
     }
 }
 
+async function readListFromDatabase() {
+    const eventsReference = database.ref('events/' + userId);
+    const eventsSnapshot = await eventsReference.once('value');
+    if (eventsSnapshot.val() === null) {
+        eventsList = [];
+        return;
+    }
+    let counter = 0;
+    for (const listId in eventsSnapshot.val()) {
+        if (counter === listIndex) {
+            listName = listId;
+            eventsList = getListFromObject(eventsSnapshot.val()[listId]);
+            return;
+        }
+        counter++;
+    }
+    eventsList = [];
+}
+
+function getListFromObject(object) {
+    let list = [];
+    for (const property in object) {
+        object[property].id = property;
+        list.push(object[property]);
+    }
+    return list;
+}
+
 function renderList(events, name) {
     const eventsSection = document.getElementById('events-section');
-    const eventsList = document.createElement('div');
-    eventsList.style.display = 'table-cell';
-    eventsList.style.width = '95%';
+    const eventsListElement = document.createElement('div');
+    eventsListElement.style.display = 'table-cell';
+    eventsListElement.style.width = '95%';
     const listName = document.createElement('h3');
     listName.style.textAlign = 'center';
     listName.classList.add('row');
     listName.innerHTML = name;
-    eventsList.appendChild(listName);
+    eventsListElement.appendChild(listName);
     for (const event of events) {
-        eventsList.appendChild(createEvent(event.name));
+        eventsListElement.appendChild(createEvent(event.name));
     }
-    eventsSection.appendChild(eventsList);
+    eventsSection.appendChild(eventsListElement);
 }
 
 function createEvent(name) {
