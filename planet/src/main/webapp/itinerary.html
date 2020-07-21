@@ -26,6 +26,7 @@
         <script src="js/authentication.js"></script>
         <script type="module" src="js/itinerary.js"></script>
         <script type="module" src="js/placesItinerary.js"></script>
+        <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDK36gDoYgOj4AlbCqh1IuaUuTlcpKF0ns&libraries=places"></script>
 
         <!--Let browser know website is optimized for mobile-->    
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -44,6 +45,8 @@
             </div>  
         </nav>
         </header>
+
+        <div id="empty-map" style="display:none"></div>
 
         <div id="content-places"> 
             <p> Start planing your itinerary by choosing your liked places from below: </p>
