@@ -73,9 +73,10 @@ async function loadUserInformation(username) {
     document.getElementById('profile-page').style.display = 'block';
     let user;
     let userId;
-    for (const object in userSnapshot.val()) {
+    // The userSnapshot.val() contains one property (user)
+    for (const property in userSnapshot.val()) {
         userId = object;
-        user = userSnapshot.val()[object];
+        user = userSnapshot.val()[property];
     }
     updateProfileHeader(
         userId,
