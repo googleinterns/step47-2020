@@ -63,7 +63,6 @@ function switchSection(linkId, sectionId) {
 }
 
 async function loadUserInformation(username) {
-    HeaderRenderer.init();
     const usersReference = database.ref('/users');
     const userSnapshot = await usersReference.orderByChild('username').equalTo(username).once('value');
     if (userSnapshot.val() === null) {
