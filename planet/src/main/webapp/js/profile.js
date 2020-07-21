@@ -13,6 +13,7 @@
 // limitations under the License.
 
 import {HeaderRenderer} from './headerRenderer.js';
+import {AboutSectionRenderer} from './about-section-renderer.js';
 
 window.loadUserInformation = loadUserInformation;
 window.switchSection = switchSection;
@@ -84,5 +85,13 @@ async function loadUserInformation(username) {
         user['name'],
         user['location'],
         user['bio']
+    );
+    AboutSectionRenderer.init(
+        'Google',
+        'Polytechnique Montreal',
+        'August 27, 1998',
+        '4383407515',
+        'nbl.dabouz@gmail.com',
+        'Algeria'
     );
 }
