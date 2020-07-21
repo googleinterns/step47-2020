@@ -14,6 +14,14 @@
 
 export const AboutSectionRenderer = {
     init: (work, school, dateOfBirth, phone, email, origin) => {
+        const titlesContainer = document.createElement('div');
+        titlesContainer.classList.add('col', 's3');
+        titlesContainer.id = 'titles-container';
+        const detailsContainer = document.createElement('div');
+        detailsContainer.classList.add('col', 's9');
+        detailsContainer.id = 'details-container';
+        document.getElementById('about-section').appendChild(titlesContainer);
+        document.getElementById('about-section').appendChild(detailsContainer);
         addSection('Overview');
         renderOverview(work, school, dateOfBirth, phone, email, origin); 
     }
@@ -36,32 +44,32 @@ function renderOverview(work, school, dateOfBirth, phone, email, origin) {
     overview.innerHTML = '';
     overview.appendChild(createElement('work', 
         work !== undefined ? 
-        'Works at ' + work :
+        'Works at <b>' + work + '</b>':
         'No information about workplace'
     ));
     overview.appendChild(createElement('school', 
         school !== undefined ? 
-        'Studies at ' + school :
+        'Studies at <b>' + school + '</b>':
         'No information about education'
     ));
     overview.appendChild(createElement('date_range', 
         dateOfBirth !== undefined ? 
-        'Date of birth: ' + dateOfBirth :
+        'Date of birth: <b>' + dateOfBirth + '</b>':
         'No information about date of birth'
     ));
     overview.appendChild(createElement('phone', 
-        dateOfBirth !== undefined ? 
-        'Phone number: ' + phone :
+        phone !== undefined ? 
+        'Phone number: <b>' + phone + '</b>':
         'No phone number'
     ));
     overview.appendChild(createElement('email', 
         email !== undefined ? 
-        'Email: ' + email :
+        'Email: <b>' + email + '</b>':
         'No email address'
     ));
     overview.appendChild(createElement('place', 
         origin !== undefined ? 
-        'From ' + origin :
+        'From <b>' + origin + '</b>':
         'No information about origin'
     ));
 }
@@ -71,7 +79,7 @@ function createElement(icon, text) {
     iconElement.classList.add('material-icons', 'col', 's2');
     iconElement.innerHTML = icon;
     const textElement = document.createElement('p');
-    textElement.innerText = text;
+    textElement.innerHTML = text;
     const element = document.createElement('div');
     element.classList.add('row');
     element.appendChild(iconElement);
