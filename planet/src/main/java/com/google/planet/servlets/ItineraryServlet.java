@@ -39,7 +39,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedReader;
 
-
 @WebServlet("/generate-itinerary")
 public class ItineraryServlet extends HttpServlet {
     @Override
