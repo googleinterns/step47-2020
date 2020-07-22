@@ -241,8 +241,20 @@ function openModal(modalElement) {
 
 function loadElement(href, elementId) {
     const element = document.getElementById(elementId);
+    if (element === null) {
+        return;
+    }
     const xmlhttp = new XMLHttpRequest();
     xmlhttp.open("GET", href, false);
     xmlhttp.send();
     element.innerHTML = xmlhttp.responseText;
+}
+
+function openProfile() {
+    if (currentUser === null) {
+        return;
+    }
+    database.ref('users/' + currentUser.uid).once('value').then(function(snapshot) {
+        window.location.href = '/user/' + snapshot.val().username;
+    });
 }
