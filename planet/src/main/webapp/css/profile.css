@@ -35,3 +35,8 @@ a:hover {
 .header-buttons:hover {
     cursor: pointer;
 }
+
+.slide-events:hover {
+    cursor: pointer;
+    background-color: lightgray;
+}
