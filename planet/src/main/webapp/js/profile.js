@@ -13,30 +13,47 @@
 // limitations under the License.
 
 import {HeaderRenderer} from './headerRenderer.js';
+import {AboutSectionRenderer} from './about-section-renderer.js';
 
 window.loadUserInformation = loadUserInformation;
 window.switchSection = switchSection;
+
+let user;
+let userId;
 
 function diplaySection(sectionId) {
     switch(sectionId) {
         case 'about-section':
             document.getElementById('about-section').style.display = 'block';
-            document.getElementById('posts-section').style.display = 'none';
-            document.getElementById('events-section').style.display = 'none';
+            AboutSectionRenderer.init(
+                user['work'],
+                user['school'],
+                user['dateOfBirth'],
+                user['phoneNumber'],
+                user['email'],
+                user['origin'] 
+            );
+            hideSection('posts-section');
+            hideSection('events-section');
             break;
         case 'posts-section':
-            document.getElementById('about-section').style.display = 'none';
+            hideSection('about-section');
             document.getElementById('posts-section').style.display = 'block';
-            document.getElementById('events-section').style.display = 'none';
+            hideSection('events-section');
             break;
         case 'events-section':
-            document.getElementById('about-section').style.display = 'none';
-            document.getElementById('posts-section').style.display = 'none';
+            hideSection('about-section');
+            hideSection('posts-section');
             document.getElementById('events-section').style.display = 'block';
             break;
         default:
             console.log('Unhandled section id:' + sectionId);
     }
+}
+
+function hideSection(sectionId) {
+    document.getElementById(sectionId).innerHTML = '';
+    document.getElementById(sectionId).style.display = 'none';
 }
 
 function activateLink(tabId) {
@@ -76,6 +93,7 @@ async function loadUserInformation(username) {
     }
     document.getElementById('not-found-message').remove();
     document.getElementById('profile-page').style.display = 'block';
+
     let user;
     let userId;
     // The userSnapshot.val() contains one property (user)
@@ -88,5 +106,13 @@ async function loadUserInformation(username) {
         user['name'],
         user['location'],
         user['bio']
+    );
+    AboutSectionRenderer.init(
+        user['work'],
+        user['school'],
+        user['dateOfBirth'],
+        user['phoneNumber'],
+        user['email'],
+        user['origin']
     );
 }
