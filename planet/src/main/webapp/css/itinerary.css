@@ -9,8 +9,8 @@ h1,h2,h3,h4,h5,h6{
 #content-places {
     width: 25%;
     float: left;
-    padding-left: 1vw;
-    padding-right: 1vw;
+    padding-left: 0;
+    padding-right: 0;
     color: #263238;
     text-align: center;
     height: 100vh;
@@ -19,12 +19,21 @@ h1,h2,h3,h4,h5,h6{
     font-family: "Trebuchet MS", Helvetica, sans-serif;
 }
 
+#places {
+    padding-left: 1vw;
+    padding-right: 1vw;
+    overflow-y: scroll;
+    height: 95vh;
+}
+
 #content-events {
     padding-left: 5vw;
     padding-right: 5vw;
     padding-top: 2vh;
     float:right;
     width: 75%;
+    height: 95vh;
+    overflow-y: scroll;
     color: #263238;
     text-align: center;
     font-family: "Trebuchet MS", Helvetica, sans-serif;
@@ -45,6 +54,19 @@ h1,h2,h3,h4,h5,h6{
 .save-events-form {
     display: none;
     z-index: 999;
+}
+
+#save-events-name {
+    width: 30%;
+}
+#save-events-label {
+    display: inline-block;
+}
+
+#add-custom-event-button {
+    display: block;
+    left: 60vw;
+    margin-top: 2vw;
 }
 
 #add-place-to-event-form {
