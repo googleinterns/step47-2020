@@ -76,6 +76,7 @@ function getListFromObject(object) {
 
 function renderList(events, name) {
     const eventsSection = document.getElementById('events-section');
+    eventsSection.style.paddingTop = '2%';
     let eventsListElement = document.getElementById('events-list');
     if (eventsListElement === null) {
         eventsListElement = document.createElement('div');
@@ -88,30 +89,33 @@ function renderList(events, name) {
     eventsListElement.style.width = '95%';
     const listName = document.createElement('h3');
     listName.style.textAlign = 'center';
-    listName.style.fontFamily = 'cursive';
     listName.classList.add('row');
     listName.innerHTML = name;
     eventsListElement.appendChild(listName);
     for (const event of events) {
-        eventsListElement.appendChild(createEvent(event.name, event.address, event.duration));
+        eventsListElement.appendChild(createEvent(event.name, event.address, event.duration, event.id));
     }
 }
 
-function createEvent(name, address, duration) {
+function createEvent(name, address, duration, eventId) {
     const eventElement = document.createElement('div');
     eventElement.classList.add('card');
     eventElement.style.backgroundColor = 'lightcyan';
 
     const usersIcon = document.createElement('i');
     usersIcon.classList.add('material-icons', 'row');
+    usersIcon.id = 'event-' + eventId;
     usersIcon.style.position = 'absolute';
     usersIcon.style.right = '1%';
     usersIcon.innerText = 'people';
+    usersIcon.title = 'People who visited the place';
+    usersIcon.addEventListener('click', function() { 
+        renderVisitorsList(event.target.id);
+    });
     eventElement.appendChild(usersIcon);
 
     const eventName = document.createElement('h4');
     eventName.classList.add('row');
-    eventName.style.fontFamily = 'cursive';
     eventName.style.textAlign = 'center';
     eventName.style.paddingTop = '10px';
     eventName.innerHTML = name;
@@ -148,6 +152,52 @@ function createEvent(name, address, duration) {
     durationElement.appendChild(durationText);
     eventElement.appendChild(durationElement);
     return eventElement;
+}
+
+async function renderVisitorsList(eventId) {
+    const placeId = eventId.slice(6, eventId.length);
+    const visitors = await getVisitors(placeId);
+    const modalElement = document.getElementById('list-visitors');
+    modalElement.innerHTML = '';
+    if (visitors.length !== 0) {
+        for (const visitorId of visitors) {
+            modalElement.appendChild(createListElement(
+                await getVisitorName(visitorId)
+            ));
+        }
+    } else {
+        const noVisitorsElement = document.createElement('p');
+        noVisitorsElement.style.textAlign = 'center';
+        noVisitorsElement.innerText = 'No one has ever visited this place! Be the first one';
+        modalElement.appendChild(noVisitorsElement);
+    }
+    M.Modal.getInstance(modalElement).open();
+}
+
+function createListElement(text) {
+    const element = document.createElement('li');
+    element.style.textAlign = 'center';
+    element.innerText = text;
+    return element;
+}
+
+async function getVisitorName(visitorId) {
+    const userSnapshot = await database.ref('users/' + visitorId).once('value');
+    if (userSnapshot.val() === null) {
+        alert('No visitor found with the id provided!');
+    }
+    return userSnapshot.val()['name'];
+}
+
+async function getVisitors(placeId) {
+    let visitors = [];
+    const placeSnapshot = await database.ref('places/' + placeId).once('value');
+    if (placeSnapshot.val() !== null) {
+        for (const userId in placeSnapshot.val().visitors) {
+            visitors.push(userId);
+        }
+    }
+    return visitors;
 }
 
 function getDuration(duration) {
