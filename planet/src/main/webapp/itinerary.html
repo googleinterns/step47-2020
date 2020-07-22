@@ -89,11 +89,14 @@
     </body>
     <script>
         function initAutocomplete() {
-            let input = document.getElementById('starting-address');
+            let startAddress = document.getElementById('starting-address');
+            let eventAddress = document.getElementById('add-event-address');
+
             let options = {
                 types: ['geocode']
             };
-            autocomplete = new google.maps.places.Autocomplete(input,options); 
+            autocomplete = new google.maps.places.Autocomplete(startAddress,options); 
+            autocomplete = new google.maps.places.Autocomplete(eventAddress,options);
             autocomplete.setFields(['address_component']);
             autocomplete.addListener('place_changed', fillAddress);
         }
