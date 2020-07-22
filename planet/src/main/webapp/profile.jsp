@@ -8,7 +8,8 @@
     <!-- Include the firebase and local JS files -->  
     <script src="https://www.gstatic.com/firebasejs/4.1.3/firebase.js"></script> 
     <script src="/js/authentication.js"></script>
-    <script src="/js/profile.js"></script>
+    <script type="module" src="/js/headerRenderer.js"></script>
+    <script type="module" src="/js/profile.js"></script>
     <link href='//fonts.googleapis.com/css?family=Marmelad' rel='stylesheet' type='text/css'>
     <!-- Compiled and minified CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
@@ -25,14 +26,20 @@
         Profile Not Found
     </div>
     <div id="profile-page" class="profile-container" style="display: none">
-        <div class="row card" style="background-color: #bbdefb;">
+        <div id="profile-header" class="row card" style="background-color: #bbdefb;">
             <div class="col s3 valign-wrapper">
                 <img class="center-align circle responsive-img" src="/images/profile-pic.png"/>
             </div>
-            <div class="col s8" style="position: absolute; bottom: 0; left: 25%;">
-                <h2 id="display-name" style="margin: 0; font-size: 3vw;"></h2>
-                <div id="location" class="valign-wrapper"></div>
-                <div id="bio"></div>
+            <div class="col s7" style="position: absolute; bottom: 0; left: 25%;">
+                <div id="name-container" class="row valign-wrapper" style="margin: 0">
+                    <h2 id="display-name" class="col s11" style="margin: 0; font-size: 3vw;"></h2>
+                </div>
+                <div id="location-container" class="row valign-wrapper" style="margin: 0">
+                    <div id="location" class="col s11 valign-wrapper" style="margin: 0"></div>
+                </div>
+                <div id="bio-container" class="row valign-wrapper" style="margin: 0">
+                    <div id="bio" class="col s11" style="margin: 0"></div>
+                </div>
             </div>
         </div>
         <div>

@@ -12,6 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import {HeaderRenderer} from './headerRenderer.js';
+
+window.loadUserInformation = loadUserInformation;
+window.switchSection = switchSection;
+
 function diplaySection(sectionId) {
     switch(sectionId) {
         case 'about-section':
@@ -78,71 +83,10 @@ async function loadUserInformation(username) {
         userId = object;
         user = userSnapshot.val()[property];
     }
-    updateProfileHeader(
+    HeaderRenderer.init(
         userId,
         user['name'],
         user['location'],
         user['bio']
     );
-}
-
-function updateProfileHeader(userId, displayName, location, bio) {
-    document.getElementById('display-name').innerText = displayName;
-    renderLocation(location, userId);
-    renderBio(bio, userId);
-}
-
-function renderLocation(location, userId) {
-    if (location !== undefined) {
-        document.getElementById('location').innerHTML =
-            '<i class="tiny material-icons col" style="padding: 0;">place</i>\
-            <p class="col" style="padding-left: 0; margin: 0">' + location + '</p>';
-        return;
-    } 
-    if (userId !== currentUser.uid) {
-        document.getElementById('location').innerHTML =
-            '<i class="tiny material-icons col" style="padding: 0;">place</i>\
-            <p class="col" style="padding-left: 0; margin: 0">Somewhere, World</p>';
-        return;
-    }
-    const addLocationLink = document.createElement('a');
-    addLocationLink.innerText = 'Add Location';
-    // This is an example, later the user will be selecting the city
-    addLocationLink.addEventListener('click', addLocationToDatabse);
-    document.getElementById('location').innerHTML = '';
-    document.getElementById('location').appendChild(addLocationLink);
-}
-
-function renderBio(bio, userId) {
-    if (bio !== undefined) {
-        document.getElementById('bio').innerText = bio;
-        return;
-    } 
-    if (userId !== currentUser.uid) {
-        document.getElementById('bio').innerText = 'No Bio';
-        return;
-    }
-    const addBioLink = document.createElement('a');
-    // This is an example, later the user will be writing the bio
-    addBioLink.addEventListener('click', addBioToDatabse);
-    addBioLink.innerText = 'Add Bio';
-    document.getElementById('bio').appendChild(addBioLink);
-}
-
-function addLocationToDatabse() {
-    const userReference = database.ref('users/' + currentUser.uid);
-    userReference.update({
-        location: 'Waterloo, Canada'
-    }).then(() => {
-        renderLocation('Waterloo, Canada', currentUser.uid);
-    });
-}
-
-function addBioToDatabse() {
-    const userReference = database.ref('users/' + currentUser.uid);
-    userReference.update({
-        bio: 'This is my bio'
-    }).then(() => {
-        renderBio('This is my bio', currentUser.uid);
-    });
 }

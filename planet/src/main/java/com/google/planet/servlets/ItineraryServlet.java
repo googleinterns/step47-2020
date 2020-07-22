@@ -57,6 +57,12 @@ public class ItineraryServlet extends HttpServlet {
             ItineraryGenerator itineraryGenerator = new ItineraryGenerator();
             Itinerary itinerary = itineraryGenerator.generateItinerary(events);
 
+            if (itinerary.errorMessage != null) {
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                response.getWriter().println(itinerary.errorMessage);
+                return;
+            }
+
             response.setContentType("application/json");
             String json = new Gson().toJson(itinerary);
             response.getWriter().println(json);
@@ -66,4 +72,3 @@ public class ItineraryServlet extends HttpServlet {
         }
   }
 }
-
