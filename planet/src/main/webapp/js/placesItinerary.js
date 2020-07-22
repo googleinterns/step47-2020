@@ -14,12 +14,18 @@
 
 // This file contains functions related to the places part of the itinerary page
 
+import TimeRange from './TimeRange.js';
+
 // Declare global functions.
 window.openAddPlaceForm = openAddPlaceForm;
 window.closeAddPlaceForm = closeAddPlaceForm;
 
 // Declare global variables/constants.
 const database = firebase.database();
+let placeToBeAdded = { name: '', 
+                    address: '', 
+                    openingTime: 0,
+                    closingTime: 0 };
 let map = new google.maps.Map(document.getElementById('empty-map'));
 
 export function renderPlaces() {
@@ -33,7 +39,7 @@ export function renderPlaces() {
             // Make request with fields
             let placeRequest = {
                 placeId: placeId,
-                fields: ['name','rating','formatted_address',
+                fields: ['place_id','name','rating','formatted_address',
                     'opening_hours','photos','url']
             };
             let service = new google.maps.places.PlacesService(map);
@@ -144,18 +150,21 @@ async function submitPlace(ref) {
     const eventListSnapshot = await eventListRef.once('value');
     const order = eventListSnapshot.numChildren() + 1;
 
-    // Create a new event based on the place
-    const placeRef = database.ref('places/' + ref); 
-    const placeSnapshot = await placeRef.once('value');
-    const placeDetails = placeSnapshot.val();
+    // Create a new event based on the place details
+    let placeRequest = {
+        placeId: ref,
+        fields: ['place_id','name','formatted_address','opening_hours']
+    };
+    let service = new google.maps.places.PlacesService(map);
+    service.getDetails(placeRequest, submitPlaceCallback); 
 
     const newEventRef = eventListRef.child(ref);
     newEventRef.set({
-        name: placeDetails.name,
-        address: placeDetails.address,
+        name: placeToBeAdded.name,
+        address: placeToBeAdded.address,
         duration: eventDuration,
-        openingTime: placeDetails.openingTime,
-        closingTime: placeDetails.closingTime,
+        openingTime: placeToBeAdded.openingTime,
+        closingTime: placeToBeAdded.closingTime,
         order: order,
     });
 
@@ -165,7 +174,7 @@ async function submitPlace(ref) {
     // the place, rather than when they add the place as an event
     const date = new Date();
     const timestamp = date.getTime();
-    placeRef.child('visitors').update({
+    database.ref('places/' + ref + '/visitors').update({
         [userId]: timestamp
     });
 
@@ -183,4 +192,24 @@ function validatePlaceDuration(duration) {
         return false;
     }
     return true;
+}
+
+function submitPlaceCallback(place, status) {
+    if (status == google.maps.places.PlacesServiceStatus.OK) {
+        placeToBeAdded.name = place.name;
+         placeToBeAdded.address = place.formatted_address; 
+        if (place.opening_hours) {
+            // for MVP purposes, use Monday's hours. 
+            const openHours = place.opening_hours.periods[1].open.hours;
+            const openMinutes = place.opening_hours.periods[1].open.minutes;
+            const closeHours = place.opening_hours.periods[1].close.hours;
+            const closeMinutes = place.opening_hours.periods[1].close.minutes;
+            placeToBeAdded.openingTime = TimeRange.getTimeInMinutes(openHours, openMinutes);
+            placeToBeAdded.closingTime = TimeRange.getTimeInMinutes(closeHours, closeMinutes);
+        } else { 
+            // Set the event's opening hours to 8am - 5pm otherwise. 
+            placeToBeAdded.openingTime = TimeRange.getTimeInMinutes(8, 0);
+            placeToBeAdded.closingTime = TimeRange.getTimeInMinutes(17, 0);
+        }
+    } 
 }

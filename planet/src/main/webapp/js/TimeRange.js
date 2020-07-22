@@ -28,8 +28,8 @@ export default class TimeRange {
     }
     
     static getTimeInMinutes(hours, minutes) {
-        if (hours < 8 || hours > 19) {
-            throw new Error("Hours can only be 8 through 19 (inclusive).");
+        if (hours < 0 || hours > 23) {
+            throw new Error("Hours can only be 0 through 23 (inclusive).");
         }
         if (minutes < 0 || minutes > 59) {
             throw new Error("Minutes can only be 0 through 59 (inclusive).");
@@ -37,9 +37,9 @@ export default class TimeRange {
         return (hours * 60) + minutes;
     }
     static getStartOfDay() {
-        return this.getTimeInMinutes(8, 0);
+        return this.getTimeInMinutes(0, 0);
     } 
     static getEndOfDay() {
-        return this.getTimeInMinutes(19, 59);
+        return this.getTimeInMinutes(23, 59);
     }
 }
