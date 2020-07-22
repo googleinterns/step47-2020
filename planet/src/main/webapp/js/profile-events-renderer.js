@@ -102,6 +102,13 @@ function createEvent(name, address, duration) {
     eventElement.classList.add('card');
     eventElement.style.backgroundColor = 'lightcyan';
 
+    const usersIcon = document.createElement('i');
+    usersIcon.classList.add('material-icons', 'row');
+    usersIcon.style.position = 'absolute';
+    usersIcon.style.right = '1%';
+    usersIcon.innerText = 'people';
+    eventElement.appendChild(usersIcon);
+
     const eventName = document.createElement('h4');
     eventName.classList.add('row');
     eventName.style.fontFamily = 'cursive';
@@ -171,7 +178,7 @@ async function getNextList() {
     }
     listIndex++;
     eventsList = getListFromSnapshot(listIndex, eventsSnapshot);
-    if (eventsList.length === 0) {
+    if (eventsList.length === 0 || listName === 'currentList') {
         listIndex--;
         return;
     }
@@ -185,7 +192,7 @@ async function getPreviousList() {
     }
     listIndex--;
     eventsList = getListFromSnapshot(listIndex, eventsSnapshot);
-    if (eventsList.length === 0) {
+    if (eventsList.length === 0 || listName === 'currentList') {
         listIndex++;
         return;
     }
