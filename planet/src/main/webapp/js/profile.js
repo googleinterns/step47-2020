@@ -46,6 +46,8 @@ function diplaySection(sectionId) {
             hideSection('posts-section');
             document.getElementById('events-section').style.display = 'block';
             break;
+        default:
+            console.log('Unhandled section id:' + sectionId);
     }
 }
 
@@ -71,6 +73,8 @@ function activateLink(tabId) {
             document.getElementById('posts-link').classList.remove('active');
             document.getElementById('events-link').classList.add('active');
             break;
+        default:
+            console.log('Unhandled link id:' + linkId);
     }
 }
 
@@ -80,7 +84,6 @@ function switchSection(linkId, sectionId) {
 }
 
 async function loadUserInformation(username) {
-    HeaderRenderer.init();
     const usersReference = database.ref('/users');
     const userSnapshot = await usersReference.orderByChild('username').equalTo(username).once('value');
     if (userSnapshot.val() === null) {
@@ -90,9 +93,13 @@ async function loadUserInformation(username) {
     }
     document.getElementById('not-found-message').remove();
     document.getElementById('profile-page').style.display = 'block';
-    for (const object in userSnapshot.val()) {
+
+    let user;
+    let userId;
+    // The userSnapshot.val() contains one property (user)
+    for (const property in userSnapshot.val()) {
         userId = object;
-        user = userSnapshot.val()[object];
+        user = userSnapshot.val()[property];
     }
     HeaderRenderer.init(
         userId,
@@ -104,7 +111,7 @@ async function loadUserInformation(username) {
         user['work'],
         user['school'],
         user['dateOfBirth'],
-        user['phone'],
+        user['phoneNumber'],
         user['email'],
         user['origin']
     );
