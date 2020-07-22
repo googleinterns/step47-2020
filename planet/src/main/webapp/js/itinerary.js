@@ -27,17 +27,6 @@ window.addEvent = addEvent;
 window.saveEvents = saveEvents;
 window.generateItinerary = generateItinerary;
 
-let autocomplete; 
-
-// function initAutocomplete() {
-//     let input = document.getElementById('starting-address');
-//     let options = {
-//         types: ['geocode']
-//     };
-//     autocomplete = new google.maps.places.Autocomplete(input,options); 
-//     autocomplete.setFields(['address_component']);
-//     autocomplete.addListener('place_changed', fillAddress);
-// }
 
 function openAddEventForm() {
     document.getElementById('add-event').style.display = 'block';
@@ -73,20 +62,6 @@ function renderStartingLocation() {
     if (sessionStorage.getItem('start')) {
         document.getElementById('starting-address').value = sessionStorage.getItem('start');
     }
-}
-
-export function fillAddress() {
-    console.log('filled'); 
-    let place = autocomplete.getPlace();
-    console.log(place);
-
-    // for (var i = 0; i < place.address_components.length; i++) {
-    //     var addressType = place.address_components[i].types[0];
-    //     if (componentForm[addressType]) {
-    //         var val = place.address_components[i][componentForm[addressType]];
-    //         document.getElementById(addressType).value = val;
-    //     }
-    // }
 }
 
 function renderListOptions() {
