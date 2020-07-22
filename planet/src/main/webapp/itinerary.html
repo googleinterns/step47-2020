@@ -75,11 +75,11 @@
                 <div id="events">
                 </div>
                 <button class="btn waves-effect waves-light" id="save-events-button" onclick="openSaveEventsForm();">save</button>
-                <div id="save-events-form" class="save-events-form">
-                    <p> Please type in a name you want to save the list as:
-                        <input type="text" name="save-events-name" id="save-events-name" placeholder="list1"></input> </p>
-                    <button class="btn waves-effect waves-light" onclick="closeSaveEventsForm();">Cancel</button></br>
-                    <button class="btn waves-effect waves-light" onclick="saveEvents();">Submit</button></br>
+                 <div id="save-events-form" class="save-events-form">
+                    <p id="save-events-label"> Save the list as: 
+                        <input type="text" name="save-events-name" id="save-events-name" placeholder="list1"></input></p>
+                    <button class="btn waves-effect waves-light" onclick="saveEvents();"><i class="material-icons">cloud_done</i></button>
+                    <button class="btn waves-effect waves-light" onclick="closeSaveEventsForm();"><i class="material-icons">highlight_off</i></button></br>
                 </div>
                 <button class="btn waves-effect waves-light" onclick="generateItinerary()">generage itnerary</button>
             </div>
