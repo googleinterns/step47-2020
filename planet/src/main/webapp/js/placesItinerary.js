@@ -24,6 +24,9 @@ window.closeAddPlaceForm = closeAddPlaceForm;
 const database = firebase.database();
 let map = new google.maps.Map(document.getElementById('empty-map'));
 
+function initEmptyMap() {
+    map = new google.maps.Map(document.getElementById('empty-map'));
+}
 export function renderPlaces() {
     const userId = firebase.auth().currentUser.uid;
     const placesRef = database.ref('users/' + userId + '/places');
