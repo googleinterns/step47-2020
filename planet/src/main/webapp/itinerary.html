@@ -87,4 +87,20 @@
             </div>
         </div>
     </body>
+    <script>
+        function initAutocomplete() {
+            let input = document.getElementById('starting-address');
+            let options = {
+                types: ['geocode']
+            };
+            autocomplete = new google.maps.places.Autocomplete(input,options); 
+            autocomplete.setFields(['address_component']);
+            autocomplete.addListener('place_changed', fillAddress);
+        }
+
+        function fillAddress() {
+            let place = autocomplete.getPlace();
+        }
+    </script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDK36gDoYgOj4AlbCqh1IuaUuTlcpKF0ns&libraries=places&callback=initAutocomplete"></script>
 </html>

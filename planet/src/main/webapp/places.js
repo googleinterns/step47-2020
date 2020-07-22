@@ -147,6 +147,7 @@ function setSearchByButton() {
 function addPlaceDetails() {
     // For each place, get the icon, name and location.
     places.forEach(function(place) {
+
         if (!place.geometry) {
           console.log("Returned place contains no geometry");
           return;
@@ -190,13 +191,6 @@ function callback(place, status) {
         }
         if (place.opening_hours) {
             placeDetails['Hours'] = place.opening_hours.weekday_text;
-            // Open and closing time for Monday (MVP purposes)
-            if (place.opening_hours.periods[1]) {
-                placeDetails['Opening'] = place.opening_hours.periods[1].open.time;
-                if (place.opening_hours.periods[1].close) {
-                    placeDetails['Closing'] = place.opening_hours.periods[1].close.time;
-                }
-            }
         }
         if (place.photos) {
             placeDetails['Photo'] = place.photos[0].getUrl({maxWidth:400, maxHeight:200});
@@ -206,7 +200,6 @@ function callback(place, status) {
         }
         placeInfo.push(placeDetails);
     }    
-    
     // List results when all callbacks are finished
     count ++ 
     if (count === places.length) {
@@ -343,7 +336,7 @@ function listResults() {
         div1.appendChild(div2); 
         element.appendChild(div1);
     }
-    // Add search keyword to header
+    // Add search keyword to header 
     document.getElementById('greeting').innerHTML = 'Find a place: ' + document.getElementById('pac-input').value;
 }
 
