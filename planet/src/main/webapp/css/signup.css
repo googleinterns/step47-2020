@@ -36,10 +36,10 @@
     font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
 }
 
-button.btn.waves-effect.waves-light {
+/* button.btn.waves-effect.waves-light {
     font-size: min(1vw, 18px);
     width: 100%;
-}
+} */
 
 .input-field.col.s12, .input-field.col.s6, .input-field.col.s4 {
     margin: 0;

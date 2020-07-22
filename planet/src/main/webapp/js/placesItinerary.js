@@ -60,6 +60,7 @@ function createPlaceElement(place) {
     // Create the add button
     const addButton = document.createElement('div');
     addButton.setAttribute('class', 'place-button');
+    addButton.setAttribute('id', 'place-button-' + place.place_id);
     
     const eventFromThisPlace = document.getElementById(place.place_id);
     if (eventFromThisPlace) {
@@ -207,6 +208,38 @@ async function submitPlaceCallback(place, status) {
         });
 
         closeAddPlaceForm();
-        renderPlaces();
+        renderPlaceIcons(place.place_id, false);
     } 
+}
+
+export function renderPlaceIcons(placeId, enableAdd) {
+    if (placeId) {
+        const placeIcon = document.getElementById('place-button-' + placeId);
+        if (enableAdd) {
+            placeIcon.setAttribute('onclick', 'openAddPlaceForm(event, "' + placeId + '")');
+            placeIcon.innerHTML = `<i class="material-icons small">playlist_add</i>`;
+        } else {
+            placeIcon.onclick = null;
+            placeIcon.innerHTML = `<i class="material-icons small">playlist_add_check</i>`;
+        }
+    } else {
+        const userId = firebase.auth().currentUser.uid;
+        const placeListRef = database.ref('users/' + userId + '/places');
+        placeListRef.once('value', (placeListSnapshot) => {
+            placeListSnapshot.forEach(function(childPlace) {
+                let placeId = childPlace.key;
+                const event = document.getElementById(placeId);
+                const placeIcon = document.getElementById('place-button-' + placeId);
+                if (placeIcon){
+                    if (event) {
+                        placeIcon.onclick = null;
+                        placeIcon.innerHTML = `<i class="material-icons small">playlist_add_check</i>`;
+                    } else {
+                        placeIcon.setAttribute('onclick', 'openAddPlaceForm(event, "' + placeId + '")');
+                        placeIcon.innerHTML = `<i class="material-icons small">playlist_add</i>`;
+                    }
+                }
+            });
+        });
+    }
 }

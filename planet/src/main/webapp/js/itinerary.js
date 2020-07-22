@@ -15,6 +15,7 @@
 
 import TimeRange from './TimeRange.js';
 import {renderPlaces} from './placesItinerary.js';
+import {renderPlaceIcons} from './placesItinerary.js';
 // Declare global functions
 window.openAddEventForm = openAddEventForm;
 window.closeAddEventForm = closeAddEventForm;
@@ -100,7 +101,7 @@ function handleListOptionChange() {
         document.getElementById('save-events-button').style.display = 'inline-block';
     }
     renderEvents(listName);
-    renderPlaces();
+    renderPlaceIcons(null, false);
 }
 
 // Add an event to the firebase realtime database
@@ -251,7 +252,7 @@ function deleteEvent(listName, ref) {
     });
 
     // Render places again since the icons might need to change
-    renderPlaces();
+    renderPlaceIcons(ref, true);
 }
 
 async function saveEvents() {
