@@ -27,6 +27,7 @@ window.addEvent = addEvent;
 window.saveEvents = saveEvents;
 window.generateItinerary = generateItinerary;
 
+const database = firebase.database();
 
 function openAddEventForm() {
     document.getElementById('add-event').style.display = 'block';
@@ -169,7 +170,11 @@ function validateCustomEventInput(name, address, duration) {
 firebase.auth().onAuthStateChanged(function(user) {
     if (user) {
         renderListOptions();
-        renderEvents(sessionStorage.getItem('listName'));
+        if (sessionStorage.getItem('listName')) {
+            renderEvents(sessionStorage.getItem('listName'));
+        } else {
+            renderEvents('currentList');
+        }
         renderPlaces();
     } else {
         console.log('Please sign in');
