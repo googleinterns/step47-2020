@@ -1,5 +1,5 @@
 .profile-container {
-    width: 65%;
+    width: min(65%, 600px);
     margin-left: auto;
     margin-right: auto;
     margin-top: 2%;
@@ -17,11 +17,21 @@
 
 a {
     color: blue;
-    font-size: 1.5vw;
+    font-size: min(14px, 1.5vw);
     opacity: 0.8;
 }
 
 a:hover {
     cursor: pointer;
+    text-decoration: underline;
     opacity: 1;
+}
+
+#edit-button {
+    position: absolute;
+    right: 0;
+}
+
+.header-buttons:hover {
+    cursor: pointer;
 }
