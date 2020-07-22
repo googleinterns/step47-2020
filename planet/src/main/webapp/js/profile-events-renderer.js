@@ -28,22 +28,29 @@ export const ProfileEventsRenderer = {
 }
 
 async function readListFromDatabase() {
-    const eventsReference = database.ref('events/' + userId);
-    const eventsSnapshot = await eventsReference.once('value');
+    const eventsSnapshot = await getEventsSnapshot();
     if (eventsSnapshot.val() === null) {
         eventsList = [];
         return;
     }
+    eventsList = getListFromSnapshot(listIndex, eventsSnapshot);
+}
+
+async function getEventsSnapshot() {
+    const eventsReference = database.ref('events/' + userId);
+    return await eventsReference.once('value');
+}
+
+function getListFromSnapshot(index, snapshot) {
     let counter = 0;
-    for (const listId in eventsSnapshot.val()) {
-        if (counter === listIndex) {
+    for (const listId in snapshot.val()) {
+        if (counter === index) {
             listName = listId;
-            eventsList = getListFromObject(eventsSnapshot.val()[listId]);
-            return;
+            return getListFromObject(snapshot.val()[listId]);
         }
         counter++;
     }
-    eventsList = [];
+    return [];
 }
 
 function getListFromObject(object) {
@@ -57,7 +64,13 @@ function getListFromObject(object) {
 
 function renderList(events, name) {
     const eventsSection = document.getElementById('events-section');
-    const eventsListElement = document.createElement('div');
+    let eventsListElement = document.getElementById('events-list');
+    if (eventsListElement === null) {
+        eventsListElement = document.createElement('div');
+        eventsListElement.id = 'events-list';
+        eventsSection.appendChild(eventsListElement);
+    }
+    eventsListElement.innerHTML = '';
     eventsListElement.style.display = 'table-cell';
     eventsListElement.style.width = '95%';
     const listName = document.createElement('h3');
@@ -68,7 +81,6 @@ function renderList(events, name) {
     for (const event of events) {
         eventsListElement.appendChild(createEvent(event.name));
     }
-    eventsSection.appendChild(eventsListElement);
 }
 
 function createEvent(name) {
@@ -85,8 +97,40 @@ function renderSlideButton(icon) {
     const eventsSection = document.getElementById('events-section');
     const slideElement = document.createElement('div');
     slideElement.classList.add('slide-events', 'valign-wrapper');
+    if (icon === 'keyboard_arrow_left') {
+        slideElement.addEventListener('click', getPreviousList);
+    }
+    if (icon === 'keyboard_arrow_right') {
+        slideElement.addEventListener('click', getNextList);
+    }
     slideElement.appendChild(createIcon(icon));
     eventsSection.appendChild(slideElement);
+}
+
+async function getNextList() {
+    const eventsSnapshot = await getEventsSnapshot();
+    if (eventsSnapshot.val() === null) {
+        return;
+    }
+    listIndex = (listIndex + 1) % eventsSnapshot.numChildren();
+    eventsList = getListFromSnapshot(listIndex, eventsSnapshot);
+    if (eventsList.length === 0) {
+        return;
+    }
+    renderList(eventsList, listName);
+}
+
+async function getPreviousList() {
+    const eventsSnapshot = await getEventsSnapshot();
+    if (eventsSnapshot.val() === null) {
+        return;
+    }
+    listIndex = (listIndex - 1) % eventsSnapshot.numChildren();
+    eventsList = getListFromSnapshot(listIndex, eventsSnapshot);
+    if (eventsList.length === 0) {
+        return;
+    }
+    renderList(eventsList, listName);
 }
 
 function createIcon(icon) {
