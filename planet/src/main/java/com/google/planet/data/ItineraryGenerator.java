@@ -35,7 +35,7 @@ public final class ItineraryGenerator {
         
         // Return an empty list if events are empty or only contains the starting point event
         if (events.size() <= 1) { 
-            errorMessage = "Status code 400 (BAD REQUEST): Itinerary can only be generated with at least one event!";
+            errorMessage = "Itinerary can only be generated with at least one event!";
             Itinerary itinerary = new Itinerary(Arrays.asList(), errorMessage);
             return itinerary;
         }
@@ -84,13 +84,13 @@ public final class ItineraryGenerator {
                     if (currentElement.duration != null) {
                         travelTimeGraph[i][j] = currentElement.duration;
                     } else {
-                        errorMessage = "Status code 400 (BAD REQUEST): Oops, one of your addresses is invalid, please use a valid address.";
+                        errorMessage = "Oops, one of your addresses is invalid, please use a valid address.";
                     }
                 }
             }
             return travelTimeGraph;
         } catch (Exception e) {
-            errorMessage = "Status code 400 (BAD REQUEST): Oops, one of your addresses is invalid, please use a valid address.";
+            errorMessage = "Oops, one of your addresses is invalid, please use a valid address.";
             return travelTimeGraph;
         }
     }
@@ -127,7 +127,7 @@ public final class ItineraryGenerator {
                     start += event.getDurationInMinutes() + getTravelDurationInMinutes(travelTimeGraph[i][i+1]);
                 }
             }else {
-                errorMessage = "Status code 400 (BAD REQUEST): Sorry, you have too many events in a day!";
+                errorMessage = "Sorry, you have too many events in a day!";
                 return Arrays.asList();
             }
         }
