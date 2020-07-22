@@ -48,10 +48,10 @@
             <p> Start planing your itinerary by choosing your liked places from below: </p>
             <div id="places"></div>
             <div id="add-place-to-event-form">
-                <p>Duration (in hours): 
+                <p id="add-place-duration-label">Duration (in hours): 
                     <input type="number" id="add-place-duration" name="add-place-duration" max="9" min="0" step = "0.5"> </input></p>
-                <button class="btn waves-effect waves-light" onclick="closeAddPlaceForm();">Cancel</button></br>
-                <button class="btn waves-effect waves-light" id="submit-place">Submit</button></br>
+                <button class="btn waves-effect waves-light" id="submit-place"><i class="material-icons">cloud_done</i></button>
+                <button class="btn waves-effect waves-light" onclick="closeAddPlaceForm();"><i class="material-icons">highlight_off</i></button></br>
             </div>
         </div>     
 
@@ -59,7 +59,7 @@
             <div id="events-container">
                 <p>Choose to edit from the following list:</p> 
                 <select id="list-options" name="list-options" onchange="handleListOptionChange()"></select>
-                <a class="btn-floating btn-large" onclick="openAddEventForm()"> <i class="material-icons">add</i> </a>
+                <a class="btn-floating btn-large" id="add-custom-event-button" onclick="openAddEventForm()"> <i class="material-icons">add</i> </a>
                 <p>Starting Address (Hotel/Home): 
                         <input type="text" id="starting-address" name="starting-address" onchange="handleStartingLocationChange()"> </input></p>
                 <div id="add-event" class="add-event"> 

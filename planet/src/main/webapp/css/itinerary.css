@@ -56,10 +56,11 @@ h1,h2,h3,h4,h5,h6{
     z-index: 999;
 }
 
-#save-events-name {
+#save-events-name, #add-place-duration {
     width: 30%;
 }
-#save-events-label {
+
+#save-events-label{
     display: inline-block;
 }
 
@@ -73,6 +74,7 @@ h1,h2,h3,h4,h5,h6{
     position: absolute;
     display: none;
     background: white;
+    border-radius: 0.5rem;
     border: solid 1px;
     z-index: 999;
 }
