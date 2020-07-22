@@ -24,6 +24,7 @@
 
         <!-- Include the firebase and local JS files -->  
         <script src="https://www.gstatic.com/firebasejs/4.1.3/firebase.js"></script> 
+        <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDK36gDoYgOj4AlbCqh1IuaUuTlcpKF0ns&libraries=places"></script>
         <script src="js/authentication.js"></script>
         <script type="module" src="js/itinerary.js"></script>
         <script type="module" src="js/placesItinerary.js"></script>
@@ -37,13 +38,16 @@
             <div class="nav-wrapper indigo darken-2">
                 <a href="places.html" class="brand-logo" style="padding-left: 25px">planet</a>
                 <ul class="right hide-on-med-and-down">
-                    <li><a href="itinerary.html">Itinerary</a></li>
-                    <li><a onclick="openModal('sign-in-modal')">Sign In</a></li>
-                    <li><a onclick="openModal('sign-up-modal')"><i class="material-icons right">account_circle</i>Sign Up</a></li>
+                     <li><a href="itinerary.html">Itinerary</a></li>
+                    <li><a id="sign-out-button" style="display: none;" onclick="signOut()">Sign Out</a></li>
+                    <li><a id="profile-button" style="display: none;"></a></li>
+                    <li><a id="sign-in-button" style="display: none;" onclick="openModal('sign-in-modal')"><i class="material-icons right">account_circle</i>Sign In</a></li>
                 </ul>
             </div>  
         </nav>
         </header>
+
+        <div id="empty-map" style="display:none"></div>
 
         <div id="content-places"> 
             <p> Start planing your itinerary by choosing your liked places from below: </p>
@@ -94,5 +98,7 @@
             <div id="itinerary">
             </div>
         </div>
+        <div id="sign-in-modal" class="modal" style="padding-bottom: 1vh;"></div>
+        <div id="sign-up-modal" class="modal" style="padding-bottom: 1vh;"></div>
     </body>
 </html>

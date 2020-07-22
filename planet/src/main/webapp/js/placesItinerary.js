@@ -13,10 +13,16 @@
 // limitations under the License.
 
 // This file contains functions related to the places part of the itinerary page
+
+import TimeRange from './TimeRange.js';
+
+// Declare global functions.
 window.openAddPlaceForm = openAddPlaceForm;
 window.closeAddPlaceForm = closeAddPlaceForm;
 
+// Declare global variables/constants.
 const database = firebase.database();
+let map = new google.maps.Map(document.getElementById('empty-map'));
 
 export function renderPlaces() {
     const userId = firebase.auth().currentUser.uid;
@@ -24,42 +30,85 @@ export function renderPlaces() {
     placesRef.once('value', (placesSnapshot) => {
         const placesContainer = document.getElementById('places');
         placesContainer.innerHTML = '';
-        placesSnapshot.forEach((childPlace) => {
-            let placeDetailsRef = database.ref('places/' + childPlace.val());
-            placeDetailsRef.once('value', (placeDetailsSnapshot) => {
-                let placeObject = placeDetailsSnapshot.val();
-                let placeElement = createPlaceElement (placeDetailsSnapshot.key,
-                                                placeObject.name, 
-                                                placeObject.address);
-                placesContainer.appendChild(placeElement);
-            });
-        });
+        const savedPlaces = placesSnapshot.val();
+        for (const placeId in savedPlaces) {
+            // Make request with fields
+            let placeRequest = {
+                placeId: placeId,
+                fields: ['place_id','name','rating','formatted_address',
+                    'opening_hours','photos','url']
+            };
+            let service = new google.maps.places.PlacesService(map);
+            service.getDetails(placeRequest, renderPlaceDetailsCallback); 
+        }
     });
 }
 
-function createPlaceElement(ref, name, address) {
+function renderPlaceDetailsCallback(place, status) {
+    if (status == google.maps.places.PlacesServiceStatus.OK) {
+        const placesContainer = document.getElementById('places');
+        const placeElement = createPlaceElement(place);
+        placesContainer.appendChild(placeElement);
+    }    
+}
+
+function createPlaceElement(place) {
     const placeElement = document.createElement('div');
     placeElement.setAttribute('class', 'card place yellow lighten-4');
-    placeElement.setAttribute('id', 'place-' + ref);
+    placeElement.setAttribute('id', 'place-' + place.place_id);
 
+    // Create the add button
     const addButton = document.createElement('div');
     addButton.setAttribute('class', 'place-button');
     
-    const eventFromThisPlace = document.getElementById(ref);
+    const eventFromThisPlace = document.getElementById(place.place_id);
     if (eventFromThisPlace) {
         addButton.innerHTML = `<i class="material-icons small">playlist_add_check</i>`;
     }else {
-        addButton.setAttribute('onclick', 'openAddPlaceForm(event, "' + ref + '")');
+        addButton.setAttribute('onclick', 'openAddPlaceForm(event, "' + place.place_id + '")');
         addButton.innerHTML = `<i class="material-icons small">playlist_add</i>`;
     }
     placeElement.appendChild(addButton);
 
-    placeElement.innerHTML += 
-        `<div class="card-content">
-          <span class="card-title">` + name + `</span>
-          <p>` + address +`</p>
-        </div>`;
+    // Create place name as the card title
+    const placeElementContent = document.createElement('div');
+    placeElementContent.setAttribute('class', 'card-content');
+    placeElementContent.innerHTML += `<span class="card-title">` + place.name + `</span>`;
+
+    // Add the rest of information if they exist
+    if (place.rating) {
+        placeElementContent.appendChild(createParagraphElement(place.rating));    
+    }
+    if (place.photos) {
+        const placePhotoSrc = place.photos[0].getUrl({maxWidth:400, maxHeight:200});
+        const placePhotoElement = document.createElement('img');
+        placePhotoElement.src = placePhotoSrc;
+        placeElementContent.appendChild(placePhotoElement);    
+    }
+    if (place.formatted_address) {
+        placeElementContent.appendChild(createParagraphElement(place.formatted_address));    
+    }
+    if (place.opening_hours) {
+        place.opening_hours.weekday_text.forEach((day) => {
+            placeElementContent.appendChild(createParagraphElement(day));
+        }); 
+    }
+    if (place.url) {
+        const placeUrlElement = document.createElement('a');
+        placeUrlElement.href = place.url;
+        placeUrlElement.target = '_blank';
+        placeUrlElement.innerText = 'More';
+        placeElementContent.appendChild(placeUrlElement);    
+    }
+
+    placeElement.appendChild(placeElementContent);
     return placeElement;
+}
+
+function createParagraphElement(text){
+    const p = document.createElement('p');
+    p.innerText = text;
+    return p;
 }
 
 function openAddPlaceForm(event, ref) {
@@ -90,40 +139,13 @@ async function submitPlace(ref) {
         return;
     }
 
-    const userId = firebase.auth().currentUser.uid;
-    const listName = document.getElementById('list-options').value;
-    const eventListRef = database.ref('events/' + userId + '/' + listName);
-    // Get the order number by counting existing events
-    const eventListSnapshot = await eventListRef.once('value');
-    const order = eventListSnapshot.numChildren() + 1;
-
-    // Create a new event based on the place
-    const placeRef = database.ref('places/' + ref); 
-    const placeSnapshot = await placeRef.once('value');
-    const placeDetails = placeSnapshot.val();
-
-    const newEventRef = eventListRef.child(ref);
-    newEventRef.set({
-        name: placeDetails.name,
-        address: placeDetails.address,
-        duration: eventDuration,
-        openingTime: placeDetails.openingTime,
-        closingTime: placeDetails.closingTime,
-        order: order,
-    });
-
-    // Update the place's visitors
-    // This will add the user id to the visitors list, along with the most recent timestamp 
-    // In the future, the timestamp should be modified to when the users indicate they will visit 
-    // the place, rather than when they add the place as an event
-    const date = new Date();
-    const timestamp = date.getTime();
-    placeRef.child('visitors').update({
-        [userId]: timestamp
-    });
-
-    closeAddPlaceForm();
-    renderPlaces();
+    // Create a new event based on the place details
+    let placeRequest = {
+        placeId: ref,
+        fields: ['place_id','name','formatted_address','opening_hours']
+    };
+    let service = new google.maps.places.PlacesService(map);
+    service.getDetails(placeRequest, submitPlaceCallback); 
 }
 
 function validatePlaceDuration(duration) {
@@ -136,4 +158,55 @@ function validatePlaceDuration(duration) {
         return false;
     }
     return true;
+}
+
+async function submitPlaceCallback(place, status) {
+    if (status == google.maps.places.PlacesServiceStatus.OK) {
+        let openingTime = 0;
+        let closingTime = 0;
+        if (place.opening_hours) {
+            // for MVP purposes, use Monday's hours. 
+            const openHours = place.opening_hours.periods[1].open.hours;
+            const openMinutes = place.opening_hours.periods[1].open.minutes;
+            const closeHours = place.opening_hours.periods[1].close.hours;
+            const closeMinutes = place.opening_hours.periods[1].close.minutes;
+            openingTime = TimeRange.getTimeInMinutes(openHours, openMinutes);
+            closingTime = TimeRange.getTimeInMinutes(closeHours, closeMinutes);
+        } else { 
+            // Set the event's opening hours to 8am - 5pm otherwise. 
+            openingTime = TimeRange.getTimeInMinutes(8, 0);
+            closingTime = TimeRange.getTimeInMinutes(17, 0);
+        }
+
+        const userId = firebase.auth().currentUser.uid;
+        const listName = document.getElementById('list-options').value;
+        const eventDuration = document.getElementById('add-place-duration').value;
+        const eventListRef = database.ref('events/' + userId + '/' + listName);
+        // Get the order number by counting existing events
+        const eventListSnapshot = await eventListRef.once('value');
+        const order = eventListSnapshot.numChildren() + 1;
+
+        const newEventRef = eventListRef.child(place.place_id);
+        newEventRef.set({
+            name: place.name,
+            address: place.formatted_address,
+            duration: eventDuration,
+            openingTime: openingTime,
+            closingTime: closingTime,
+            order: order,
+        });
+
+        // Update the place's visitors
+        // This will add the user id to the visitors list, along with the most recent timestamp 
+        // In the future, the timestamp should be modified to when the users indicate they will visit 
+        // the place, rather than when they add the place as an event
+        const date = new Date();
+        const timestamp = date.getTime();
+        database.ref('places/' + place.place_id + '/visitors').update({
+            [userId]: timestamp
+        });
+
+        closeAddPlaceForm();
+        renderPlaces();
+    } 
 }
