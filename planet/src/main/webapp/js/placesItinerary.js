@@ -38,8 +38,16 @@ function initAutocomplete() {
     let options = {
         types: ['geocode']
     };
-    autocompleteStart = new google.maps.places.Autocomplete(startAddress,options); 
+    autocompleteStart = new google.maps.places.Autocomplete(startAddress,options);
+    autocompleteStart.setFields(['address_component']);
+    autocompleteStart.addListener('place_changed', updateStartingAddress);
+
     autocompleteEvent = new google.maps.places.Autocomplete(eventAddress,options);
+}
+
+function updateStartingAddress() {
+    const startAddress = document.getElementById('starting-address');
+    sessionStorage.setItem('start', startAddress.value);
 }
 
 export function renderPlaces() {
