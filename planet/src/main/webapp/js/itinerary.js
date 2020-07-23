@@ -26,8 +26,24 @@ window.handleListOptionChange = handleListOptionChange;
 window.addEvent = addEvent;
 window.saveEvents = saveEvents;
 window.generateItinerary = generateItinerary;
+window.initAutocomplete = initAutocomplete; 
 
 const database = firebase.database();
+
+// Declare global variables 
+let autocompleteStart;
+let autocompleteEvent;
+
+/** Adds autocomplete to input boxes */
+function initAutocomplete() {
+    let startAddress = document.getElementById('starting-address');
+    let eventAddress = document.getElementById('add-event-address');
+    let options = {
+        types: ['geocode']
+    };
+    autocompleteStart = new google.maps.places.Autocomplete(startAddress,options); 
+    autocompleteEvent = new google.maps.places.Autocomplete(eventAddress,options);
+}
 
 function openAddEventForm() {
     document.getElementById('add-event').style.display = 'block';
@@ -56,7 +72,7 @@ function handleStartingLocationChange() {
         sessionStorage.setItem('start', document.getElementById('starting-address').value);
     } else {
         alert ('Please update your browser'); 
-    } 
+    }
 }
 
 function renderStartingLocation() {

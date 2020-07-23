@@ -31,7 +31,7 @@
         <!--Let browser know website is optimized for mobile-->    
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     </head>    
-    <body onload ="renderStartingLocation();">   
+    <body onload ="renderStartingLocation(); initAutocomplete();">   
         <header>
         <nav>
             <div class="nav-wrapper indigo darken-2">
@@ -95,23 +95,5 @@
             </div>
         </div>
     </body>
-    <script>
-        function initAutocomplete() {
-            let startAddress = document.getElementById('starting-address');
-            let eventAddress = document.getElementById('add-event-address');
-
-            let options = {
-                types: ['geocode']
-            };
-            autocomplete = new google.maps.places.Autocomplete(startAddress,options); 
-            autocomplete = new google.maps.places.Autocomplete(eventAddress,options);
-            autocomplete.setFields(['address_component']);
-            autocomplete.addListener('place_changed', fillAddress);
-        }
-
-        function fillAddress() {
-            let place = autocomplete.getPlace();
-        }
-    </script>
-    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDK36gDoYgOj4AlbCqh1IuaUuTlcpKF0ns&libraries=places&callback=initAutocomplete"></script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDK36gDoYgOj4AlbCqh1IuaUuTlcpKF0ns&libraries=places"></script>
 </html>
