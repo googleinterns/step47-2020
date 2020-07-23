@@ -171,11 +171,8 @@ function validateCustomEventInput(name, address, duration) {
 firebase.auth().onAuthStateChanged(function(user) {
     if (user) {
         renderListOptions();
-        if (sessionStorage.getItem('listName')) {
-            renderEvents(sessionStorage.getItem('listName'));
-        } else {
-            renderEvents('currentList');
-        }
+        const listName = document.getElementById('list-options').value;
+        renderEvents(listName);
         renderPlaces();
     } else {
         console.log('Please sign in');
@@ -274,6 +271,7 @@ async function saveEvents() {
     currentListRef.remove();
     // Update the select tag options and close save events form
     renderListOptions();
+    renderPlaceIcons(null, false);
     closeSaveEventsForm();
 }
 
