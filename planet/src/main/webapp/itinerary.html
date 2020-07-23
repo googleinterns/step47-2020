@@ -87,4 +87,23 @@
             </div>
         </div>
     </body>
+    <script>
+        function initAutocomplete() {
+            let startAddress = document.getElementById('starting-address');
+            let eventAddress = document.getElementById('add-event-address');
+
+            let options = {
+                types: ['geocode']
+            };
+            autocomplete = new google.maps.places.Autocomplete(startAddress,options); 
+            autocomplete = new google.maps.places.Autocomplete(eventAddress,options);
+            autocomplete.setFields(['address_component']);
+            autocomplete.addListener('place_changed', fillAddress);
+        }
+
+        function fillAddress() {
+            let place = autocomplete.getPlace();
+        }
+    </script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDK36gDoYgOj4AlbCqh1IuaUuTlcpKF0ns&libraries=places&callback=initAutocomplete"></script>
 </html>

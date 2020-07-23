@@ -190,13 +190,6 @@ function callback(place, status) {
         }
         if (place.opening_hours) {
             placeDetails['Hours'] = place.opening_hours.weekday_text;
-            // Open and closing time for Monday (MVP purposes)
-            if (place.opening_hours.periods[1]) {
-                placeDetails['Opening'] = place.opening_hours.periods[1].open.time;
-                if (place.opening_hours.periods[1].close) {
-                    placeDetails['Closing'] = place.opening_hours.periods[1].close.time;
-                }
-            }
         }
         if (place.photos) {
             placeDetails['Photo'] = place.photos[0].getUrl({maxWidth:400, maxHeight:200});
@@ -206,7 +199,6 @@ function callback(place, status) {
         }
         placeInfo.push(placeDetails);
     }    
-    
     // List results when all callbacks are finished
     count ++ 
     if (count === places.length) {
@@ -286,14 +278,12 @@ function listResults() {
         let close = document.createTextNode(placeInfo[i]['Closing']);
         let img = document.createElement('img');
         
-        // Create and add save icon 
-        let icon = document.createElement('i');
-        icon.innerHTML = 'favorite_border';
-        icon.classList.add('material-icons');
-        icon.classList.add('small');
-        icon.setAttribute('onclick','savePlace(this);');
-        icon.setAttribute('name',placeInfo[i]['PlaceID']);
-        div3.append(icon);
+        // Check if user is signed in
+        if (currentUser) {
+            // Display save icons
+            let icon = createIcon(placeInfo[i]['PlaceID']);
+            div3.append(icon);
+        }
 
         // Check for missing details, otherwise display through HTML
         p.appendChild(name);        
@@ -345,6 +335,16 @@ function listResults() {
     }
     // Add search keyword to header
     document.getElementById('greeting').innerHTML = 'Find a place: ' + document.getElementById('pac-input').value;
+}
+
+function createIcon(placeID) {
+    // Create and add save icon 
+    let icon = document.createElement('i');
+    icon.innerHTML = 'favorite_border';
+    icon.classList.add('material-icons','small');
+    icon.setAttribute('onclick','savePlace(this);');
+    icon.setAttribute('name',placeID);
+    return icon; 
 }
 
 /** Toggle save icon on click */
