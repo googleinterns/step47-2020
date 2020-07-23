@@ -111,7 +111,7 @@ function createParagraphElement(text){
     return p;
 }
 
-function openAddPlaceForm(event, ref) {
+function openAddPlaceForm(event, placeId) {
     const addPlaceForm = document.getElementById('add-place-to-event-form');
 
     // Clone node to remove old event listeners
@@ -122,7 +122,7 @@ function openAddPlaceForm(event, ref) {
     addPlaceFormClone.style.left = event.clientX + 'px';
     addPlaceFormClone.style.top = event.clientY + 'px';
     document.getElementById('submit-place').addEventListener('click', () => {
-        submitPlace(ref);
+        submitPlace(placeId);
     });
 }
 
@@ -131,7 +131,7 @@ function closeAddPlaceForm() {
     addPlaceForm.style.display = 'none';
 }
 
-async function submitPlace(ref) {
+async function submitPlace(placeId) {
     const eventDuration = document.getElementById('add-place-duration').value;
 
     // Validate the input duration
@@ -141,7 +141,7 @@ async function submitPlace(ref) {
 
     // Create a new event based on the place details
     let placeRequest = {
-        placeId: ref,
+        placeId: placeId,
         fields: ['place_id','name','formatted_address','opening_hours']
     };
     let service = new google.maps.places.PlacesService(map);
