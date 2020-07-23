@@ -44,7 +44,7 @@
             </div>
         </div>
         <div>
-            <ul class="tabs" style="background-color: #303f9f;">
+            <ul class="tabs" style="background-color: #fff9c4;">
                 <li class="tab" onclick="switchSection('about-link', 'about-section')">
                     <a id="about-link" class="tab-link active">About</a>
                 </li>
@@ -66,6 +66,7 @@
             <div id="events-section" style="display: none;">
             </div>
         </div>
+        <div id="list-visitors" class="modal" style="padding: 1vh;">Hello</div>
     </div>
     <!-- Compiled and minified JavaScript -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
