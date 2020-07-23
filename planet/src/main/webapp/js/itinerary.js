@@ -31,7 +31,6 @@ window.initAutocomplete = initAutocomplete;
 const database = firebase.database();
 
 // Declare global variables 
-// This is safe because the autocomplete objects do not get cleaned up by the garbage collector
 let autocompleteStart;
 let autocompleteEvent;
 
