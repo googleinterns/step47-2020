@@ -85,5 +85,5 @@ async function loadUserInformation(username) {
         user['location'],
         user['bio']
     );
-    ProfileEventsRenderer.init();
+    ProfileEventsRenderer.init(userId);
 }
