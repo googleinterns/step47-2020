@@ -14,6 +14,7 @@
 
 import {HeaderRenderer} from './headerRenderer.js';
 import {AboutSectionRenderer} from './about-section-renderer.js';
+import {ProfileEventsRenderer} from './profile-events-renderer.js';
 
 window.loadUserInformation = loadUserInformation;
 window.switchSection = switchSection;
@@ -45,6 +46,7 @@ function diplaySection(sectionId) {
             hideSection('about-section');
             hideSection('posts-section');
             document.getElementById('events-section').style.display = 'block';
+            ProfileEventsRenderer.init(userId);
             break;
         default:
             console.log('Unhandled section id:' + sectionId);

@@ -9,7 +9,8 @@
     <script src="https://www.gstatic.com/firebasejs/4.1.3/firebase.js"></script> 
     <script src="/js/authentication.js"></script>
     <script type="module" src="/js/headerRenderer.js"></script>
-    <script type="module" src="/js/aboutSectionRenderer.js"></script>
+    <script type="module" src="/js/about-section-renderer.js"></script>
+    <script type="module" src="/js/profile-events-renderer.js"></script>
     <script type="module" src="/js/profile.js"></script>
     <link href='//fonts.googleapis.com/css?family=Marmelad' rel='stylesheet' type='text/css'>
     <!-- Compiled and minified CSS -->
@@ -44,7 +45,7 @@
             </div>
         </div>
         <div>
-            <ul class="tabs" style="background-color: #303f9f;">
+            <ul class="tabs" style="background-color: #fff9c4;">
                 <li class="tab" onclick="switchSection('about-link', 'about-section')">
                     <a id="about-link" class="tab-link active">About</a>
                 </li>
@@ -64,10 +65,9 @@
                 This is the posts section
             </div>
             <div id="events-section" style="display: none;">
-                <!--This test will be deleted later -->
-                This is the events section
             </div>
         </div>
+        <div id="list-visitors" class="modal" style="padding: 1vh;">Hello</div>
     </div>
     <!-- Compiled and minified JavaScript -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
