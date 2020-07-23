@@ -198,7 +198,7 @@ async function submitPlace(placeId) {
     // the place, rather than when they add the place as an event
     const date = new Date();
     const timestamp = date.getTime();
-    database.ref('places/' + place.place_id + '/visitors').update({
+    database.ref('places/' + placeId + '/visitors').update({
         [userId]: timestamp
     });
 
