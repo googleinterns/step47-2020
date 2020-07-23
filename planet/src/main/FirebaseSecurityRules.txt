@@ -18,8 +18,8 @@
         // Rules applied to the users tree
         // Users can read other users' data and write their own data
         "users": {
+            ".read": true,
             "$uid": {
-                ".read": true,
                 ".write": "$uid === auth.uid"
             }
         },
