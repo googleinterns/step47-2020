@@ -192,7 +192,7 @@ function callback(place, status) {
             placeDetails['Hours'] = place.opening_hours.weekday_text;
         }
         if (place.photos) {
-            placeDetails['Photo'] = place.photos[0].getUrl({maxWidth:400, maxHeight:200});
+            placeDetails['Photo'] = place.photos[0].getUrl({maxHeight:200});
         }
         if (place.url) {
             placeDetails['Website'] = place.url;
@@ -334,7 +334,7 @@ function listResults() {
         element.appendChild(div1);
     }
     // Add search keyword to header
-    document.getElementById('greeting').innerHTML = 'Find a place: ' + document.getElementById('pac-input').value;
+    document.getElementById('greeting').innerHTML = 'Find a location: ' + document.getElementById('pac-input').value;
 }
 
 function createIcon(placeID) {
