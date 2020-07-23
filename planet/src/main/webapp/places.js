@@ -279,14 +279,12 @@ function listResults() {
         let close = document.createTextNode(placeInfo[i]['Closing']);
         let img = document.createElement('img');
         
-        // Create and add save icon 
-        let icon = document.createElement('i');
-        icon.innerHTML = 'favorite_border';
-        icon.classList.add('material-icons');
-        icon.classList.add('small');
-        icon.setAttribute('onclick','savePlace(this);');
-        icon.setAttribute('name',placeInfo[i]['PlaceID']);
-        div3.append(icon);
+        // Check if user is signed in
+        if (currentUser) {
+            // Display save icons
+            let icon = createIcon(placeInfo[i]['PlaceID']);
+            div3.append(icon);
+        }
 
         // Check for missing details, otherwise display through HTML
         p.appendChild(name);        
@@ -338,6 +336,16 @@ function listResults() {
     }
     // Add search keyword to header 
     document.getElementById('greeting').innerHTML = 'Find a place: ' + document.getElementById('pac-input').value;
+}
+
+function createIcon(placeID) {
+    // Create and add save icon 
+    let icon = document.createElement('i');
+    icon.innerHTML = 'favorite_border';
+    icon.classList.add('material-icons','small');
+    icon.setAttribute('onclick','savePlace(this);');
+    icon.setAttribute('name',placeID);
+    return icon; 
 }
 
 /** Toggle save icon on click */
