@@ -39,8 +39,8 @@ function initAutocomplete() {
         types: ['geocode']
     };
 
-    new google.maps.places.Autocomplete(startAddress,options); 
-    new google.maps.places.Autocomplete(eventAddress,options);
+    let autocompleteStart = new google.maps.places.Autocomplete(startAddress,options); 
+    let autocompleteEvent = new google.maps.places.Autocomplete(eventAddress,options);
 }
 
 function openAddEventForm() {
