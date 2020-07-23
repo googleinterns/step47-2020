@@ -42,8 +42,8 @@ header {
     display: inline;
 }
 
-/** When screen size if greater than 700px*/
-@media screen and (min-width: 701px) {
+/** When screen size if greater than 900px*/
+@media screen and (min-width: 901px) {
     #column-map {
         height:100%;
         float: left;
@@ -56,8 +56,8 @@ header {
     }
 }
 
-/** When screen size if less than 700px*/
-@media screen and (max-width: 700px) {
+/** When screen size if less than 900px*/
+@media screen and (max-width: 900px) {
     #column-map {
         height:50%;
         float: left;
@@ -108,4 +108,12 @@ header {
 
 #place-name {
     font-weight: bold;
+}
+
+.card .card-content p {
+    font-size: 1.2vh; 
+}
+
+img {
+    width: 90%; 
 }

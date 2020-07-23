@@ -192,7 +192,7 @@ function callback(place, status) {
             placeDetails['Hours'] = place.opening_hours.weekday_text;
         }
         if (place.photos) {
-            placeDetails['Photo'] = place.photos[0].getUrl({maxWidth:400, maxHeight:200});
+            placeDetails['Photo'] = place.photos[0].getUrl({maxHeight:200});
         }
         if (place.url) {
             placeDetails['Website'] = place.url;
