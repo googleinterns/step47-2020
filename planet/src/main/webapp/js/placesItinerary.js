@@ -19,10 +19,34 @@ import TimeRange from './TimeRange.js';
 // Declare global functions.
 window.openAddPlaceForm = openAddPlaceForm;
 window.closeAddPlaceForm = closeAddPlaceForm;
+window.initEmptyMap = initEmptyMap;
 
 // Declare global variables/constants.
 const database = firebase.database();
-let map = new google.maps.Map(document.getElementById('empty-map'));
+let map;
+let startingAddressAutocomplete;
+let eventAddressAutocomplete;
+
+function initEmptyMap() {
+    map = new google.maps.Map(document.getElementById('empty-map'));
+    let startAddress = document.getElementById('starting-address');
+    let eventAddress = document.getElementById('add-event-address');
+
+    let options = {
+        types: ['geocode']
+    };
+    startingAddressAutocomplete = new google.maps.places.Autocomplete(startAddress, options); 
+    startingAddressAutocomplete.setFields(['address_component']);
+    startingAddressAutocomplete.addListener('place_changed', fillStartingAddress);
+
+    eventAddressAutocomplete = new google.maps.places.Autocomplete(eventAddress, options);
+    eventAddressAutocomplete.setFields(['address_component']);
+}
+
+function fillStartingAddress() {
+    const startAddress = document.getElementById('starting-address');
+    sessionStorage.setItem('start', startAddress.value);
+}
 
 export function renderPlaces() {
     const userId = firebase.auth().currentUser.uid;
@@ -215,12 +239,14 @@ async function submitPlaceCallback(place, status) {
 export function renderPlaceIcons(placeId, enableAdd) {
     if (placeId) {
         const placeIcon = document.getElementById('place-button-' + placeId);
-        if (enableAdd) {
-            placeIcon.setAttribute('onclick', 'openAddPlaceForm(event, "' + placeId + '")');
-            placeIcon.innerHTML = `<i class="material-icons small">playlist_add</i>`;
-        } else {
-            placeIcon.onclick = null;
-            placeIcon.innerHTML = `<i class="material-icons small">playlist_add_check</i>`;
+        if (placeIcon) {
+            if (enableAdd) {
+                placeIcon.setAttribute('onclick', 'openAddPlaceForm(event, "' + placeId + '")');
+                placeIcon.innerHTML = `<i class="material-icons small">playlist_add</i>`;
+            } else {
+                placeIcon.onclick = null;
+                placeIcon.innerHTML = `<i class="material-icons small">playlist_add_check</i>`;
+            }
         }
     } else {
         const userId = firebase.auth().currentUser.uid;

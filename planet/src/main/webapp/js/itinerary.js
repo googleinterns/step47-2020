@@ -57,7 +57,7 @@ function handleStartingLocationChange() {
         sessionStorage.setItem('start', document.getElementById('starting-address').value);
     } else {
         alert ('Please update your browser'); 
-    }
+    } 
 }
 
 function renderStartingLocation() {
