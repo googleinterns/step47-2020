@@ -15,9 +15,9 @@
 package com.google.planet.data;
 
 public final class TimeRange {
-    public static final int START_OF_DAY = getTimeInMinutes(8, 0);
-    public static final int END_OF_DAY = getTimeInMinutes(19, 59);
-    public static final TimeRange WHOLE_DAY = new TimeRange(getTimeInMinutes(8,0), 12 * 60);
+    public static final int START_OF_DAY = getTimeInMinutes(0, 0);
+    public static final int END_OF_DAY = getTimeInMinutes(23, 59);
+    public static final TimeRange WHOLE_DAY = new TimeRange(getTimeInMinutes(0,0), 24 * 60);
 
     private final int start;
     private final int duration;
@@ -64,8 +64,8 @@ public final class TimeRange {
     }
 
     public static int getTimeInMinutes(int hours, int minutes) {
-        if (hours < 8 || hours > 19) {
-            throw new IllegalArgumentException("Hours can only be 8 through 19 (inclusive).");
+        if (hours < 0 || hours > 23) {
+            throw new IllegalArgumentException("Hours can only be 0 through 23 (inclusive).");
         }
         if (minutes < 0 || minutes > 59) {
             throw new IllegalArgumentException("Minutes can only be 0 through 59 (inclusive).");

@@ -26,24 +26,8 @@ window.handleListOptionChange = handleListOptionChange;
 window.addEvent = addEvent;
 window.saveEvents = saveEvents;
 window.generateItinerary = generateItinerary;
-window.initAutocomplete = initAutocomplete; 
 
 const database = firebase.database();
-
-// Declare global variables 
-let autocompleteStart;
-let autocompleteEvent;
-
-/** Adds autocomplete to input boxes */
-function initAutocomplete() {
-    let startAddress = document.getElementById('starting-address');
-    let eventAddress = document.getElementById('add-event-address');
-    let options = {
-        types: ['geocode']
-    };
-    autocompleteStart = new google.maps.places.Autocomplete(startAddress,options); 
-    autocompleteEvent = new google.maps.places.Autocomplete(eventAddress,options);
-}
 
 function openAddEventForm() {
     document.getElementById('add-event').style.display = 'block';
@@ -303,8 +287,8 @@ async function generateItinerary() {
     const startingPoint = {name: "Start", 
                         address: sessionStorage.getItem('start'), 
                         duration: 0,
-                        openingTime: TimeRange.getStartOfDay(),
-                        closingTime: TimeRange.getEndOfDay(),
+                        openingTime: TimeRange.getTimeInMinutes(8 ,0),
+                        closingTime: TimeRange.getTimeInMinutes(19 ,59),
                         order: 0};
     requestBody.push(startingPoint);
     
