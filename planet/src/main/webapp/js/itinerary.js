@@ -30,17 +30,20 @@ window.initAutocomplete = initAutocomplete;
 
 const database = firebase.database();
 
+// Declare global variables 
+// This is safe because the autocomplete objects do not get cleaned up by the garbage collector
+let autocompleteStart;
+let autocompleteEvent;
+
 /** Adds autocomplete to input boxes */
 function initAutocomplete() {
     let startAddress = document.getElementById('starting-address');
     let eventAddress = document.getElementById('add-event-address');
-
     let options = {
         types: ['geocode']
     };
-
-    let autocompleteStart = new google.maps.places.Autocomplete(startAddress,options); 
-    let autocompleteEvent = new google.maps.places.Autocomplete(eventAddress,options);
+    autocompleteStart = new google.maps.places.Autocomplete(startAddress,options); 
+    autocompleteEvent = new google.maps.places.Autocomplete(eventAddress,options);
 }
 
 function openAddEventForm() {
