@@ -147,7 +147,6 @@ function setSearchByButton() {
 function addPlaceDetails() {
     // For each place, get the icon, name and location.
     places.forEach(function(place) {
-
         if (!place.geometry) {
           console.log("Returned place contains no geometry");
           return;
@@ -336,7 +335,7 @@ function listResults() {
         div1.appendChild(div2); 
         element.appendChild(div1);
     }
-    // Add search keyword to header 
+    // Add search keyword to header
     document.getElementById('greeting').innerHTML = 'Find a place: ' + document.getElementById('pac-input').value;
 }
 
