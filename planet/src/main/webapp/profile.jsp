@@ -33,7 +33,7 @@
             </div>
             <div class="col s7" style="position: absolute; bottom: 0; left: 25%;">
                 <div id="name-container" class="row valign-wrapper" style="margin: 0">
-                    <h2 id="display-name" class="col s11" style="margin: 0; font-size: 3vw;"></h2>
+                    <h2 id="display-name" class="col s11" style="margin: 0; font-size: min(3vw, 36px);"></h2>
                 </div>
                 <div id="location-container" class="row valign-wrapper" style="margin: 0">
                     <div id="location" class="col s11 valign-wrapper" style="margin: 0"></div>

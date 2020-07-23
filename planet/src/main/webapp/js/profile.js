@@ -94,11 +94,9 @@ async function loadUserInformation(username) {
     document.getElementById('not-found-message').remove();
     document.getElementById('profile-page').style.display = 'block';
 
-    let user;
-    let userId;
     // The userSnapshot.val() contains one property (user)
     for (const property in userSnapshot.val()) {
-        userId = object;
+        userId = property;
         user = userSnapshot.val()[property];
     }
     HeaderRenderer.init(
