@@ -108,6 +108,7 @@ function createPlaceElement(place) {
     // Create the add button
     const addButton = document.createElement('div');
     addButton.setAttribute('class', 'place-button');
+    addButton.setAttribute('id', 'place-button-' + place.place_id);
     
     const eventFromThisPlace = document.getElementById(place.place_id);
     if (eventFromThisPlace) {
@@ -222,7 +223,7 @@ async function submitPlace(placeId) {
     });
 
     closeAddPlaceForm();
-    renderPlaces();
+    renderPlaceButtons(placeId, false);
 }
 
 function validatePlaceDuration(duration) {
@@ -235,4 +236,34 @@ function validatePlaceDuration(duration) {
         return false;
     }
     return true;
+}
+
+export function renderPlaceButtons(placeId, enableAdd) {
+    if (placeId) {
+        togglePlaceButton(placeId, enableAdd);
+    } else {
+        const userId = firebase.auth().currentUser.uid;
+        const placeListRef = database.ref('users/' + userId + '/places');
+        placeListRef.once('value', (placeListSnapshot) => {
+            placeListSnapshot.forEach(function(childPlace) {
+                let placeId = childPlace.key;
+                console.log(document.getElementById(placeId));
+                const noSuchEvent = document.getElementById(placeId) === null;
+                togglePlaceButton (placeId, noSuchEvent);
+            });
+        });
+    }
+} 
+
+function togglePlaceButton(placeId, enableAdd) {
+    const placeButton = document.getElementById('place-button-' + placeId);
+    if (placeButton) {
+        if (enableAdd) {
+            placeButton.setAttribute('onclick', 'openAddPlaceForm(event, "' + placeId + '")');
+            placeButton.innerHTML = `<i class="material-icons small">playlist_add</i>`;
+        } else {
+            placeButton.onclick = null;
+            placeButton.innerHTML = `<i class="material-icons small">playlist_add_check</i>`;
+        }
+    }
 }
