@@ -14,32 +14,39 @@
 
 // This file contains the security rules of the firebase realtime databse
 {
-  "rules": {
-    // Rules applied to the users tree
-    "users": {
-      "$uid": {
-        ".read": true,
-        ".write": "$uid === auth.uid"
-      }
-    },
-    
-    // Rules applied to the places tree
-    "places": {
-      "$placeId":{
-        ".read": "root.child('users').child(auth.uid).child('places').child('$placeId').exists() === true",
-        ".write": "root.child('users').child(auth.uid).child('places').child('$placeId').exists() === true"
-      }
-    },
-    
-    // Rules applied to the events tree
-    "events": {
-      "$uid": {
-        ".read": true,
-        ".write": "$uid === auth.uid",
-        "$listName": {
-          ".indexOn": ["order"]
+    "rules": {
+        // Rules applied to the users tree
+        // Users can read other users' data and write their own data
+        "users": {
+            "$uid": {
+                ".read": true,
+                ".write": "$uid === auth.uid"
+            }
+        },
+        
+        // Rules applied to the places tree
+        // Users can read all places data, but can only edit their own data
+        "places": {
+          	".read": true,
+            "$placeId":{
+                "visitors":{
+                    "$uid" : {
+                        ".write": "$uid === auth.uid"
+                    }
+                }
+            }
+        },
+        
+        // Rules applied to the events tree
+        // Users can read other users' data and write their own data
+        "events": {
+            "$uid": {
+                ".read": true,
+                ".write": "$uid === auth.uid",
+                "$listName": {
+                    ".indexOn": ["order"]
+                }
+            }
         }
-      }
     }
-  }
 }
