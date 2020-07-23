@@ -255,7 +255,6 @@ export function renderPlaceButtons(placeId, enableAdd) {
         placeListRef.once('value', (placeListSnapshot) => {
             placeListSnapshot.forEach(function(childPlace) {
                 let placeId = childPlace.key;
-                console.log(document.getElementById(placeId));
                 const noSuchEvent = document.getElementById(placeId) === null;
                 togglePlaceButton (placeId, noSuchEvent);
             });
