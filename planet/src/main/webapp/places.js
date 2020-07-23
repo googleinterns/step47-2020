@@ -334,7 +334,7 @@ function listResults() {
         element.appendChild(div1);
     }
     // Add search keyword to header
-    document.getElementById('greeting').innerHTML = 'Find a place: ' + document.getElementById('pac-input').value;
+    document.getElementById('greeting').innerHTML = 'Find a location: ' + document.getElementById('pac-input').value;
 }
 
 function createIcon(placeID) {
