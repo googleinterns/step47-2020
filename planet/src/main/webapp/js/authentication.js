@@ -35,8 +35,8 @@ document.addEventListener('DOMContentLoaded', function() {
     M.Modal.init(elements, {
         opacity: 0.7
     });
-    loadElement('signin.html', 'sign-in-modal');
-    loadElement('signup.html', 'sign-up-modal');
+    loadElement('/signin.html', 'sign-in-modal');
+    loadElement('/signup.html', 'sign-up-modal');
     database = firebase.database();
     currentUser = firebase.auth().currentUser;
     firebase.auth().onAuthStateChanged(checkUserSignIn);
@@ -165,7 +165,10 @@ function signIn() {
 }
 
 function signOut() {
-    firebase.auth().signOut().then(checkUserSignIn);
+    firebase.auth().signOut().then(() => {
+        checkUserSignIn();
+        location.reload();
+    });
 }
 
 function signInWithGoogle() {

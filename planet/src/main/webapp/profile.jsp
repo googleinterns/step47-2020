@@ -18,12 +18,24 @@
     <!--Import Google Icon Font-->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" href="/css/profile.css">
+    <link rel="stylesheet" href="/css/signup.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta charset="UTF-8">
     <title>Profile</title>
 </head>
 
 <body onload="loadUserInformation('<%= username %>')">
+    <nav>
+        <div class="nav-wrapper indigo darken-2">
+            <a href="/places.html" class="brand-logo" style="padding-left: 25px">planet</a>
+            <ul class="right hide-on-med-and-down">
+                <li><a href="/itinerary.html">Itinerary</a></li>
+                <li><a id="sign-out-button" style="display: none;" onclick="signOut()">Sign Out</a></li>
+                <li><a id="profile-button" style="display: none;" onclick="openProfile()"></a></li>
+                <li><a id="sign-in-button" style="display: none;" onclick="openModal('sign-in-modal')"><i class="material-icons right">account_circle</i>Sign In</a></li>
+            </ul>
+        </div>
+    </nav>
     <div id="not-found-message" style="display: none; font-size: 30px; font-family: initial;">
         Profile Not Found
     </div>
@@ -68,6 +80,8 @@
             </div>
         </div>
         <div id="list-visitors" class="modal" style="padding: 1vh;">Hello</div>
+        <div id="sign-in-modal" class="modal" style="padding-bottom: 1vh;">Hello</div>
+        <div id="sign-up-modal" class="modal" style="padding-bottom: 1vh;">Hello</div>
     </div>
     <!-- Compiled and minified JavaScript -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
