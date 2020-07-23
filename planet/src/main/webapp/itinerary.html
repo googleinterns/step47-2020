@@ -4,6 +4,7 @@
         <meta charset="UTF-8">
         <title>Planet</title>
         <link rel="stylesheet" href="css/itinerary.css">
+        <link rel="stylesheet" href="css/signup.css">
 
         <!--Import fonts and icons-->
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -52,18 +53,22 @@
             <p> Start planing your itinerary by choosing your liked places from below: </p>
             <div id="places"></div>
             <div id="add-place-to-event-form">
-                <p>Duration (in hours): 
+                <p id="add-place-duration-label">Duration (in hours): 
                     <input type="number" id="add-place-duration" name="add-place-duration" max="9" min="0" step = "0.5"> </input></p>
-                <button class="btn waves-effect waves-light" onclick="closeAddPlaceForm();">Cancel</button></br>
-                <button class="btn waves-effect waves-light" id="submit-place">Submit</button></br>
+                <button class="btn waves-effect waves-light" id="submit-place"><i class="material-icons">cloud_done</i></button>
+                <button class="btn waves-effect waves-light" onclick="closeAddPlaceForm();"><i class="material-icons">highlight_off</i></button></br>
             </div>
         </div>     
 
         <div id="content-events">
             <div id="events-container">
+                <h4> Step 1: Choose a list </h4>
                 <p>Choose to edit from the following list:</p> 
                 <select id="list-options" name="list-options" onchange="handleListOptionChange()"></select>
-                <a class="btn-floating btn-large" onclick="openAddEventForm()"> <i class="material-icons">add</i> </a>
+
+                </br></br>
+                <h4> Step 2: Create events </h4>
+                <a class="btn-floating btn-large" id="add-custom-event-button" onclick="openAddEventForm()"> <i class="material-icons">add</i> </a>
                 <p>Starting Address (Hotel/Home): 
                         <input type="text" id="starting-address" name="starting-address" onchange="handleStartingLocationChange()"> </input></p>
                 <div id="add-event" class="add-event"> 
@@ -79,13 +84,16 @@
                 <div id="events">
                 </div>
                 <button class="btn waves-effect waves-light" id="save-events-button" onclick="openSaveEventsForm();">save</button>
-                <div id="save-events-form" class="save-events-form">
-                    <p> Please type in a name you want to save the list as:
-                        <input type="text" name="save-events-name" id="save-events-name" placeholder="list1"></input> </p>
-                    <button class="btn waves-effect waves-light" onclick="closeSaveEventsForm();">Cancel</button></br>
-                    <button class="btn waves-effect waves-light" onclick="saveEvents();">Submit</button></br>
+                 <div id="save-events-form" class="save-events-form">
+                    <p id="save-events-label"> Save the list as: 
+                        <input type="text" name="save-events-name" id="save-events-name" placeholder="list1"></input></p>
+                    <button class="btn waves-effect waves-light" onclick="saveEvents();"><i class="material-icons">cloud_done</i></button>
+                    <button class="btn waves-effect waves-light" onclick="closeSaveEventsForm();"><i class="material-icons">highlight_off</i></button></br>
                 </div>
                 <button class="btn waves-effect waves-light" onclick="generateItinerary()">generage itnerary</button>
+
+            </br></br>
+            <h4> Step 3: See your itinerary here </h4>
             </div>
             <div id="itinerary">
             </div>
@@ -93,4 +101,23 @@
         <div id="sign-in-modal" class="modal" style="padding-bottom: 1vh;"></div>
         <div id="sign-up-modal" class="modal" style="padding-bottom: 1vh;"></div>
     </body>
+    <script>
+        function initAutocomplete() {
+            let startAddress = document.getElementById('starting-address');
+            let eventAddress = document.getElementById('add-event-address');
+
+            let options = {
+                types: ['geocode']
+            };
+            autocomplete = new google.maps.places.Autocomplete(startAddress,options); 
+            autocomplete = new google.maps.places.Autocomplete(eventAddress,options);
+            autocomplete.setFields(['address_component']);
+            autocomplete.addListener('place_changed', fillAddress);
+        }
+
+        function fillAddress() {
+            let place = autocomplete.getPlace();
+        }
+    </script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDK36gDoYgOj4AlbCqh1IuaUuTlcpKF0ns&libraries=places&callback=initAutocomplete"></script>
 </html>
