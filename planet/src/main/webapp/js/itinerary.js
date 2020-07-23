@@ -28,6 +28,7 @@ window.saveEvents = saveEvents;
 window.generateItinerary = generateItinerary;
 window.initAutocomplete = initAutocomplete; 
 
+const database = firebase.database();
 
 /** Adds autocomplete to input boxes */
 function initAutocomplete() {
@@ -183,7 +184,11 @@ function validateCustomEventInput(name, address, duration) {
 firebase.auth().onAuthStateChanged(function(user) {
     if (user) {
         renderListOptions();
-        renderEvents(sessionStorage.getItem('listName'));
+        if (sessionStorage.getItem('listName')) {
+            renderEvents(sessionStorage.getItem('listName'));
+        } else {
+            renderEvents('currentList');
+        }
         renderPlaces();
     } else {
         console.log('Please sign in');
