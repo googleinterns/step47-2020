@@ -17,7 +17,7 @@ export const HeaderRenderer = {
         renderName(displayName);
         renderLocation(location, userId);
         renderBio(bio, userId);
-        if (userId === currentUser.uid) {
+        if (currentUser !== null && userId === currentUser.uid) {
             addEditButton();
         }
     },
@@ -33,7 +33,7 @@ function renderLocation(location, userId) {
         addLocation(location);
         return;
     } 
-    if (userId !== currentUser.uid) {
+    if (currentUser === null || userId !== currentUser.uid) {
         addLocation('Somewhere, World');
         return;
     }
