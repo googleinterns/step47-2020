@@ -13,7 +13,7 @@
 // limitations under the License.
 
 let userId;
-let listIndex = 1;
+let listIndex = 0;
 let eventsList = [];
 let listName = 'List X';
 
@@ -22,7 +22,7 @@ export const ProfileEventsRenderer = {
         userId = uid;
         document.getElementById('events-section').innerHTML = '';
         await readListFromDatabase();
-        if (eventsList.length === 0) {
+        if (eventsList.length === 0 || listName === 'currentList') {
             displayEmptyListMessage();
             return;
         }
@@ -228,7 +228,7 @@ async function getNextList() {
     }
     listIndex++;
     eventsList = getListFromSnapshot(listIndex, eventsSnapshot);
-    if (eventsList.length === 0 || listName === 'currentList') {
+    if (eventsList.length === 0 || listName == 'currentList') {
         listIndex--;
         return;
     }
@@ -242,7 +242,7 @@ async function getPreviousList() {
     }
     listIndex--;
     eventsList = getListFromSnapshot(listIndex, eventsSnapshot);
-    if (eventsList.length === 0 || listName === 'currentList') {
+    if (eventsList.length === 0 || listName == 'currentList') {
         listIndex++;
         return;
     }
