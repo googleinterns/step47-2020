@@ -23,10 +23,10 @@ window.closeAddPlaceForm = closeAddPlaceForm;
 // Declare global variables/constants.
 const database = firebase.database();
 let map = new google.maps.Map(document.getElementById('empty-map'));
-let savedPlaces;  // Object that contains all the places information
+let displayedPlaces = {};  // Object that contains all the places information
 
 export function renderPlaces() {
-    savedPlaces = {};
+    displayedPlaces = {};
     const userId = firebase.auth().currentUser.uid;
     const placesRef = database.ref('users/' + userId + '/places');
     placesRef.once('value', (placesSnapshot) => {
@@ -51,9 +51,7 @@ function renderPlaceDetailsCallback(place, status) {
         const placesContainer = document.getElementById('places');
         const placeElement = createPlaceElement(place);
         placesContainer.appendChild(placeElement);
-    } else {
-        alert( 'Too many requests at the same time! please try again in another 10s. ');
-    }  
+    } 
 }
 
 function createPlaceElement(place) {
@@ -85,7 +83,7 @@ function createPlaceElement(place) {
         closingTime = TimeRange.getTimeInMinutes(17, 0);
     }
     // Add the place to the places object
-    savedPlaces[place.place_id] = { name: place.name,
+    displayedPlaces[place.place_id] = { name: place.name,
                                     address: place.formatted_address,
                                     openingTime: openingTime,
                                     closingTime: closingTime };
@@ -181,7 +179,11 @@ async function submitPlace(placeId) {
     const eventListSnapshot = await eventListRef.once('value');
     const order = eventListSnapshot.numChildren() + 1;
 
-    const place = savedPlaces[placeId];
+    const place = displayedPlaces[placeId];
+    if (!place) {
+        console.log ('Place object cannot be found :(');
+        return;
+    }
     const newEventRef = eventListRef.child(placeId);
     newEventRef.set({
         name: place.name,
