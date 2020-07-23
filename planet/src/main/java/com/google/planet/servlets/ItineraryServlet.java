@@ -20,6 +20,7 @@ import com.google.gson.reflect.TypeToken;
 import com.google.planet.data.Event;
 import com.google.planet.data.ItineraryGenerator;
 import com.google.planet.data.ItineraryItem;
+import com.google.planet.data.Itinerary;
 import com.google.planet.data.TimeRange;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
@@ -54,7 +55,13 @@ public class ItineraryServlet extends HttpServlet {
             List<Event> events = new Gson().fromJson(eventsJson, eventListType);
 
             ItineraryGenerator itineraryGenerator = new ItineraryGenerator();
-            List<ItineraryItem> itinerary = itineraryGenerator.generateItinerary(events);
+            Itinerary itinerary = itineraryGenerator.generateItinerary(events);
+
+            if (itinerary.errorMessage != null) {
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                response.getWriter().println(itinerary.errorMessage);
+                return;
+            }
 
             response.setContentType("application/json");
             String json = new Gson().toJson(itinerary);
@@ -65,4 +72,3 @@ public class ItineraryServlet extends HttpServlet {
         }
   }
 }
-
