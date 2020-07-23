@@ -92,6 +92,8 @@ function createPlaceElement(place) {
         place.opening_hours.weekday_text.forEach((day) => {
             placeElementContent.appendChild(createParagraphElement(day));
         }); 
+    } else {
+        placeElementContent.appendChild(createParagraphElement("Opening hours not available"));
     }
     if (place.url) {
         const placeUrlElement = document.createElement('a');
@@ -208,5 +210,7 @@ async function submitPlaceCallback(place, status) {
 
         closeAddPlaceForm();
         renderPlaces();
-    } 
+    } else {
+        alert('too many requests at a time, please try again in 10s');
+    }
 }
