@@ -26,6 +26,24 @@ window.handleListOptionChange = handleListOptionChange;
 window.addEvent = addEvent;
 window.saveEvents = saveEvents;
 window.generateItinerary = generateItinerary;
+window.initAutocomplete = initAutocomplete; 
+
+const database = firebase.database();
+
+// Declare global variables 
+let autocompleteStart;
+let autocompleteEvent;
+
+/** Adds autocomplete to input boxes */
+function initAutocomplete() {
+    let startAddress = document.getElementById('starting-address');
+    let eventAddress = document.getElementById('add-event-address');
+    let options = {
+        types: ['geocode']
+    };
+    autocompleteStart = new google.maps.places.Autocomplete(startAddress,options); 
+    autocompleteEvent = new google.maps.places.Autocomplete(eventAddress,options);
+}
 
 function openAddEventForm() {
     document.getElementById('add-event').style.display = 'block';
@@ -168,7 +186,11 @@ function validateCustomEventInput(name, address, duration) {
 firebase.auth().onAuthStateChanged(function(user) {
     if (user) {
         renderListOptions();
-        renderEvents(sessionStorage.getItem('listName'));
+        if (sessionStorage.getItem('listName')) {
+            renderEvents(sessionStorage.getItem('listName'));
+        } else {
+            renderEvents('currentList');
+        }
         renderPlaces();
     } else {
         console.log('Please sign in');
@@ -298,8 +320,14 @@ async function generateItinerary() {
                         {method: 'POST', 
                         headers: {'Content-Type': 'application/json'},
                         body: JSON.stringify(requestBody) });
-    const itinerary = await itineraryResponse.json();
-    createItinerary(itinerary);
+    if (itineraryResponse.status !== 200) {
+        const errorMessage = await itineraryResponse.text();
+        createItinerary([]); //Clear the previous itinerary
+        alert(errorMessage);
+    } else {
+        const itineraryObject = await itineraryResponse.json();
+        createItinerary(itineraryObject.itineraryItems);
+    }
 }
 
 function timeToString(totalMinutes) {

@@ -35,13 +35,13 @@ public class UserServlet extends HttpServlet {
       public void onDataChange(DataSnapshot dataSnapshot) {
         if (!dataSnapshot.exists()) {
           System.out.println("Profile Not Found");
-          return;
         }
       }
       
       @Override
       public void onCancelled(DatabaseError databaseError) {
         // This method has to be overrided that's why I'm adding it
+        System.out.println("Event has either failed or is removed due to security purposes");
       }     
     });
     request.setAttribute("username", username);

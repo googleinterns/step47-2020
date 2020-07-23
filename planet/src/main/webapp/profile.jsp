@@ -10,6 +10,7 @@
     <script src="/js/authentication.js"></script>
     <script type="module" src="/js/headerRenderer.js"></script>
     <script type="module" src="/js/profile-events-renderer.js"></script>
+    <script type="module" src="/js/aboutSectionRenderer.js"></script>
     <script type="module" src="/js/profile.js"></script>
     <link href='//fonts.googleapis.com/css?family=Marmelad' rel='stylesheet' type='text/css'>
     <!-- Compiled and minified CSS -->
@@ -57,7 +58,7 @@
               </ul>
         </div>
         <div class="profile-content">
-            <div id="about-section" style="display: block;">
+            <div id="about-section" class="row card" style="display: block;">
             </div>
             <div id="posts-section" style="display: none;">
                 <!--This test will be deleted later -->
