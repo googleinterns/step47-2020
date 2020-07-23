@@ -12,16 +12,22 @@ header {
     padding: 0; 
 }
 
-#greeting {
-    margin: 0.86vh;
-    font-size: 2.6vh;
-    padding: 0.86vh;
+/** When screen size if greater than 700px, set font size to 2.6vh */
+@media screen and (min-width: 701px) {
+    #greeting {
+        margin: 0.86vh;
+        font-size: 2.6vh;
+        padding: 0.86vh;
+    }
 }
 
-#description {
-    font-family: Roboto;
-    font-size: 15px;
-    font-weight: 300;
+/** When screen size if less than 700px, set font size to 1.8vh */
+@media screen and (max-width: 700px) {
+    #greeting {
+        margin: 0.86vh;
+        font-size: 1.8vh;
+        padding: 0.86vh;
+    }
 }
 
 #infowindow-content .title {
@@ -36,9 +42,32 @@ header {
     display: inline;
 }
 
-#column {
-    height:100%;
-    float: left;
+/** When screen size if greater than 900px*/
+@media screen and (min-width: 901px) {
+    #column-map {
+        height:100%;
+        float: left;
+        width: 75%;
+    }
+    #column-places {
+        height:100%;
+        float: left;
+        width: 25%;
+    }
+}
+
+/** When screen size if less than 900px*/
+@media screen and (max-width: 900px) {
+    #column-map {
+        height:50%;
+        float: left;
+        width: 100%;
+    }
+    #column-places {
+        height:100%;
+        float: left;
+        width: 100%;
+    }
 }
 
 #results {
@@ -79,4 +108,12 @@ header {
 
 #place-name {
     font-weight: bold;
+}
+
+.card .card-content p {
+    font-size: 1.2vh; 
+}
+
+img {
+    width: 90%; 
 }
