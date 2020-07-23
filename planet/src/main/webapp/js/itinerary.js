@@ -26,7 +26,21 @@ window.handleListOptionChange = handleListOptionChange;
 window.addEvent = addEvent;
 window.saveEvents = saveEvents;
 window.generateItinerary = generateItinerary;
+window.initAutocomplete = initAutocomplete; 
 
+
+/** Adds autocomplete to input boxes */
+function initAutocomplete() {
+    let startAddress = document.getElementById('starting-address');
+    let eventAddress = document.getElementById('add-event-address');
+
+    let options = {
+        types: ['geocode']
+    };
+
+    new google.maps.places.Autocomplete(startAddress,options); 
+    new google.maps.places.Autocomplete(eventAddress,options);
+}
 
 function openAddEventForm() {
     document.getElementById('add-event').style.display = 'block';
