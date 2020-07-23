@@ -287,8 +287,8 @@ async function generateItinerary() {
     const startingPoint = {name: "Start", 
                         address: sessionStorage.getItem('start'), 
                         duration: 0,
-                        openingTime: TimeRange.getStartOfDay(),
-                        closingTime: TimeRange.getEndOfDay(),
+                        openingTime: TimeRange.getTimeInMinutes(8 ,0),
+                        closingTime: TimeRange.getTimeInMinutes(19 ,59),
                         order: 0};
     requestBody.push(startingPoint);
     

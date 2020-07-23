@@ -23,8 +23,10 @@ window.closeAddPlaceForm = closeAddPlaceForm;
 // Declare global variables/constants.
 const database = firebase.database();
 let map = new google.maps.Map(document.getElementById('empty-map'));
+let savedPlaces;  // Object that contains all the places information
 
 export function renderPlaces() {
+    savedPlaces = {};
     const userId = firebase.auth().currentUser.uid;
     const placesRef = database.ref('users/' + userId + '/places');
     placesRef.once('value', (placesSnapshot) => {
@@ -49,13 +51,44 @@ function renderPlaceDetailsCallback(place, status) {
         const placesContainer = document.getElementById('places');
         const placeElement = createPlaceElement(place);
         placesContainer.appendChild(placeElement);
-    }    
+    } else {
+        alert( 'Too many requests at the same time! please try again in another 10s. ');
+    }  
 }
 
 function createPlaceElement(place) {
     const placeElement = document.createElement('div');
     placeElement.setAttribute('class', 'card place yellow lighten-4');
     placeElement.setAttribute('id', 'place-' + place.place_id);
+
+    // Get the openingTime and closingTime in minutes
+    let openingTime = 0;
+    let closingTime = 0;
+    if (place.opening_hours) {
+        // for MVP purposes, use Monday's hours. 
+        if (!place.opening_hours.periods[0].close) {
+            // Google Maps will not return closing time if the place opens 24 hours,
+            // So we need to manually add it.
+            openingTime = TimeRange.getTimeInMinutes(0, 0);
+            closingTime = TimeRange.getTimeInMinutes(23, 59);
+        } else {
+            const openHours = place.opening_hours.periods[1].open.hours;
+            const openMinutes = place.opening_hours.periods[1].open.minutes;
+            const closeHours = place.opening_hours.periods[1].close.hours;
+            const closeMinutes = place.opening_hours.periods[1].close.minutes;
+            openingTime = TimeRange.getTimeInMinutes(openHours, openMinutes);
+            closingTime = TimeRange.getTimeInMinutes(closeHours, closeMinutes);
+        }
+    } else { 
+        // Set the event's opening hours to 8am - 5pm otherwise. 
+        openingTime = TimeRange.getTimeInMinutes(8, 0);
+        closingTime = TimeRange.getTimeInMinutes(17, 0);
+    }
+    // Add the place to the places object
+    savedPlaces[place.place_id] = { name: place.name,
+                                    address: place.formatted_address,
+                                    openingTime: openingTime,
+                                    closingTime: closingTime };
 
     // Create the add button
     const addButton = document.createElement('div');
@@ -141,13 +174,36 @@ async function submitPlace(placeId) {
         return;
     }
 
-    // Create a new event based on the place details
-    let placeRequest = {
-        placeId: placeId,
-        fields: ['place_id','name','formatted_address','opening_hours']
-    };
-    let service = new google.maps.places.PlacesService(map);
-    service.getDetails(placeRequest, submitPlaceCallback); 
+    const userId = firebase.auth().currentUser.uid;
+    const listName = document.getElementById('list-options').value;
+    const eventListRef = database.ref('events/' + userId + '/' + listName);
+    // Get the order number by counting existing events
+    const eventListSnapshot = await eventListRef.once('value');
+    const order = eventListSnapshot.numChildren() + 1;
+
+    const place = savedPlaces[placeId];
+    const newEventRef = eventListRef.child(placeId);
+    newEventRef.set({
+        name: place.name,
+        address: place.address,
+        duration: eventDuration,
+        openingTime: place.openingTime,
+        closingTime: place.closingTime,
+        order: order,
+    });
+
+    // Update the place's visitors
+    // This will add the user id to the visitors list, along with the most recent timestamp 
+    // In the future, the timestamp should be modified to when the users indicate they will visit 
+    // the place, rather than when they add the place as an event
+    const date = new Date();
+    const timestamp = date.getTime();
+    database.ref('places/' + place.place_id + '/visitors').update({
+        [userId]: timestamp
+    });
+
+    closeAddPlaceForm();
+    renderPlaces();
 }
 
 function validatePlaceDuration(duration) {
@@ -160,57 +216,4 @@ function validatePlaceDuration(duration) {
         return false;
     }
     return true;
-}
-
-async function submitPlaceCallback(place, status) {
-    if (status == google.maps.places.PlacesServiceStatus.OK) {
-        let openingTime = 0;
-        let closingTime = 0;
-        if (place.opening_hours) {
-            // for MVP purposes, use Monday's hours. 
-            const openHours = place.opening_hours.periods[1].open.hours;
-            const openMinutes = place.opening_hours.periods[1].open.minutes;
-            const closeHours = place.opening_hours.periods[1].close.hours;
-            const closeMinutes = place.opening_hours.periods[1].close.minutes;
-            openingTime = TimeRange.getTimeInMinutes(openHours, openMinutes);
-            closingTime = TimeRange.getTimeInMinutes(closeHours, closeMinutes);
-        } else { 
-            // Set the event's opening hours to 8am - 5pm otherwise. 
-            openingTime = TimeRange.getTimeInMinutes(8, 0);
-            closingTime = TimeRange.getTimeInMinutes(17, 0);
-        }
-
-        const userId = firebase.auth().currentUser.uid;
-        const listName = document.getElementById('list-options').value;
-        const eventDuration = document.getElementById('add-place-duration').value;
-        const eventListRef = database.ref('events/' + userId + '/' + listName);
-        // Get the order number by counting existing events
-        const eventListSnapshot = await eventListRef.once('value');
-        const order = eventListSnapshot.numChildren() + 1;
-
-        const newEventRef = eventListRef.child(place.place_id);
-        newEventRef.set({
-            name: place.name,
-            address: place.formatted_address,
-            duration: eventDuration,
-            openingTime: openingTime,
-            closingTime: closingTime,
-            order: order,
-        });
-
-        // Update the place's visitors
-        // This will add the user id to the visitors list, along with the most recent timestamp 
-        // In the future, the timestamp should be modified to when the users indicate they will visit 
-        // the place, rather than when they add the place as an event
-        const date = new Date();
-        const timestamp = date.getTime();
-        database.ref('places/' + place.place_id + '/visitors').update({
-            [userId]: timestamp
-        });
-
-        closeAddPlaceForm();
-        renderPlaces();
-    } else {
-        alert('too many requests at a time, please try again in 10s');
-    }
 }
