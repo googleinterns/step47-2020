@@ -19,11 +19,28 @@ import TimeRange from './TimeRange.js';
 // Declare global functions.
 window.openAddPlaceForm = openAddPlaceForm;
 window.closeAddPlaceForm = closeAddPlaceForm;
+window.initAutocomplete = initAutocomplete; 
 
 // Declare global variables/constants.
 const database = firebase.database();
-let map = new google.maps.Map(document.getElementById('empty-map'));
+let map;
 let displayedPlaces = {};  // Object that contains all the places information
+
+// Declare global variables 
+let autocompleteStart;
+let autocompleteEvent;
+
+/** Adds autocomplete to input boxes */
+function initAutocomplete() {
+    map = new google.maps.Map(document.getElementById('empty-map'));
+    let startAddress = document.getElementById('starting-address');
+    let eventAddress = document.getElementById('add-event-address');
+    let options = {
+        types: ['geocode']
+    };
+    autocompleteStart = new google.maps.places.Autocomplete(startAddress,options); 
+    autocompleteEvent = new google.maps.places.Autocomplete(eventAddress,options);
+}
 
 export function renderPlaces() {
     displayedPlaces = {};
