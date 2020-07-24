@@ -44,7 +44,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function checkUserSignIn() {
     currentUser = firebase.auth().currentUser;
-    if (currentUser !== null) {
+    if (currentUser !== null && currentUser.emailVerified) {
         document.getElementById('profile-button').innerText = currentUser.displayName;
         document.getElementById('profile-button').style.display = 'block';
         document.getElementById('sign-out-button').style.display = 'block';
@@ -53,6 +53,10 @@ function checkUserSignIn() {
         document.getElementById('profile-button').style.display = 'none';
         document.getElementById('sign-out-button').style.display = 'none';
         document.getElementById('sign-in-button').style.display = 'block';
+    }
+    if (currentUser !== null && !currentUser.emailVerified) {
+        console.log('Please verify your email');
+        signOut();
     }
 }
 
@@ -95,6 +99,30 @@ function addUserToDatabase(uid, name, phoneNumber, email, username) {
     });
 }
 
+function sendEmailVerification(user, displayName, email, phoneNumber, username) {
+    user.sendEmailVerification().then(function() {
+        console.log('verification Email sent');
+        addUserToDatabase(user.uid, displayName, email, phoneNumber, username);
+    })
+    .catch(function(error) {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        if (errorCode === 'auth/missing-android-pkg-name') {
+            alert('Android package name is missing');
+        } else if (errorCode === 'auth/missing-continue-uri') {
+            alert('Continue URL is missing');
+        } else if (errorCode === 'missing-ios-bundle-id') {
+            alert('IOS bundle id is missing');
+        } else if (errorCode === 'auth/invalid-continue-uri') {
+            alert('Continue URL is invalid');
+        } else if (errorCode === 'auth/unauthorized-continue-uri') {
+            alert('The domain of the continue URL is not whitelisted');
+        } else {
+            alert(errorMessage);
+        }
+    });
+}
+
 async function signUp() {
     const password = document.getElementById('password').value;
     const passwordConfirmation = document.getElementById('repeat-password').value;
@@ -111,7 +139,7 @@ async function signUp() {
     firebase.auth().createUserWithEmailAndPassword(email, password)
     .then(function() {
         const user = firebase.auth().currentUser;
-        addUserToDatabase(user.uid, displayName, email, phoneNumber, username);
+        sendEmailVerification(user, displayName, email, phoneNumber, username);
         user.updateProfile({
             displayName: displayName,
         }).then(function() {
@@ -120,7 +148,6 @@ async function signUp() {
         });
     }).catch(function(error) {
         // Handle Errors here.
-        console.log(error);
         const errorCode = error.code;
         const errorMessage = error.message;
         if (errorCode === 'auth/email-already-in-use') {
