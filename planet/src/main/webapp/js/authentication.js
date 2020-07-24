@@ -49,14 +49,19 @@ function checkUserSignIn() {
         document.getElementById('profile-button').style.display = 'block';
         document.getElementById('sign-out-button').style.display = 'block';
         document.getElementById('sign-in-button').style.display = 'none';
+        // Set the emailVerified property to true
+        database.ref('users/' + currentUser.uid).once('value', (userSnapshot) => {
+            if (userSnapshot.exists()) {
+                database.ref('users/' + currentUser.uid).update({
+                    emailVerified: true
+                });
+            }
+        });
+
     } else {
         document.getElementById('profile-button').style.display = 'none';
         document.getElementById('sign-out-button').style.display = 'none';
         document.getElementById('sign-in-button').style.display = 'block';
-    }
-    if (currentUser !== null && !currentUser.emailVerified) {
-        console.log('Please verify your email');
-        signOut();
     }
 }
 
@@ -90,12 +95,20 @@ async function generateUsername(displayName) {
     return username;
 }
 
-function addUserToDatabase(uid, name, phoneNumber, email, username) {
+function addUserToDatabase(uid, name, phoneNumber, email, username, emailVerified) {
+    // We need to be signed in to be able to add the user to the database
+    // even if the user hasn't verified their email yet
     database.ref('users/' + uid).set({
         name: name,
         email: email,
         phoneNumber: phoneNumber,
         username: username,
+        emailVerified: emailVerified,
+    }).then(() => {
+        // Once the user has been added, if the email is not verified, we sign out
+        if (!emailVerified) {
+            signOut();
+        }
     });
 }
 
@@ -116,7 +129,8 @@ function sendEmailVerification(user, displayName, email, phoneNumber, username) 
         modalElement.appendChild(line2);
         closeModal('sign-up-modal');
         openModal('account-created-modal');
-        addUserToDatabase(user.uid, displayName, email, phoneNumber, username);
+        addUserToDatabase(user.uid, displayName, phoneNumber, email, 
+            username, user.emailVerified);
     })
     .catch(function(error) {
         const errorCode = error.code;
@@ -181,8 +195,13 @@ function signIn() {
     resetForm('input-sign-in');
     firebase.auth().signInWithEmailAndPassword(email, password)
     .then(function() {
-        closeModal('sign-in-modal');
         checkUserSignIn(); 
+        if (!currentUser.emailVerified) {
+            signOut();
+            alert('Email not verified!');
+            return;
+        };
+        closeModal('sign-in-modal');
     }).catch(function(error) {
         // Handle Errors here.
         console.log(error);
@@ -221,22 +240,21 @@ function signInWithGithub() {
 function signInWithProvider(provider) {
     firebase.auth().signInWithPopup(provider).then(async function() {
         // The signed-in user info.
-        closeModal('sign-in-modal');
-        checkUserSignIn();
+        currentUser = firebase.auth().currentUser;
         const username = await generateUsername(currentUser.displayName);
-        const refrence = database.ref('users' + currentUser.uid);
+        const refrence = database.ref('users/' + currentUser.uid);
         refrence.once('value').then(function(snapshot) {
             if (!snapshot.exists()) {
                 addUserToDatabase(currentUser.uid,
                     currentUser.displayName,
                     currentUser.phoneNumber,
                     currentUser.email,
-                    username);
+                    username,
+                    currentUser.emailVerified);
             }
-        })
+            closeModal('sign-in-modal');
+        });
     }).catch(function(error) {
-        console.log(error);
-        // TODO: We will be handling errors here
         const errorCode = error.code;
         const errorMessage = error.message;
         if (errorCode === 'auth/account-exists-with-different-credential') {
