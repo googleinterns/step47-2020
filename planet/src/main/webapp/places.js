@@ -105,10 +105,23 @@ function updateSearch() {
         placeInfo = [];
 
         bounds = new google.maps.LatLngBounds();
+    
+        // Display markers on map
+        places.forEach(function(place) {
+            if (!place.geometry) {
+                console.log("Returned place contains no geometry");
+                return;
+            }
+            createMarkers(place); 
+            if (place.geometry.viewport) {
+                bounds.union(place.geometry.viewport);
+            } else {
+                bounds.extend(place.geometry.location);
+            }
+        });
         addPlaceDetails(places);
         map.fitBounds(bounds);
     });
-
     // Add onclick function to option buttons
     addOnclick(); 
 }
@@ -145,29 +158,39 @@ function setSearchByButton() {
 
 /** Create markers and add details to each place */
 function addPlaceDetails() {
-    // For each place, get the icon, name and location.
-    places.forEach(function(place) {
-        if (!place.geometry) {
-          console.log("Returned place contains no geometry");
-          return;
-        }
-        createMarkers(place); 
-        if (place.geometry.viewport) {
-            bounds.union(place.geometry.viewport);
-        } else {
-            bounds.extend(place.geometry.location);
-        }
+    const half = Math.ceil(places.length /2); 
+    const firstHalf = places.splice(0,half);
+    const secondHalf = places.splice(-half);
 
-        // Make request with fields
-        var place = {
-            placeId: place.place_id,
-            fields: ['place_id','name','rating','formatted_phone_number','formatted_address',
-            'opening_hours','photos','url']
-        };
-        // Call Places Details Request
-        let service = new google.maps.places.PlacesService(map);
-        service.getDetails(place, callback); 
+    // For each place, get the icon, name and location.
+    firstHalf.forEach(function(place) {
+        sendPlaceRequest(place);
     });
+
+    // Call remaining 10 place requests after 5 seconds to wait after request query empties
+    // Place Details Requests can only handle a query of 10 requests
+    setTimeout(function () {
+        secondHalf.forEach(function(place) {
+            sendPlaceRequest(place);
+        })
+    },5000);
+}
+
+/** Create place requests */
+function sendPlaceRequest(place) {
+    if (!place.geometry) {
+        console.log("Returned place contains no geometry");
+        return;
+    }
+    // Make request with fields
+    var place = {
+        placeId: place.place_id,
+        fields: ['place_id','name','rating','formatted_phone_number','formatted_address',
+        'opening_hours','photos','url']
+    };
+    // Call Places Details Request
+    let service = new google.maps.places.PlacesService(map);
+    service.getDetails(place, callback); 
 }
 
 /** Callback function to handle place details response */
@@ -198,10 +221,10 @@ function callback(place, status) {
             placeDetails['Website'] = place.url;
         }
         placeInfo.push(placeDetails);
-    }    
+    }
     // List results when all callbacks are finished
     count ++ 
-    if (count === places.length) {
+    if (count === 10) {
         count = 0; 
         listResults();
     }
