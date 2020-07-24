@@ -101,7 +101,21 @@ function addUserToDatabase(uid, name, phoneNumber, email, username) {
 
 function sendEmailVerification(user, displayName, email, phoneNumber, username) {
     user.sendEmailVerification().then(function() {
-        console.log('verification Email sent');
+        const modalElement = document.getElementById('account-created-modal');
+        const line1 = document.createElement('p');
+        line1.style.textAlign = 'center';
+        line1.style.marginBottom = '0';
+        line1.innerText = 'Your account has been successfully created and a verification\
+        email has been sent to you.';
+        const line2 = document.createElement('p');
+        line2.style.textAlign = 'center';
+        line2.style.marginTop = '0';
+        line2.innerText = 'Please verify your email and log in again!';
+        modalElement.innerHTML = '';
+        modalElement.appendChild(line1);
+        modalElement.appendChild(line2);
+        closeModal('sign-up-modal');
+        openModal('account-created-modal');
         addUserToDatabase(user.uid, displayName, email, phoneNumber, username);
     })
     .catch(function(error) {
@@ -142,9 +156,6 @@ async function signUp() {
         sendEmailVerification(user, displayName, email, phoneNumber, username);
         user.updateProfile({
             displayName: displayName,
-        }).then(function() {
-            closeModal('sign-up-modal');
-            checkUserSignIn();
         });
     }).catch(function(error) {
         // Handle Errors here.
