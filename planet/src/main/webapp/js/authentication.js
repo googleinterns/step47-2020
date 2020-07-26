@@ -37,6 +37,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     loadElement('signin.html', 'sign-in-modal');
     loadElement('signup.html', 'sign-up-modal');
+    loadElement('resetpwd.html', 'reset-pwd-modal');
     database = firebase.database();
     currentUser = firebase.auth().currentUser;
     firebase.auth().onAuthStateChanged(checkUserSignIn);
@@ -273,6 +274,54 @@ function signInWithProvider(provider) {
             alert('Pop-up has been closed by the user');
         } else if (errorCode === 'auth/unauthorized-domain') {
             alert('Unauthorized domain');
+        } else {
+            alert(errorMessage);
+        }
+    });
+}
+
+function onForgotPassword() {
+    closeModal('sign-in-modal'); 
+    openModal('reset-pwd-modal');
+    document.getElementById('submit-message').innerHTML = '';
+    document.getElementById('email-reset-pwd').value = '';
+}
+
+function resetPassword() {
+    const email = document.getElementById('email-reset-pwd');
+    if (email === null) {
+        console.log('Email element not found');
+        return;
+    }
+    const message = document.getElementById('submit-message');
+    message.style.textAlign = 'center';
+    message.style.width = '100%';
+    message.style.height = 'auto';
+    message.style.marginBottom = '2%';
+    firebase.auth().sendPasswordResetEmail(email.value)
+    .then(function() {
+        email.value = '';
+        message.style.backgroundColor = 'lightgreen';
+        message.innerText = 'A reset email has been sent to your inbox! Check it out!';
+    })
+    .catch(function(error) {
+        message.style.backgroundColor = 'tomato';
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        if (errorCode === 'auth/invalid-email') {
+            message.innerText = 'Invalid Email! Please try again!';
+        } else if (errorCode === 'auth/missing-android-pkg-name') {
+            message.innerText = 'Adroid package name is missing! Please try again!';
+        } else if (errorCode === 'auth/missing-continue-uri') {
+            message.innerText = 'Continue URL is missing! Please try again!';
+        } else if (errorCode === 'auth/missing-ios-bundle-id') {
+            message.innerText = 'IOs bundle id is missing! Please try again!';
+        } else if (errorCode === 'auth/invalid-continue-uri') {
+            message.innerText = 'Invalid continue URL! Please try again!';
+        } else if (errorCode === 'auth/unauthorized-continue-uri') {
+            message.innerText = 'Unauthorized continue URL! Please try again!';
+        } else if (errorCode === 'auth/user-not-found') {
+            message.innerText = 'User not found! Make sure the email is correct!';
         } else {
             alert(errorMessage);
         }
