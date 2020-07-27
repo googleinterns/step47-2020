@@ -231,7 +231,7 @@ async function submitPlace(placeId) {
     });
 
     closeAddPlaceForm();
-    renderPlaceButtons(placeId, false);
+    disablePlaceButton(placeId);
 }
 
 function validatePlaceDuration(duration) {
@@ -246,31 +246,37 @@ function validatePlaceDuration(duration) {
     return true;
 }
 
-export function renderPlaceButtons(placeId, enableAdd) {
-    if (placeId) {
-        togglePlaceButton(placeId, enableAdd);
-    } else {
-        const userId = firebase.auth().currentUser.uid;
-        const placeListRef = database.ref('users/' + userId + '/places');
-        placeListRef.once('value', (placeListSnapshot) => {
-            placeListSnapshot.forEach(function(childPlace) {
-                let placeId = childPlace.key;
-                const noSuchEvent = document.getElementById(placeId) === null;
-                togglePlaceButton (placeId, noSuchEvent);
-            });
-        });
+export function renderPlaceButtons() {
+    if (firebase.auth().currentUser === null) {
+        return;
     }
+    const userId = firebase.auth().currentUser.uid;
+    const placeListRef = database.ref('users/' + userId + '/places');
+    placeListRef.once('value', (placeListSnapshot) => {
+        placeListSnapshot.forEach(function(childPlace) {
+            let placeId = childPlace.key;
+            const eventExists = document.getElementById(placeId) !== null;
+            if (eventExists) {
+                disablePlaceButton(placeId);
+            } else {
+                enablePlaceButton(placeId);
+            }
+        });
+    });
 } 
 
-function togglePlaceButton(placeId, enableAdd) {
+export function enablePlaceButton(placeId) {
     const placeButton = document.getElementById('place-button-' + placeId);
     if (placeButton) {
-        if (enableAdd) {
-            placeButton.setAttribute('onclick', 'openAddPlaceForm(event, "' + placeId + '")');
-            placeButton.innerHTML = `<i class="material-icons small">playlist_add</i>`;
-        } else {
-            placeButton.onclick = null;
-            placeButton.innerHTML = `<i class="material-icons small">playlist_add_check</i>`;
-        }
+        placeButton.setAttribute('onclick', 'openAddPlaceForm(event, "' + placeId + '")');
+        placeButton.innerHTML = `<i class="material-icons small">playlist_add</i>`;
+    }
+}
+
+export function disablePlaceButton(placeId) {
+    const placeButton = document.getElementById('place-button-' + placeId);
+    if (placeButton) {
+        placeButton.onclick = null;
+        placeButton.innerHTML = `<i class="material-icons small">playlist_add_check</i>`;
     }
 }
