@@ -73,10 +73,8 @@ export function renderPlaces() {
 function makePlaceRequests() {
     hideLoadMoreButton();
     let service = new google.maps.places.PlacesService(map);
-    for (let i = placeCount; i < placeCount + 10 ; i++) {
-        if (i >= allPlaces.length) {
-            return;
-        }
+    const maxNumOfRequests = 10;
+    for (let i = placeCount; i < Math.min(placeCount + maxNumOfRequests , allPlaces.length); i++) {
         let placeId = allPlaces[i];
         // Make request with fields
         let placeRequest = {
