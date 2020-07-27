@@ -20,6 +20,7 @@ import TimeRange from './TimeRange.js';
 window.openAddPlaceForm = openAddPlaceForm;
 window.closeAddPlaceForm = closeAddPlaceForm;
 window.initAutocomplete = initAutocomplete; 
+window.makePlaceRequests = makePlaceRequests;
 
 // Declare global variables/constants.
 const database = firebase.database();
@@ -70,6 +71,7 @@ export function renderPlaces() {
 }
 
 function makePlaceRequests() {
+    hideLoadMoreButton();
     let service = new google.maps.places.PlacesService(map);
     for (let i = placeCount; i < placeCount + 10 ; i++) {
         if (i >= allPlaces.length) {
@@ -84,7 +86,7 @@ function makePlaceRequests() {
         };
         service.getDetails(placeRequest, renderPlaceDetailsCallback);
     } 
-    setTimeout(renderLoadMoreButton, 5000);
+    setTimeout(showLoadMoreButton, 5000);
 }
 
 function renderPlaceDetailsCallback(place, status) {
@@ -96,9 +98,15 @@ function renderPlaceDetailsCallback(place, status) {
     } 
 }
 
-function renderLoadMoreButton() {
+function hideLoadMoreButton() {
+    const loadMoreButton = document.getElementById('load-more-button');
+    loadMoreButton.style.display = 'none';
+}
+
+function showLoadMoreButton() {
     if (placeCount < allPlaces.length) {
-        console.log('Load more');
+        const loadMoreButton = document.getElementById('load-more-button');
+        loadMoreButton.style.display = 'block';
     }
 }
 
