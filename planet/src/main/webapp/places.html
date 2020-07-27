@@ -4,9 +4,9 @@
 <head>
     <title>Planet</title>
     <script src="https://www.gstatic.com/firebasejs/4.1.3/firebase.js"></script>
-    <script src="places.js"></script>
     <script src="js/authentication.js"></script>
-    <link rel="stylesheet" href="places.css">
+    <script src="places.js"></script>
+    <link rel="stylesheet" href="css/places.css">
     <!-- Compiled and minified CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
     <!--Import Google Icon Font-->
@@ -20,7 +20,7 @@
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <nav>
         <div class="nav-wrapper indigo darken-2">
-            <a href="places.html" class="brand-logo" style="padding-left: 25px">Planet</a>
+            <a href="places.html" class="brand-logo" style="padding-left: 25px">planet</a>
             <ul class="right hide-on-med-and-down">
                 <li><a href="itinerary.html">Itinerary</a></li>
                 <li><a id="sign-out-button" style="display: none;" onclick="signOut()">Sign Out</a></li>
@@ -32,13 +32,13 @@
 </header>
 
 <body>
-    <div id="column" style="width:75%;">
+    <div id="column-map">
         <input id="pac-input" class="controls " style="width:50%; background:white; margin:0.43vh; padding-left:0.57vw;"
             type="text" placeholder="Search Location">
         <div id="map"></div>
     </div>
-    <div id="column" style="width:25%;">
-        <h3 id="greeting">Find a place:</h3>
+    <div id="column-places">
+        <h3 id="greeting">Find a location:</h3>
         <div id="button-bar">
             <a id="hotel" class="btn-floating btn-large waves-effect waves-light red accent-2"><i class="material-icons">hotel</i></a>
             <a id="food" class="btn-floating btn-large waves-effect waves-light red accent-2"><i class="material-icons">local_dining</i></a>
@@ -47,11 +47,10 @@
         </div>
         <div id="results" class="col s12 m7"></div>
     </div>
-
     <div id="sign-in-modal" class="modal" style="padding-bottom: 1vh;">Hello</div>
     <div id="sign-up-modal" class="modal" style="padding-bottom: 1vh;">Hello</div>
     <!-- Compiled and minified JavaScript -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDK36gDoYgOj4AlbCqh1IuaUuTlcpKF0ns&libraries=places&callback=initMap"></script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDK36gDoYgOj4AlbCqh1IuaUuTlcpKF0ns&libraries=places&callback=initMap"></script>
 </body>
 </html>

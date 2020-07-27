@@ -14,28 +14,48 @@
 
 import {HeaderRenderer} from './headerRenderer.js';
 import {ProfileEventsRenderer} from './profile-events-renderer.js';
+import {AboutSectionRenderer} from './about-section-renderer.js';
 
 window.loadUserInformation = loadUserInformation;
 window.switchSection = switchSection;
+
+let user;
+let userId;
 
 function diplaySection(sectionId) {
     switch(sectionId) {
         case 'about-section':
             document.getElementById('about-section').style.display = 'block';
-            document.getElementById('posts-section').style.display = 'none';
-            document.getElementById('events-section').style.display = 'none';
+            AboutSectionRenderer.init(
+                user['work'],
+                user['school'],
+                user['dateOfBirth'],
+                user['phoneNumber'],
+                user['email'],
+                user['origin'] 
+            );
+            hideSection('posts-section');
+            hideSection('events-section');
             break;
         case 'posts-section':
-            document.getElementById('about-section').style.display = 'none';
+            hideSection('about-section');
             document.getElementById('posts-section').style.display = 'block';
-            document.getElementById('events-section').style.display = 'none';
+            hideSection('events-section');
             break;
         case 'events-section':
-            document.getElementById('about-section').style.display = 'none';
-            document.getElementById('posts-section').style.display = 'none';
+            hideSection('about-section');
+            hideSection('posts-section');
             document.getElementById('events-section').style.display = 'block';
+            ProfileEventsRenderer.init(userId);
             break;
+        default:
+            console.log('Unhandled section id:' + sectionId);
     }
+}
+
+function hideSection(sectionId) {
+    document.getElementById(sectionId).innerHTML = '';
+    document.getElementById(sectionId).style.display = 'none';
 }
 
 function activateLink(tabId) {
@@ -55,6 +75,8 @@ function activateLink(tabId) {
             document.getElementById('posts-link').classList.remove('active');
             document.getElementById('events-link').classList.add('active');
             break;
+        default:
+            console.log('Unhandled link id:' + linkId);
     }
 }
 
@@ -73,11 +95,13 @@ async function loadUserInformation(username) {
     }
     document.getElementById('not-found-message').remove();
     document.getElementById('profile-page').style.display = 'block';
+
     let user;
     let userId;
-    for (const object in userSnapshot.val()) {
+    // The userSnapshot.val() contains one property (user)
+    for (const property in userSnapshot.val()) {
         userId = object;
-        user = userSnapshot.val()[object];
+        user = userSnapshot.val()[property];
     }
     HeaderRenderer.init(
         userId,
@@ -85,5 +109,13 @@ async function loadUserInformation(username) {
         user['location'],
         user['bio']
     );
-    ProfileEventsRenderer.init(userId);
+
+    AboutSectionRenderer.init(
+        user['work'],
+        user['school'],
+        user['dateOfBirth'],
+        user['phoneNumber'],
+        user['email'],
+        user['origin']
+    );
 }

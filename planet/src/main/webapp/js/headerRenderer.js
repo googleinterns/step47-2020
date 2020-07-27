@@ -39,7 +39,7 @@ function renderLocation(location, userId) {
     }
     const addLocationLink = document.createElement('a');
     addLocationLink.innerText = 'Add Location';
-    addLocationLink.addEventListener('click', addNewLocation);
+    addLocationLink.addEventListener('click', addNewLocationForm);
     document.getElementById('location').innerHTML = '';
     document.getElementById('location').appendChild(addLocationLink);
 }
@@ -55,12 +55,12 @@ function renderBio(bio, userId) {
         return;
     }
     const addBioLink = document.createElement('a');
-    addBioLink.addEventListener('click', addNewBio);
+    addBioLink.addEventListener('click', addNewBioForm);
     addBioLink.innerText = 'Add Bio';
     document.getElementById('bio').appendChild(addBioLink);
 }
 
-function addNewLocation() {
+function addNewLocationForm() {
     document.getElementById('location').classList.remove('valign-wrapper');
     const inputFields = document.createElement('div');
     // Create two input fields
@@ -107,7 +107,7 @@ function saveLocation() {
     const country = document.getElementById('country-input');
     if (city !== null && country !== null && 
         city.value !== '' && country.value !== '') {
-        addLocationToDatabse(city.value + ', ' + country.value);
+        addLocationToDatabase(city.value + ', ' + country.value);
         return;
     }
     cancelLocationEditing();
@@ -117,7 +117,7 @@ function cancelLocationEditing() {
     renderLocation(undefined, currentUser.uid);
 }
 
-function addLocationToDatabse(location) {
+function addLocationToDatabase(location) {
     const userReference = database.ref('users/' + currentUser.uid);
     userReference.update({
         location: location
@@ -126,7 +126,7 @@ function addLocationToDatabse(location) {
     });
 }
 
-function addNewBio() {
+function addNewBioForm() {
     // Create the text area
     const textArea = document.createElement('textarea');
     textArea.placeholder = 'Describe yourself ...';

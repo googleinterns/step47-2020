@@ -22,15 +22,20 @@ let markers = [];
 let promises = [];
 let placeInfo = [];
 let bounds;
+let count = 0;
+let places;
 const TORONTO_COORDINATES = {lat:43.6532, lng:-79.3832}; 
 
 /** Initializes Map, implements search box and marks locations of searches */
 function initMap() {
-    map = new google.maps.Map(document.getElementById("map"), {
+    // Create a map centered in Toronto
+    map = new google.maps.Map(document.getElementById('map'), {
         center: TORONTO_COORDINATES,
         zoom: 8
     });
-    input = document.getElementById('pac-input');
+
+    // Create the search box and link it to the UI element.
+    input = document.getElementById("pac-input");
     searchBox = new google.maps.places.SearchBox(input);
     // Set position of the search bar onto the map
     map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
@@ -87,7 +92,7 @@ function updateSearch() {
 
     // Listener for when user selects new location
     searchBox.addListener('places_changed', function() {
-        let places = searchBox.getPlaces();
+        places = searchBox.getPlaces();
         if (places.length === 0) {
             return;
         }
@@ -105,6 +110,11 @@ function updateSearch() {
     });
 
     // Add onclick function to option buttons
+    addOnclick(); 
+}
+
+/** Add onclick function to option buttons */
+function addOnclick() {
     document.getElementById('hotel').onclick = function() {
         document.getElementById('pac-input').value = 'hotel';
         setSearchByButton(); 
@@ -120,7 +130,7 @@ function updateSearch() {
     document.getElementById('nature').onclick = function() {
         document.getElementById('pac-input').value = 'nature';
         setSearchByButton(); 
-    }
+    }    
 }
 
 /** Search map when option button is clicked by triggering enter key */
@@ -134,7 +144,7 @@ function setSearchByButton() {
 }
 
 /** Create markers and add details to each place */
-function addPlaceDetails(places) {
+function addPlaceDetails() {
     // For each place, get the icon, name and location.
     places.forEach(function(place) {
         if (!place.geometry) {
@@ -148,53 +158,53 @@ function addPlaceDetails(places) {
             bounds.extend(place.geometry.location);
         }
 
-        // Get place id
-        let placeId = place['place_id']; 
-        let url = 'https://maps.googleapis.com/maps/api/place/details/json?placeid=' + placeId + 
-        '&key=AIzaSyDK36gDoYgOj4AlbCqh1IuaUuTlcpKF0ns&fields=photo,formatted_phone_number,formatted_address,opening_hours,website';        
-        let placeDetails = {Name: '', Rating: '', Address: '', Photo: '',Phone: '',Hours: '',Website: ''}; 
-        
-        // Fetch url and add photo reference to a list
-        promises = [];
-        promises.push(fetch(url).then(response => response.json()).then(function(response) {
-            placeDetails['Name'] = place.name; 
-            // Check if place details exist
-            if (place.rating != undefined) {
-                placeDetails['Rating'] = place.rating;    
-            }
-            if (response.result.formatted_address != undefined) {
-                placeDetails['Address'] = response.result.formatted_address;
-            }
-            if (response.result.photos != undefined) {
-                placeDetails['Photo'] = response.result.photos[0].photo_reference;
-            }
-            if (response.result.formatted_phone_number != undefined) {
-                placeDetails['Phone'] = response.result.formatted_phone_number;
-            }
-            if (response.result.opening_hours != undefined){
-                placeDetails['Hours'] = response.result.opening_hours.weekday_text;
-            }
-            if (response.result.website != undefined) {
-                placeDetails['Website'] = response.result.website;
-            }
-            placeInfo.push(placeDetails);
-        }));
+        // Make request with fields
+        var place = {
+            placeId: place.place_id,
+            fields: ['place_id','name','rating','formatted_phone_number','formatted_address',
+            'opening_hours','photos','url']
+        };
+        // Call Places Details Request
+        let service = new google.maps.places.PlacesService(map);
+        service.getDetails(place, callback); 
     });
-    // Wait for promises to complete before proceeding
-    Promise.all(promises).then(function() {
-        listResults();
-    })
 }
 
-/** Get URL for Place Photo Request  */
-function getPhotoURL(photo_reference) {
-    let baseURL = 'https://maps.googleapis.com/maps/api/place/photo?';
-    let maxWidth = '400';
-    let maxHeight = '200';
-    let photoURL = baseURL + 'maxwidth=' + maxWidth + '&maxheight=' + maxHeight 
-    + '&photoreference=' + photo_reference + '&key=AIzaSyDK36gDoYgOj4AlbCqh1IuaUuTlcpKF0ns'; 
-
-    return photoURL; 
+/** Callback function to handle place details response */
+function callback(place, status) {
+    if (status == google.maps.places.PlacesServiceStatus.OK) {
+        // Add place details to dictionary
+        let placeDetails = {PlaceID: '',Name: '', Rating: '', Address: '', Photo: '',Phone: '',
+        Hours: '', Website: '',Opening: '',Closing: ''}; 
+        placeDetails['PlaceID'] = place.place_id;
+        placeDetails['Name'] = place.name; 
+        // Check if place details exist
+        if (place.rating) {
+            placeDetails['Rating'] = place.rating;    
+        }
+        if (place.formatted_address) {
+            placeDetails['Address'] = place.formatted_address;
+        }
+        if (place.formatted_phone_number) {
+            placeDetails['Phone'] = place.formatted_phone_number;
+        }
+        if (place.opening_hours) {
+            placeDetails['Hours'] = place.opening_hours.weekday_text;
+        }
+        if (place.photos) {
+            placeDetails['Photo'] = place.photos[0].getUrl({maxHeight:200});
+        }
+        if (place.url) {
+            placeDetails['Website'] = place.url;
+        }
+        placeInfo.push(placeDetails);
+    }    
+    // List results when all callbacks are finished
+    count ++ 
+    if (count === places.length) {
+        count = 0; 
+        listResults();
+    }
 }
 
 /** Create marker and add info window to place */
@@ -254,6 +264,8 @@ function listResults() {
         let p2 = document.createElement('p');
         let p3 = document.createElement('p');
         let p4 = document.createElement('p');
+        let p5 = document.createElement('p');
+        let p6 = document.createElement('p');
         let a = document.createElement('a');
 
         // Set variables for place details
@@ -262,15 +274,16 @@ function listResults() {
         let address = document.createTextNode(placeInfo[i]['Address']);
         let phoneNumber = document.createTextNode('Phone Number: ' + placeInfo[i]['Phone']);
         let openingHours = document.createTextNode('Opening Hours: ' + placeInfo[i]['Hours']);
+        let open = document.createTextNode(placeInfo[i]['Opening']);
+        let close = document.createTextNode(placeInfo[i]['Closing']);
         let img = document.createElement('img');
         
-        // Create and add save icon 
-        let icon = document.createElement('i');
-        icon.innerHTML = 'favorite_border';
-        icon.classList.add('material-icons');
-        icon.classList.add('small');
-        icon.setAttribute('onclick','savePlace(this);');
-        div3.append(icon);
+        // Check if user is signed in
+        if (currentUser) {
+            // Display save icons
+            let icon = createIcon(placeInfo[i]['PlaceID']);
+            div3.append(icon);
+        }
 
         // Check for missing details, otherwise display through HTML
         p.appendChild(name);        
@@ -278,28 +291,42 @@ function listResults() {
         div3.appendChild(p);
         if (placeInfo[i]['Rating'] != '') {
             p1.appendChild(rating);
-           div3.appendChild(p1);
+            p1.setAttribute('id','place-rating');
+            div3.appendChild(p1);
         }     
          if (placeInfo[i]['Photo'] != '') {
-            img.src = getPhotoURL(placeInfo[i]['Photo']);
+            img.src = placeInfo[i]['Photo'];
             div3.appendChild(img); 
         }      
         if (address != '') {
             p2.appendChild(address);
+            p2.setAttribute('id','place-address');
             div3.appendChild(p2);
         }
         if (placeInfo[i]['Phone'] != '') {
             p3.appendChild(phoneNumber);
+            p3.setAttribute('id','phone-number');
             div3.appendChild(p3);         
         }
         if (placeInfo[i]['Hours'] != '') {
-            p4.appendChild(openingHours);    
+            p4.appendChild(openingHours); 
+            p4.setAttribute('id','opening-hours');   
             div3.appendChild(p4);      
+        }
+        if (placeInfo[i]['Opening'] != '') {
+            p5.appendChild(open);
+            p5.setAttribute('id','openingTime');
+            div3.appendChild(p5);
+        }
+        if (placeInfo[i]['Closing'] != '') {
+            p6.appendChild(close);
+            p6.setAttribute('id','closingTime');
+            div3.appendChild(p6); 
         }
         if (placeInfo[i]['Website'] != '') {
             a.appendChild(document.createTextNode('Website'));
             a.href = placeInfo[i]['Website'];
-            a.title = 'Website'; 
+            a.title = 'More'; 
             div3.appendChild(a);
         }
         div2.appendChild(div3);
@@ -307,17 +334,42 @@ function listResults() {
         element.appendChild(div1);
     }
     // Add search keyword to header
-    document.getElementById('greeting').innerHTML = 'Find a place: ' + document.getElementById('pac-input').value;
+    document.getElementById('greeting').innerHTML = 'Find a location: ' + document.getElementById('pac-input').value;
+}
+
+function createIcon(placeID) {
+    // Create and add save icon 
+    let icon = document.createElement('i');
+    icon.innerHTML = 'favorite_border';
+    icon.classList.add('material-icons','small');
+    icon.setAttribute('onclick','savePlace(this);');
+    icon.setAttribute('name',placeID);
+    return icon; 
 }
 
 /** Toggle save icon on click */
 function savePlace(x) {
+    let placeID = $(x).attr('name');
+    let userID = currentUser.uid; 
     if(x.innerHTML === "favorite_border") {
         // Set as saved
         x.innerHTML = "favorite";
+        updateDatabase(placeID, userID); 
     }
     else {
         // Set as unsaved
         x.innerHTML = "favorite_border";
+        deletePlace(placeID, userID);
     }
+}
+
+/** Update database and add placeID when place is saved by user */
+function updateDatabase(placeID, userID) {
+    // Add placeID to current userID in user tree
+    database.ref('users/' + userID + '/places').child(placeID).set(placeID);
+}
+
+/** Delete placeID from current user when place is unsaved by user */
+function deletePlace(placeID, userID) {
+    database.ref('users/' + userID + '/places').child(placeID).remove();
 }

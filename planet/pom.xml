@@ -23,6 +23,16 @@
   <dependencies>
     <!-- Compile/runtime dependencies -->
     <dependency>
+        <groupId>com.google.maps</groupId>
+        <artifactId>google-maps-services</artifactId>
+        <version>0.14.0</version>
+    </dependency>
+    <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-simple</artifactId>
+        <version>1.7.25</version>
+    </dependency>
+    <dependency>
       <groupId>com.google.appengine</groupId>
       <artifactId>appengine-api-1.0-sdk</artifactId>
       <version>1.9.80</version>
