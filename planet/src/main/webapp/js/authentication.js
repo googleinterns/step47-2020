@@ -37,6 +37,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     loadElement('signin.html', 'sign-in-modal');
     loadElement('signup.html', 'sign-up-modal');
+    loadElement('navbar.html', 'nav-bar');
     database = firebase.database();
     currentUser = firebase.auth().currentUser;
     firebase.auth().onAuthStateChanged(checkUserSignIn);
