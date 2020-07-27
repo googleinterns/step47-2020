@@ -84,6 +84,9 @@ function makePlaceRequests() {
         };
         service.getDetails(placeRequest, renderPlaceDetailsCallback);
     } 
+    // Google Maps API can only process 10 place details requests at a time,
+    // and once the session is full, new requests are refilled at a rate of 2 per second.
+    // Therefore, we need to wait 5 seconds here to process another group of 10 requests.
     setTimeout(showLoadMoreButton, 5000);
 }
 
