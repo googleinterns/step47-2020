@@ -62,10 +62,10 @@ export function renderPlaces() {
     placesRef.orderByValue().once('value', (placesSnapshot) => {
         const placesContainer = document.getElementById('places');
         placesContainer.innerHTML = '';
-        const savedPlaces = placesSnapshot.val();
-        for (const placeId in savedPlaces) {
+        placesSnapshot.forEach(function(childPlace) {
+            const placeId = childPlace.key;
             allPlaces.push(placeId);
-        }
+        });
         makePlaceRequests();
     });
 }
