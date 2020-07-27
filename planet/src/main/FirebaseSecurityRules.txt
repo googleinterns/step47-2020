@@ -42,10 +42,7 @@
         "events": {
             "$uid": {
                 ".read": true,
-                ".write": "$uid === auth.uid",
-                "$listName": {
-                    ".indexOn": ["order"]
-                }
+                ".write": "$uid === auth.uid"
             }
         }
     }
