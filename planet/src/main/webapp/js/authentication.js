@@ -136,17 +136,17 @@ function sendEmailVerification(user, displayName, email, phoneNumber, username) 
         const errorCode = error.code;
         const errorMessage = error.message;
         if (errorCode === 'auth/missing-android-pkg-name') {
-            alert('Android package name is missing');
+            console.log('Android package name is missing');
         } else if (errorCode === 'auth/missing-continue-uri') {
-            alert('Continue URL is missing');
+            console.log('Continue URL is missing');
         } else if (errorCode === 'missing-ios-bundle-id') {
-            alert('IOS bundle id is missing');
+            console.log('IOS bundle id is missing');
         } else if (errorCode === 'auth/invalid-continue-uri') {
-            alert('Continue URL is invalid');
+            console.log('Continue URL is invalid');
         } else if (errorCode === 'auth/unauthorized-continue-uri') {
-            alert('The domain of the continue URL is not whitelisted');
+            console.log('The domain of the continue URL is not whitelisted');
         } else {
-            alert(errorMessage);
+            console.log(errorMessage);
         }
     });
 }
