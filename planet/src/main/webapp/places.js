@@ -366,10 +366,10 @@ function savePlace(x) {
 /** Update database and add placeID when place is saved by user */
 function updateDatabase(placeID, userID) {
     const date = new Date();
+    // The negative timestamp is for firebase sorting purposes in ascending order
     const time = -date.getTime();
 
     // Add placeID to current userID in user tree with negative timestamp
-    // The negative timestamp is for firebase sorting purposes in ascending order
     database.ref('users/' + userID +'/places').child(placeID).set(time);
 }
 
