@@ -111,7 +111,7 @@ async function signUp() {
     firebase.auth().createUserWithEmailAndPassword(email, password)
     .then(function() {
         const user = firebase.auth().currentUser;
-        addUserToDatabase(user.uid, displayName, phoneNumber, email, username);
+        addUserToDatabase(user.uid, displayName, email, phoneNumber, username);
         user.updateProfile({
             displayName: displayName,
         }).then(function() {
