@@ -158,25 +158,28 @@ function setSearchByButton() {
 
 /** Create markers and add details to each place */
 function addPlaceDetails() {
-    const half = Math.ceil(places.length /2); 
-    const firstHalf = places.splice(0,half);
-    const secondHalf = places.splice(-half);
-
     // Clear results 
     document.getElementById('results').innerHTML = ""; 
 
+    // Place Details Requests can only handle a query of 10 requests
+    let splice = places.splice(0,10);
+
     // For each place, get the icon, name and location.
-    firstHalf.forEach(function(place) {
+    splice.forEach(function(place) {
         sendPlaceRequest(place);
     });
 
-    // Call remaining 10 place requests after 5 seconds to wait after request query empties
-    // Place Details Requests can only handle a query of 10 requests
-    setTimeout(function () {
-        secondHalf.forEach(function(place) {
-            sendPlaceRequest(place);
-        })
-    },5000);
+    // Place Details API can call place requests in groups of 20, 40, 60, etc. by using tokens
+    // Allow for all place requests to be called
+    while (places.length > 9) {
+        splice = places.splice(0,10);    
+        // Call remaining 10 place requests after 5 seconds to wait after request query empties
+        setTimeout(function () {
+            splice.forEach(function(place) {
+                sendPlaceRequest(place);
+            })
+        },5000);
+    }
 }
 
 /** Create place requests */
