@@ -162,6 +162,9 @@ function addPlaceDetails() {
     const firstHalf = places.splice(0,half);
     const secondHalf = places.splice(-half);
 
+    // Clear results 
+    document.getElementById('results').innerHTML = ""; 
+
     // For each place, get the icon, name and location.
     firstHalf.forEach(function(place) {
         sendPlaceRequest(place);
@@ -267,9 +270,6 @@ function createMarkers(place) {
 /** List results of nearby search on page*/
 function listResults() {
     let element = document.getElementById('results');
-    // Clear results 
-    element.innerHTML = ""; 
-
     // Displays search results on page
     for (let i = 0; i < placeInfo.length; i++) {
         // Create materialize card for each result by creating dom element in HTML
