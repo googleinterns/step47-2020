@@ -24,7 +24,9 @@ window.initAutocomplete = initAutocomplete;
 // Declare global variables/constants.
 const database = firebase.database();
 let map;
-let displayedPlaces = {};  // Object that contains all the places information
+let displayedPlaces = {};  // Object that contains all the places information that are rendered
+let allPlaces = []; // Array that contains all the placeIds that the user saved
+let placeCount = 0;
 
 // Declare global variables 
 let autocompleteStart;
@@ -52,23 +54,37 @@ function updateStartingAddress() {
 
 export function renderPlaces() {
     displayedPlaces = {};
+    allPlaces = [];
+    placeCount = 0;
     const userId = firebase.auth().currentUser.uid;
     const placesRef = database.ref('users/' + userId + '/places');
-    placesRef.once('value', (placesSnapshot) => {
+    placesRef.orderByValue().once('value', (placesSnapshot) => {
         const placesContainer = document.getElementById('places');
         placesContainer.innerHTML = '';
         const savedPlaces = placesSnapshot.val();
         for (const placeId in savedPlaces) {
-            // Make request with fields
-            let placeRequest = {
-                placeId: placeId,
-                fields: ['place_id','name','rating','formatted_address',
-                    'opening_hours','photos','url']
-            };
-            let service = new google.maps.places.PlacesService(map);
-            service.getDetails(placeRequest, renderPlaceDetailsCallback); 
+            allPlaces.push(placeId);
         }
+        makePlaceRequests();
     });
+}
+
+function makePlaceRequests() {
+    let service = new google.maps.places.PlacesService(map);
+    for (let i = placeCount; i < placeCount + 10 ; i++) {
+        if (i >= allPlaces.length) {
+            return;
+        }
+        let placeId = allPlaces[i];
+        // Make request with fields
+        let placeRequest = {
+            placeId: placeId,
+            fields: ['place_id','name','rating','formatted_address',
+                'opening_hours','photos','url']
+        };
+        service.getDetails(placeRequest, renderPlaceDetailsCallback);
+    } 
+    setTimeout(renderLoadMoreButton, 5000);
 }
 
 function renderPlaceDetailsCallback(place, status) {
@@ -76,7 +92,14 @@ function renderPlaceDetailsCallback(place, status) {
         const placesContainer = document.getElementById('places');
         const placeElement = createPlaceElement(place);
         placesContainer.appendChild(placeElement);
+        placeCount += 1;
     } 
+}
+
+function renderLoadMoreButton() {
+    if (placeCount < allPlaces.length) {
+        console.log('Load more');
+    }
 }
 
 function createPlaceElement(place) {
