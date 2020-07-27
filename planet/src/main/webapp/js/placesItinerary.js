@@ -27,7 +27,7 @@ const database = firebase.database();
 let map;
 let displayedPlaces = {};  // Object that contains all the places information that are rendered
 let allPlaces = []; // Array that contains all the placeIds that the user saved
-let placeCount = 0;
+let placeCount = 0; // Variable that keeps track of requested places
 
 // Declare global variables 
 let autocompleteStart;
