@@ -26,8 +26,7 @@ window.makePlaceRequests = makePlaceRequests;
 const database = firebase.database();
 let map;
 let displayedPlaces = {};  // Object that contains all the places information that are rendered
-let allPlaces = []; // Array that contains all the placeIds that the user saved
-let placeCount = 0; // Variable that keeps track of requested places
+let toBeProcessedPlaces = []; // Array that contains all the placeIds to be used in Google Maps API call
 
 // Declare global variables 
 let autocompleteStart;
@@ -55,8 +54,7 @@ function updateStartingAddress() {
 
 export function renderPlaces() {
     displayedPlaces = {};
-    allPlaces = [];
-    placeCount = 0;
+    toBeProcessedPlaces = [];
     const userId = firebase.auth().currentUser.uid;
     const placesRef = database.ref('users/' + userId + '/places');
     placesRef.orderByValue().once('value', (placesSnapshot) => {
@@ -64,7 +62,7 @@ export function renderPlaces() {
         placesContainer.innerHTML = '';
         placesSnapshot.forEach(function(childPlace) {
             const placeId = childPlace.key;
-            allPlaces.push(placeId);
+            toBeProcessedPlaces.push(placeId);
         });
         makePlaceRequests();
     });
@@ -74,8 +72,8 @@ function makePlaceRequests() {
     hideLoadMoreButton();
     let service = new google.maps.places.PlacesService(map);
     const maxNumOfRequests = 10;
-    for (let i = placeCount; i < Math.min(placeCount + maxNumOfRequests , allPlaces.length); i++) {
-        let placeId = allPlaces[i];
+    for (let i = 0; i < Math.min(maxNumOfRequests, toBeProcessedPlaces.length); i++) {
+        let placeId = toBeProcessedPlaces[i];
         // Make request with fields
         let placeRequest = {
             placeId: placeId,
@@ -95,7 +93,11 @@ function renderPlaceDetailsCallback(place, status) {
         const placesContainer = document.getElementById('places');
         const placeElement = createPlaceElement(place);
         placesContainer.appendChild(placeElement);
-        placeCount += 1;
+
+        const indexOfProcessedPlace = toBeProcessedPlaces.indexOf(place.place_id);
+        if (indexOfProcessedPlace > -1) {
+            toBeProcessedPlaces.splice(indexOfProcessedPlace, 1);
+        }
     } 
 }
 
@@ -105,7 +107,7 @@ function hideLoadMoreButton() {
 }
 
 function showLoadMoreButton() {
-    if (placeCount < allPlaces.length) {
+    if (toBeProcessedPlaces.length > 0) {
         const loadMoreButton = document.getElementById('load-more-button');
         loadMoreButton.style.display = 'block';
     }
