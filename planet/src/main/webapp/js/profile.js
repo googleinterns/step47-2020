@@ -13,6 +13,7 @@
 // limitations under the License.
 
 import {HeaderRenderer} from './headerRenderer.js';
+import {ProfileEventsRenderer} from './profile-events-renderer.js';
 import {AboutSectionRenderer} from './about-section-renderer.js';
 
 window.loadUserInformation = loadUserInformation;
@@ -45,6 +46,7 @@ function diplaySection(sectionId) {
             hideSection('about-section');
             hideSection('posts-section');
             document.getElementById('events-section').style.display = 'block';
+            ProfileEventsRenderer.renderListOfEvents(userId);
             break;
         default:
             console.log('Unhandled section id:' + sectionId);
