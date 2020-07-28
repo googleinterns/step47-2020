@@ -31,7 +31,7 @@ let toBeProcessedPlaces = []; // Array that contains all the placeIds to be used
 // Declare global variables 
 let autocompleteStart;
 let autocompleteEvent;
-
+ 
 /** Adds autocomplete to input boxes */
 function initAutocomplete() {
     map = new google.maps.Map(document.getElementById('empty-map'));
