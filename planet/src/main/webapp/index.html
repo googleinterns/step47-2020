@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Planet</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <link rel="stylesheet" href="index.css">
+</head>
+
+<header>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="index.js"></script>
+    <nav>
+        <div class="nav-wrapper indigo darken-2">
+            <a href="places.html" class="brand-logo" style="padding-left: 25px">planet</a>
+            <ul class="right hide-on-med-and-down">
+                <li><a href="itinerary.html">Itinerary</a></li>
+                <li><a id="sign-out-button" style="display: none;" onclick="signOut()">Sign Out</a></li>
+                <li><a id="profile-button" style="display: none;"></a></li>
+                <li><a id="sign-in-button" style="display: none;" onclick="openModal('sign-in-modal')"><i class="material-icons right">account_circle</i>Sign In</a></li>
+            </ul>
+        </div>
+    </nav>
+</header>
+
+<body>
+    <div class= "container">
+        <h1>Get ready to
+            <span
+                class="txt-rotate"
+                data-period="2000"
+                data-words='[ "search destinations.", "generate itineraries.", "create a profile.", "connect with travellers."]'>
+            </span>
+        </h1>
+    </div>
+</body>
+
+</html>
