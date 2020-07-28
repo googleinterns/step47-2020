@@ -83,7 +83,9 @@ public final class ItineraryGenerator {
                 items.add(item);
 
                 // Update the next event's start time
-                start += event.getDurationInMinutes() + getTravelDurationInMinutes(directionsLegs[i].duration);
+                if (i != events.size() - 1) {
+                    start += event.getDurationInMinutes() + getTravelDurationInMinutes(directionsLegs[i].duration);
+                }
             }else {
                 errorMessage = "Sorry, you have too many events in a day!";
                 return Arrays.asList();
@@ -118,7 +120,9 @@ public final class ItineraryGenerator {
                 items.add(item);
 
                 // Update the next event's start time
-                start += event.getDurationInMinutes() + getTravelDurationInMinutes(directionsLegs[i].duration);
+                if (i != events.size() - 1) {
+                    start += event.getDurationInMinutes() + getTravelDurationInMinutes(directionsLegs[i].duration);
+                }
             }else {
                 errorMessage = "Sorry, you have too many events in a day!";
                 return Arrays.asList();
@@ -135,9 +139,8 @@ public final class ItineraryGenerator {
     // For the MVP, real time traffic is NOT used.
     private DirectionsRoute getDirectionsRoute(List<Event> events, boolean optimized) {
         String GoogleApiKey = "AIzaSyDK36gDoYgOj4AlbCqh1IuaUuTlcpKF0ns";
-        String origin = events.get(0).getAddress();
-        String destination = origin; // The ending location should be assumed as the starting location 
-                                     // since users most likely want a round trip
+        String origin = getOrigin(events);
+        String destination = getDestination(events); 
         String[] waypoints = getListOfWaypoints(events);
         GeoApiContext context = new GeoApiContext.Builder(new GaeRequestHandler.Builder())
                             .apiKey(GoogleApiKey)
