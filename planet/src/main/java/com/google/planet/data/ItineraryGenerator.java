@@ -14,17 +14,19 @@
 
 package com.google.planet.data;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.stream.*;
 import com.google.maps.GeoApiContext;
-import com.google.maps.DistanceMatrixApi;
+import com.google.maps.DirectionsApi;
+import com.google.maps.DirectionsApiRequest;
 import com.google.maps.GaeRequestHandler;
-import com.google.maps.model.DistanceMatrix;
-import com.google.maps.model.DistanceMatrixRow;
-import com.google.maps.model.DistanceMatrixElement;
+import com.google.maps.model.DirectionsResult;
+import com.google.maps.model.DirectionsRoute;
+import com.google.maps.model.DirectionsLeg;
 import com.google.maps.model.Duration;
 
 public final class ItineraryGenerator {
@@ -32,6 +34,9 @@ public final class ItineraryGenerator {
     
     public Itinerary generateItinerary(List<Event> events) {
         errorMessage = null; 
+
+        // This needs to be removed in the next PR and changed to a function parameter
+        boolean optimized = true;
         
         // Return an empty list if events are empty or only contains the starting point event
         if (events.size() <= 1) { 
@@ -47,74 +52,29 @@ public final class ItineraryGenerator {
         int END = events.get(0).getOpeningHours().end();
 
         Collections.sort(events, Event.SortByOrder);
-        Duration [][] travelTimeGraph = getEventsDistanceMatrix(events);
-        if (errorMessage != null) { 
-            Itinerary itinerary = new Itinerary(Arrays.asList(), errorMessage);
-            return itinerary;
+        List<ItineraryItem> items = new ArrayList<>();
+        if (optimized) {
+            items = scheduleOptimizedItinerary(events, START, END);
+        }else {
+            items = scheduleItineraryInOrder(events, START, END);
         }
-        List<ItineraryItem> items = scheduleItineraryInOrder(events, START, END, travelTimeGraph);
+        
         Itinerary itinerary = new Itinerary(items, errorMessage);
         return itinerary;
     }
 
-    // Function that creates a graph with the events as vertices and the travelling
-    // time between the events as edges.
-    // The order of this graph will be the same as the order of the events.
-    // For the MVP, real time traffic is NOT used.
-    // TODO: handle invalid addresses
-    private Duration[][] getEventsDistanceMatrix(List<Event> events) {
-        int numOfNodes = events.size();
-        Duration[][] travelTimeGraph = new Duration[numOfNodes][numOfNodes];
-
-        String GoogleApiKey = "AIzaSyDK36gDoYgOj4AlbCqh1IuaUuTlcpKF0ns";
-        String[] origins = getListOfAddresses(events);
-        String[] destinations = getListOfAddresses(events);
-        GeoApiContext context = new GeoApiContext.Builder(new GaeRequestHandler.Builder())
-                            .apiKey(GoogleApiKey)
-                            .build();
-       try {
-            DistanceMatrix distanceMatrix = DistanceMatrixApi.getDistanceMatrix(context,
-                                                         origins,
-                                                         destinations).await();
-
-            for (int i = 0; i < distanceMatrix.rows.length; i++) {
-                DistanceMatrixRow currentRow = distanceMatrix.rows[i];
-                for (int j = 0; j < currentRow.elements.length; j++) {
-                    DistanceMatrixElement currentElement = currentRow.elements[j];
-                    if (currentElement.duration != null) {
-                        travelTimeGraph[i][j] = currentElement.duration;
-                    } else {
-                        errorMessage = "Oops, one of your addresses is invalid, please use a valid address.";
-                    }
-                }
-            }
-            return travelTimeGraph;
-        } catch (Exception e) {
-            errorMessage = "Oops, one of your addresses is invalid, please use a valid address.";
-            return travelTimeGraph;
-        }
-    }
-
-    private String[] getListOfAddresses(List<Event> events) {
-        String[] addressList = events.stream()
-                                .map(event -> event.getAddress())
-                                .toArray(String[]::new);
-        return addressList;
-    }
-
-    private int getTravelDurationInMinutes(Duration duration) {
-        int travelDurationInMinutes = (int) Math.round(duration.inSeconds / 60);
-        return travelDurationInMinutes;
-    }
-
     // Function that creates an itinerary by scheduling each event in order.
-    private List<ItineraryItem> scheduleItineraryInOrder(List<Event> events, int openningTime, int endingTime, 
-                                                        Duration[][] travelTimeGraph) {
+    private List<ItineraryItem> scheduleItineraryInOrder(List<Event> events, int openningTime, int endingTime) {
         List<ItineraryItem> items = new ArrayList<>();
+        boolean optimized = false;
+        DirectionsRoute directionsRoute = getDirectionsRoute(events, optimized);
+        if (errorMessage != null) { 
+            return items;
+        }
+        DirectionsLeg[] directionsLegs = directionsRoute.legs;
         int start = openningTime; 
         for (int i = 0; i < events.size(); i++){
             Event event = events.get(i);
-
             // Add the event as an itinerary item if the remaining available time is longer than the
             // event duration.
             if (start + event.getDurationInMinutes() <= endingTime) {
@@ -123,14 +83,108 @@ public final class ItineraryGenerator {
                 items.add(item);
 
                 // Update the next event's start time
-                if (i != events.size() - 1) { 
-                    start += event.getDurationInMinutes() + getTravelDurationInMinutes(travelTimeGraph[i][i+1]);
-                }
+                start += event.getDurationInMinutes() + getTravelDurationInMinutes(directionsLegs[i].duration);
             }else {
                 errorMessage = "Sorry, you have too many events in a day!";
                 return Arrays.asList();
             }
         }
         return items;
+    }
+
+    // Function that creates an optimized itinerary
+    private List<ItineraryItem> scheduleOptimizedItinerary(List<Event> events, int openningTime, int endingTime) {
+        List<ItineraryItem> items = new ArrayList<>();
+        boolean optimized = true;
+        DirectionsRoute directionsRoute = getDirectionsRoute(events, optimized);
+        if (errorMessage != null) { 
+            return items;
+        }
+        DirectionsLeg[] directionsLegs = directionsRoute.legs;
+        int start = openningTime; 
+        int eventIndex = 0;
+        for (int i = 0; i < events.size(); i++){
+            // waypointOrder gives the ordering of the wayPoints, excluding the origin.
+            // Therefore, waypointOrder of [2, 0, 1] will correspond to event 3, 1, and 2, etc.
+            if (i != 0) {
+                eventIndex = directionsRoute.waypointOrder[i-1] + 1;
+            }
+            Event event = events.get(eventIndex);
+            // Add the event as an itinerary item if the remaining available time is longer than the
+            // event duration.
+            if (start + event.getDurationInMinutes() <= endingTime) {
+                ItineraryItem item = new ItineraryItem(event.getName(), event.getAddress(),
+                    TimeRange.fromStartDuration(start, event.getDurationInMinutes()));
+                items.add(item);
+
+                // Update the next event's start time
+                start += event.getDurationInMinutes() + getTravelDurationInMinutes(directionsLegs[i].duration);
+            }else {
+                errorMessage = "Sorry, you have too many events in a day!";
+                return Arrays.asList();
+            }
+        }
+        return items;
+    }
+
+    // Function that makes a request to the Directions API and return a direction route
+    // A DirectionsRoute has field legs, which is an array of DirectionsLegs
+    // Each DirectionsLeg contains starting address, ending address, and duration
+    // DirectionRoute also has int[] waypointOrder, which will be empty if optimized is set to false,
+    // and will contain the new order of waypoints if optimized is set to true
+    // For the MVP, real time traffic is NOT used.
+    private DirectionsRoute getDirectionsRoute(List<Event> events, boolean optimized) {
+        String GoogleApiKey = "AIzaSyDK36gDoYgOj4AlbCqh1IuaUuTlcpKF0ns";
+        String origin = events.get(0).getAddress();
+        String destination = origin; // The ending location should be assumed as the starting location 
+                                     // since users most likely want a round trip
+        String[] waypoints = getListOfWaypoints(events);
+        GeoApiContext context = new GeoApiContext.Builder(new GaeRequestHandler.Builder())
+                            .apiKey(GoogleApiKey)
+                            .build();
+        DirectionsApiRequest directionsRequest = DirectionsApi.newRequest(context);
+       try {
+            DirectionsResult directionsResult =  directionsRequest
+                                                .origin(origin)
+                                                .destination(destination)
+                                                .waypoints(waypoints)
+                                                .optimizeWaypoints(optimized)
+                                                .await();
+            DirectionsRoute directionsRoute = directionsResult.routes[0];
+            return directionsRoute;
+        } catch (Exception e) {
+            errorMessage = "Oops, one of your addresses is invalid, please use a valid address.";
+            return null;
+        }
+    }
+
+    private String[] getListOfWaypoints(List<Event> events) {
+        String[] addressList = events.stream()
+                                .filter(event -> event.getOrder() != 0)
+                                .map(event -> event.getAddress())
+                                .toArray(String[]::new);
+        return addressList;
+    }
+    
+    private String getOrigin(List<Event> events) {
+        String origin = events.stream()
+                                .filter(event -> event.getOrder() == 0)
+                                .map(event -> event.getAddress())
+                                .findFirst()
+                                .get();
+        return origin;
+    }
+
+    private String getDestination(List<Event> events) {
+        String origin = events.stream()
+                                .max(Comparator.comparingLong(Event::getOrder))
+                                .map(event -> event.getAddress())
+                                .get();
+        return origin;
+    }
+    
+    private int getTravelDurationInMinutes(Duration duration) {
+        int travelDurationInMinutes = (int) Math.round(duration.inSeconds / 60);
+        return travelDurationInMinutes;
     }
 }
