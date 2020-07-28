@@ -103,15 +103,16 @@ function addSearchResultElement(name, username, id) {
     newElement.classList.add('row', 'result-element', 'valign-wrapper');
     newElement.style.margin = '0';
     newElement.style.marginTop = '0.5%';
-    newElement.setAttribute('onmouseover', 'onMouseOver(event)');
-    newElement.setAttribute('onmouseout', 'onMouseLeave(event)');
+    newElement.setAttribute('onmouseenter', 'onMouseEnter(event)');
+    newElement.setAttribute('onmouseleave', 'onMouseLeave(event)');
+    newElement.setAttribute('onmousedown', 'accessProfile(event)');
     newElement.appendChild(imageElement);
     newElement.appendChild(nameElement);
     newElement.appendChild(usernameElement);
     return newElement;
 }
 
-function onMouseOver(event) {
+function onMouseEnter(event) {
     event.currentTarget.style.backgroundColor = 'lightgray';
     const element =  document.getElementById('search-result-item-' + elementIndex);
     if (element) {
@@ -136,4 +137,11 @@ function createProfilePic(src) {
 
     imageContainer.appendChild(image);
     return imageContainer;
+}
+
+function accessProfile(event) {
+    const userElement = event.currentTarget;
+    let username = userElement.lastElementChild.innerText;
+    username = username.slice(1, username.length - 1);
+    window.location.href = '/user/' + username;
 }
