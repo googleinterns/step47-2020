@@ -37,6 +37,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     loadElement('signin.html', 'sign-in-modal');
     loadElement('signup.html', 'sign-up-modal');
+    loadElement('resetpwd.html', 'reset-pwd-modal');
     database = firebase.database();
     currentUser = firebase.auth().currentUser;
     firebase.auth().onAuthStateChanged(checkUserSignIn);
@@ -276,6 +277,39 @@ function signInWithProvider(provider) {
         } else {
             alert(errorMessage);
         }
+    });
+}
+
+function onForgotPassword() {
+    closeModal('sign-in-modal'); 
+    openModal('reset-pwd-modal');
+    document.getElementById('submit-message').innerHTML = '';
+    document.getElementById('email-reset-pwd').value = '';
+}
+
+function resetPassword() {
+    const email = document.getElementById('email-reset-pwd');
+    if (email === null) {
+        console.log('Email element not found');
+        return;
+    }
+    const message = document.getElementById('submit-message');
+    message.style.textAlign = 'center';
+    message.style.width = '100%';
+    message.style.height = 'auto';
+    message.style.marginBottom = '2%';
+    message.style.backgroundColor = 'lightgreen';
+    firebase.auth().sendPasswordResetEmail(email.value)
+    .then(function() {
+        message.innerText = 'If the account was found, an email was sent to' + 
+            email.value + 'to reset your password!';
+        email.value = '';
+    })
+    .catch(function(error) {
+        console.log(error.message);
+        message.innerText = 'If the account was found, an email was sent to' + 
+            email.value + 'to reset your password!';
+        email.value = '';
     });
 }
 
