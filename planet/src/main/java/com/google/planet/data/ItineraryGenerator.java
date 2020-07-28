@@ -14,7 +14,6 @@
 
 package com.google.planet.data;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.Arrays;
 import java.util.ArrayList;
@@ -83,9 +82,7 @@ public final class ItineraryGenerator {
                 items.add(item);
 
                 // Update the next event's start time
-                if (i != events.size() - 1) {
-                    start += event.getDurationInMinutes() + getTravelDurationInMinutes(directionsLegs[i].duration);
-                }
+                start += event.getDurationInMinutes() + getTravelDurationInMinutes(directionsLegs[i].duration);
             }else {
                 errorMessage = "Sorry, you have too many events in a day!";
                 return Arrays.asList();
@@ -120,9 +117,7 @@ public final class ItineraryGenerator {
                 items.add(item);
 
                 // Update the next event's start time
-                if (i != events.size() - 1) {
-                    start += event.getDurationInMinutes() + getTravelDurationInMinutes(directionsLegs[i].duration);
-                }
+                start += event.getDurationInMinutes() + getTravelDurationInMinutes(directionsLegs[i].duration);
             }else {
                 errorMessage = "Sorry, you have too many events in a day!";
                 return Arrays.asList();
@@ -139,8 +134,9 @@ public final class ItineraryGenerator {
     // For the MVP, real time traffic is NOT used.
     private DirectionsRoute getDirectionsRoute(List<Event> events, boolean optimized) {
         String GoogleApiKey = "AIzaSyDK36gDoYgOj4AlbCqh1IuaUuTlcpKF0ns";
-        String origin = getOrigin(events);
-        String destination = getDestination(events); 
+        String origin = events.get(0).getAddress();
+        String destination = origin; // The ending location should be assumed as the starting location 
+                                     // since users most likely want a round trip
         String[] waypoints = getListOfWaypoints(events);
         GeoApiContext context = new GeoApiContext.Builder(new GaeRequestHandler.Builder())
                             .apiKey(GoogleApiKey)
@@ -168,24 +164,7 @@ public final class ItineraryGenerator {
                                 .toArray(String[]::new);
         return addressList;
     }
-    
-    private String getOrigin(List<Event> events) {
-        String origin = events.stream()
-                                .filter(event -> event.getOrder() == 0)
-                                .map(event -> event.getAddress())
-                                .findFirst()
-                                .get();
-        return origin;
-    }
 
-    private String getDestination(List<Event> events) {
-        String origin = events.stream()
-                                .max(Comparator.comparingLong(Event::getOrder))
-                                .map(event -> event.getAddress())
-                                .get();
-        return origin;
-    }
-    
     private int getTravelDurationInMinutes(Duration duration) {
         int travelDurationInMinutes = (int) Math.round(duration.inSeconds / 60);
         return travelDurationInMinutes;
