@@ -14,15 +14,23 @@
 
 function onKeyUp() {
     const resultsContainer = document.getElementById('search-results-container');
+    resultsContainer.innerHTML = '';
     const searchInput = document.getElementById('search-input').value;
-    database.ref('users').orderByChild('name').
-    startAt(searchInput + 'A')
-    .endAt(searchInput + 'z')
-    .limitToFirst(5)
+    if (searchInput === '') {
+        return;
+    }
+    database.ref('users').orderByChild('name')  // Order elements by name
+    .startAt(searchInput + 'A') // Start at the users whose names start with searchInput + 'A'
+    .endAt(searchInput + 'z')   // End with the users whose names start with searchInput + 'z'
+    .limitToFirst(5) // Get the first 5 results
     .once('value', (usersSnapshot) => {
-        resultsContainer.innerHTML = '';
         usersSnapshot.forEach((childSnapshot) => {
-            resultsContainer.appendChild(addSearchResultElement(childSnapshot.val()['name']));
+            resultsContainer.appendChild(
+                addSearchResultElement(
+                    childSnapshot.val()['name'],
+                    childSnapshot.val()['username']
+                )
+            );
         });
     })
 }
@@ -39,10 +47,24 @@ function hideContainer() {
     resultsContainer.style.opacity = '0';
 }
 
-function addSearchResultElement(userName) {
+function addSearchResultElement(name, username) {
     const newElement = document.createElement('li');
+    
+    const nameElement = document.createElement('span');
+    nameElement.innerText = name;
+    nameElement.style.fontSize = 'min(1.7vw, 16px)';
+    nameElement.style.paddingRight = '1%';
+    nameElement.style.margin = '0';
+    
+    const usernameElement = document.createElement('span');
+    usernameElement.innerText = '(' + username + ')';
+    usernameElement.style.fontSize = 'min(1.2vw, 12px)';
+    usernameElement.style.margin = '0';
+    
+    
     newElement.classList.add('row', 'result-element');
     newElement.style.margin = '0';
-    newElement.innerText = userName;
+    newElement.appendChild(nameElement);
+    newElement.appendChild(usernameElement);
     return newElement;
 }
