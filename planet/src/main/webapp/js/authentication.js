@@ -298,31 +298,18 @@ function resetPassword() {
     message.style.width = '100%';
     message.style.height = 'auto';
     message.style.marginBottom = '2%';
+    message.style.backgroundColor = 'lightgreen';
     firebase.auth().sendPasswordResetEmail(email.value)
     .then(function() {
+        message.innerText = 'If the account was found, an email was sent to' + 
+            email.value + 'to reset your password!';
         email.value = '';
-        message.style.backgroundColor = 'lightgreen';
-        message.innerText = 'A reset email has been sent to your inbox! Check it out!';
     })
     .catch(function(error) {
-        message.style.backgroundColor = 'tomato';
-        const errorCode = error.code;
         console.log(error.message);
-        if (errorCode === 'auth/invalid-email') {
-            message.innerText = 'Invalid Email! Please try again!';
-        } else if (errorCode === 'auth/missing-android-pkg-name') {
-            message.innerText = 'Reset email has not been sent! Please try again!';
-        } else if (errorCode === 'auth/missing-continue-uri') {
-            message.innerText = 'Reset email has not been sent! Please try again!';
-        } else if (errorCode === 'auth/missing-ios-bundle-id') {
-            message.innerText = 'Reset email has not been sent! Please try again!';
-        } else if (errorCode === 'auth/invalid-continue-uri') {
-            message.innerText = 'Reset email has not been sent! Please try again!';
-        } else if (errorCode === 'auth/unauthorized-continue-uri') {
-            message.innerText = 'Reset email has not been sent! Please try again!';
-        } else if (errorCode === 'auth/user-not-found') {
-            message.innerText = 'User not found! Make sure the email is correct!';
-        };
+        message.innerText = 'If the account was found, an email was sent to' + 
+            email.value + 'to reset your password!';
+        email.value = '';
     });
 }
 
