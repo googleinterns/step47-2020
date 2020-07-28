@@ -162,8 +162,8 @@ function addPlaceDetails() {
 
     // Place Details Requests can only handle a query of 10 requests
     const limit = 10; 
-    console.log(places);
     let splice = places.splice(0,limit);
+    
     // For each place, get the icon, name and location.
     splice.forEach(function(place) {
         sendPlaceRequest(place);
