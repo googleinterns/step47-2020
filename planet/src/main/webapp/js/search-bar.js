@@ -32,8 +32,9 @@ function onKeyUp(event) {
     if (searchInput === '') {
         return;
     }
+    elementIndex = -1;
     database.ref('users').orderByChild('name')  // Order elements by name
-    .startAt(searchInput + 'A') // Start at the users whose names start with searchInput + 'A'
+    .startAt(searchInput + ' ') // Start at the users whose names start with searchInput + 'A'
     .endAt(searchInput + 'z')   // End with the users whose names start with searchInput + 'z'
     .limitToFirst(5) // Get the first 5 results
     .once('value', (usersSnapshot) => {
@@ -54,7 +55,9 @@ function onKeyUp(event) {
 function focusOnNextElement() {
     const resultsContainer = document.getElementById('search-results-container');
     if (elementIndex + 1 < resultsContainer.childNodes.length) {
-        document.getElementById('search-result-item-' + elementIndex).style.backgroundColor = 'white';
+        if (elementIndex >= 0) {
+            document.getElementById('search-result-item-' + elementIndex).style.backgroundColor = 'white';
+        }
         elementIndex++;
         document.getElementById('search-result-item-' + elementIndex).style.backgroundColor = 'lightgrey';
     }
@@ -94,12 +97,15 @@ function addSearchResultElement(name, username, id) {
     usernameElement.innerText = '(' + username + ')';
     usernameElement.style.fontSize = 'min(1.2vw, 12px)';
     usernameElement.style.margin = '0';
+
+    const imageElement = createProfilePic('/images/profile-pic.png');
     
-    
-    newElement.classList.add('row', 'result-element');
+    newElement.classList.add('row', 'result-element', 'valign-wrapper');
     newElement.style.margin = '0';
+    newElement.style.marginTop = '0.5%';
     newElement.setAttribute('onmouseover', 'onMouseOver(event)');
     newElement.setAttribute('onmouseout', 'onMouseLeave(event)');
+    newElement.appendChild(imageElement);
     newElement.appendChild(nameElement);
     newElement.appendChild(usernameElement);
     return newElement;
@@ -116,4 +122,18 @@ function onMouseOver(event) {
 
 function onMouseLeave(event) {
     event.currentTarget.style.backgroundColor = 'white';  
+}
+
+function createProfilePic(src) {
+    const imageContainer = document.createElement('div');
+    imageContainer.classList.add('col', 's1', 'valign-wrapper');
+    imageContainer.style.margin = '0';
+    imageContainer.style.padding = '0';
+
+    const image = document.createElement('img');
+    image.src = src;
+    image.classList.add('center-align', 'circle', 'responsive-img');
+
+    imageContainer.appendChild(image);
+    return imageContainer;
 }
