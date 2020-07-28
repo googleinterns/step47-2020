@@ -19,7 +19,7 @@ h1,h2,h3,h4,h5,h6{
     font-family: "Trebuchet MS", Helvetica, sans-serif;
 }
 
-#places {
+#place-list-container {
     padding-left: 1vw;
     padding-right: 1vw;
     overflow-y: scroll;
@@ -89,4 +89,13 @@ h1,h2,h3,h4,h5,h6{
 .place-button {
     float: right;
     cursor: pointer;
+}
+
+#load-more-button {
+    background: white !important; 
+    color: black;
+    margin-top: 2vh;
+    margin-bottom: 5vh;
+    margin-left: auto;
+    margin-right: auto;
 }
