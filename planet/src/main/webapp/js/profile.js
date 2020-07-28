@@ -46,7 +46,7 @@ function diplaySection(sectionId) {
             hideSection('about-section');
             hideSection('posts-section');
             document.getElementById('events-section').style.display = 'block';
-            ProfileEventsRenderer.init(userId);
+            ProfileEventsRenderer.renderListOfEvents(userId);
             break;
         default:
             console.log('Unhandled section id:' + sectionId);

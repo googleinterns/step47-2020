@@ -18,7 +18,7 @@ let eventsList = [];
 let listName = 'List X';
 
 export const ProfileEventsRenderer = { 
-    init: async (uid) => {
+    renderListOfEvents: async (uid) => {
         userId = uid;
         document.getElementById('events-section').innerHTML = '';
         await readListFromDatabase();
