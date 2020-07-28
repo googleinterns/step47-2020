@@ -12,7 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-function onKeyUp() {
+const UP_ARROW = 38;
+const DOWN_ARROW = 40;
+
+let elementIndex = -1;
+
+function onKeyUp(event) {
+    if (event.keyCode === DOWN_ARROW) {
+        focusOnNextElement();
+        return;
+    }
+    if (event.keyCode === UP_ARROW) {
+        focusOnPreviousElement();
+        return;
+    }
     const resultsContainer = document.getElementById('search-results-container');
     resultsContainer.innerHTML = '';
     const searchInput = document.getElementById('search-input').value;
@@ -33,6 +46,28 @@ function onKeyUp() {
             );
         });
     })
+}
+
+function focusOnNextElement() {
+    const resultsContainer = document.getElementById('search-results-container');
+    if (elementIndex + 1 < resultsContainer.childNodes.length) {
+        elementIndex++;
+        resultsContainer.childNodes[elementIndex].style.backgroundColor = 'lightgray';
+        if (elementIndex - 1 >= 0) {
+            resultsContainer.childNodes[elementIndex - 1].style.backgroundColor = 'white';
+        }
+    }
+}
+
+function focusOnPreviousElement() {
+    const resultsContainer = document.getElementById('search-results-container');
+    if (elementIndex - 1 >= 0) {
+        elementIndex--;
+        resultsContainer.childNodes[elementIndex].style.backgroundColor = 'lightgray';
+        if (elementIndex + 1 < resultsContainer.childNodes.length) {
+            resultsContainer.childNodes[elementIndex + 1].style.backgroundColor = 'white';
+        }
+    }
 }
 
 function displayContainer() {
