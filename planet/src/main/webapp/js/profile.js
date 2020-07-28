@@ -93,29 +93,33 @@ async function loadUserInformation(username) {
         document.getElementById('not-found-message').style.display = 'block';
         return;
     }
-    document.getElementById('not-found-message').remove();
-    document.getElementById('profile-page').style.display = 'block';
-
-    let user;
-    let userId;
-    // The userSnapshot.val() contains one property (user)
-    for (const property in userSnapshot.val()) {
-        userId = object;
-        user = userSnapshot.val()[property];
+    if (userSnapshot.val() !== null) {
+        // The userSnapshot.val() contains one property (user)
+        for (const property in userSnapshot.val()) {
+            userId = property;
+            user = userSnapshot.val()[property];
+        }
+    
+        if (user['emailVerified']) {
+            document.getElementById('not-found-message').remove();
+            document.getElementById('profile-page').style.display = 'block';
+            HeaderRenderer.init(
+                userId,
+                user['name'],
+                user['location'],
+                user['bio']
+            );
+            AboutSectionRenderer.init(
+                user['work'],
+                user['school'],
+                user['dateOfBirth'],
+                user['phoneNumber'],
+                user['email'],
+                user['origin']
+            );
+            return;
+        }
     }
-    HeaderRenderer.init(
-        userId,
-        user['name'],
-        user['location'],
-        user['bio']
-    );
-
-    AboutSectionRenderer.init(
-        user['work'],
-        user['school'],
-        user['dateOfBirth'],
-        user['phoneNumber'],
-        user['email'],
-        user['origin']
-    );
+    document.getElementById('profile-page').remove();
+    document.getElementById('not-found-message').style.display = 'block';
 }

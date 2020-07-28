@@ -15,6 +15,9 @@
 
 import TimeRange from './TimeRange.js';
 import {renderPlaces} from './placesItinerary.js';
+import {renderPlaceButtons} from './placesItinerary.js';
+import {enablePlaceButton} from './placesItinerary.js';
+import {disablePlaceButton} from './placesItinerary.js';
 // Declare global functions
 window.openAddEventForm = openAddEventForm;
 window.closeAddEventForm = closeAddEventForm;
@@ -26,24 +29,8 @@ window.handleListOptionChange = handleListOptionChange;
 window.addEvent = addEvent;
 window.saveEvents = saveEvents;
 window.generateItinerary = generateItinerary;
-window.initAutocomplete = initAutocomplete; 
 
 const database = firebase.database();
-
-// Declare global variables 
-let autocompleteStart;
-let autocompleteEvent;
-
-/** Adds autocomplete to input boxes */
-function initAutocomplete() {
-    let startAddress = document.getElementById('starting-address');
-    let eventAddress = document.getElementById('add-event-address');
-    let options = {
-        types: ['geocode']
-    };
-    autocompleteStart = new google.maps.places.Autocomplete(startAddress,options); 
-    autocompleteEvent = new google.maps.places.Autocomplete(eventAddress,options);
-}
 
 function openAddEventForm() {
     document.getElementById('add-event').style.display = 'block';
@@ -116,7 +103,7 @@ function handleListOptionChange() {
         document.getElementById('save-events-button').style.display = 'inline-block';
     }
     renderEvents(listName);
-    renderPlaces();
+    renderPlaceButtons();
 }
 
 // Add an event to the firebase realtime database
@@ -267,7 +254,7 @@ function deleteEvent(listName, ref) {
     });
 
     // Render places again since the icons might need to change
-    renderPlaces();
+    enablePlaceButton(ref);
 }
 
 async function saveEvents() {
@@ -290,6 +277,7 @@ async function saveEvents() {
     // Update the select tag options and close save events form
     renderListOptions();
     closeSaveEventsForm();
+    renderPlaceButtons();
 }
 
 async function generateItinerary() {
@@ -303,8 +291,8 @@ async function generateItinerary() {
     const startingPoint = {name: "Start", 
                         address: sessionStorage.getItem('start'), 
                         duration: 0,
-                        openingTime: TimeRange.getStartOfDay(),
-                        closingTime: TimeRange.getEndOfDay(),
+                        openingTime: TimeRange.getTimeInMinutes(8 ,0),
+                        closingTime: TimeRange.getTimeInMinutes(19 ,59),
                         order: 0};
     requestBody.push(startingPoint);
     
