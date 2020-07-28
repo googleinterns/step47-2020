@@ -223,7 +223,7 @@ function callback(place, status) {
             placeDetails['Website'] = place.url;
         }
         // List place when callback is finished
-        listResults(placeDetails);
+        renderResult(placeDetails);
     }
 }
 
@@ -262,7 +262,7 @@ function createMarkers(place) {
 }
 
 /** List result of searched place on page*/
-function listResults(placeInfo) {
+function renderResult(placeInfo) {
     let element = document.getElementById('results');
         
     // Create materialize card for each result by creating dom element in HTML
