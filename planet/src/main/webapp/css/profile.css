@@ -1,5 +1,5 @@
 .profile-container {
-    width: min(65%, 600px);
+    width: min(70%, 800px);
     margin-left: auto;
     margin-right: auto;
     margin-top: 2%;
@@ -11,8 +11,8 @@
 }
 
 .tabs .tab .tab-link {
-    opacity: 0.8;
-    color: white;
+    opacity: 1;
+    color: black;
 }
 
 a {
@@ -34,4 +34,9 @@ a:hover {
 
 .header-buttons:hover {
     cursor: pointer;
+}
+
+.slide-events:hover {
+    cursor: pointer;
+    background-color: lightgray;
 }

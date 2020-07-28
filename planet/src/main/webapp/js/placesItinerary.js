@@ -38,8 +38,16 @@ function initAutocomplete() {
     let options = {
         types: ['geocode']
     };
-    autocompleteStart = new google.maps.places.Autocomplete(startAddress,options); 
+    autocompleteStart = new google.maps.places.Autocomplete(startAddress,options);
+    autocompleteStart.setFields(['address_component']);
+    autocompleteStart.addListener('place_changed', updateStartingAddress);
+
     autocompleteEvent = new google.maps.places.Autocomplete(eventAddress,options);
+}
+
+function updateStartingAddress() {
+    const startAddress = document.getElementById('starting-address');
+    sessionStorage.setItem('start', startAddress.value);
 }
 
 export function renderPlaces() {
@@ -108,6 +116,7 @@ function createPlaceElement(place) {
     // Create the add button
     const addButton = document.createElement('div');
     addButton.setAttribute('class', 'place-button');
+    addButton.setAttribute('id', 'place-button-' + place.place_id);
     
     const eventFromThisPlace = document.getElementById(place.place_id);
     if (eventFromThisPlace) {
@@ -222,7 +231,7 @@ async function submitPlace(placeId) {
     });
 
     closeAddPlaceForm();
-    renderPlaces();
+    disablePlaceButton(placeId);
 }
 
 function validatePlaceDuration(duration) {
@@ -235,4 +244,39 @@ function validatePlaceDuration(duration) {
         return false;
     }
     return true;
+}
+
+export function renderPlaceButtons() {
+    if (firebase.auth().currentUser === null) {
+        return;
+    }
+    const userId = firebase.auth().currentUser.uid;
+    const placeListRef = database.ref('users/' + userId + '/places');
+    placeListRef.once('value', (placeListSnapshot) => {
+        placeListSnapshot.forEach(function(childPlace) {
+            let placeId = childPlace.key;
+            const eventExists = document.getElementById(placeId) !== null;
+            if (eventExists) {
+                disablePlaceButton(placeId);
+            } else {
+                enablePlaceButton(placeId);
+            }
+        });
+    });
+} 
+
+export function enablePlaceButton(placeId) {
+    const placeButton = document.getElementById('place-button-' + placeId);
+    if (placeButton) {
+        placeButton.setAttribute('onclick', 'openAddPlaceForm(event, "' + placeId + '")');
+        placeButton.innerHTML = `<i class="material-icons small">playlist_add</i>`;
+    }
+}
+
+export function disablePlaceButton(placeId) {
+    const placeButton = document.getElementById('place-button-' + placeId);
+    if (placeButton) {
+        placeButton.onclick = null;
+        placeButton.innerHTML = `<i class="material-icons small">playlist_add_check</i>`;
+    }
 }
