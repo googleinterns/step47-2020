@@ -37,13 +37,16 @@ function onKeyUp(event) {
     .endAt(searchInput + 'z')   // End with the users whose names start with searchInput + 'z'
     .limitToFirst(5) // Get the first 5 results
     .once('value', (usersSnapshot) => {
+        let counter = 0;
         usersSnapshot.forEach((childSnapshot) => {
             resultsContainer.appendChild(
                 addSearchResultElement(
                     childSnapshot.val()['name'],
-                    childSnapshot.val()['username']
+                    childSnapshot.val()['username'],
+                    'search-result-item-' + counter
                 )
             );
+            counter++;
         });
     })
 }
@@ -51,22 +54,17 @@ function onKeyUp(event) {
 function focusOnNextElement() {
     const resultsContainer = document.getElementById('search-results-container');
     if (elementIndex + 1 < resultsContainer.childNodes.length) {
+        document.getElementById('search-result-item-' + elementIndex).style.backgroundColor = 'white';
         elementIndex++;
-        resultsContainer.childNodes[elementIndex].style.backgroundColor = 'lightgray';
-        if (elementIndex - 1 >= 0) {
-            resultsContainer.childNodes[elementIndex - 1].style.backgroundColor = 'white';
-        }
+        document.getElementById('search-result-item-' + elementIndex).style.backgroundColor = 'lightgrey';
     }
 }
 
 function focusOnPreviousElement() {
-    const resultsContainer = document.getElementById('search-results-container');
     if (elementIndex - 1 >= 0) {
+        document.getElementById('search-result-item-' + elementIndex).style.backgroundColor = 'white';
         elementIndex--;
-        resultsContainer.childNodes[elementIndex].style.backgroundColor = 'lightgray';
-        if (elementIndex + 1 < resultsContainer.childNodes.length) {
-            resultsContainer.childNodes[elementIndex + 1].style.backgroundColor = 'white';
-        }
+        document.getElementById('search-result-item-' + elementIndex).style.backgroundColor = 'lightgrey';
     }
 }
 
@@ -82,8 +80,9 @@ function hideContainer() {
     resultsContainer.style.opacity = '0';
 }
 
-function addSearchResultElement(name, username) {
+function addSearchResultElement(name, username, id) {
     const newElement = document.createElement('li');
+    newElement.id = id;
     
     const nameElement = document.createElement('span');
     nameElement.innerText = name;
@@ -99,7 +98,22 @@ function addSearchResultElement(name, username) {
     
     newElement.classList.add('row', 'result-element');
     newElement.style.margin = '0';
+    newElement.setAttribute('onmouseover', 'onMouseOver(event)');
+    newElement.setAttribute('onmouseout', 'onMouseLeave(event)');
     newElement.appendChild(nameElement);
     newElement.appendChild(usernameElement);
     return newElement;
+}
+
+function onMouseOver(event) {
+    event.currentTarget.style.backgroundColor = 'lightgray';
+    const element =  document.getElementById('search-result-item-' + elementIndex);
+    if (element) {
+        element.style.backgroundColor = 'white';
+    }
+    elementIndex = event.currentTarget.id[event.currentTarget.id.length - 1];
+}
+
+function onMouseLeave(event) {
+    event.currentTarget.style.backgroundColor = 'white';  
 }
