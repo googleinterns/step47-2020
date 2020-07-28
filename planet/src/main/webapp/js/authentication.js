@@ -307,24 +307,22 @@ function resetPassword() {
     .catch(function(error) {
         message.style.backgroundColor = 'tomato';
         const errorCode = error.code;
-        const errorMessage = error.message;
+        console.log(error.message);
         if (errorCode === 'auth/invalid-email') {
             message.innerText = 'Invalid Email! Please try again!';
         } else if (errorCode === 'auth/missing-android-pkg-name') {
-            message.innerText = 'Adroid package name is missing! Please try again!';
+            message.innerText = 'Reset email has not been sent! Please try again!';
         } else if (errorCode === 'auth/missing-continue-uri') {
-            message.innerText = 'Continue URL is missing! Please try again!';
+            message.innerText = 'Reset email has not been sent! Please try again!';
         } else if (errorCode === 'auth/missing-ios-bundle-id') {
-            message.innerText = 'IOs bundle id is missing! Please try again!';
+            message.innerText = 'Reset email has not been sent! Please try again!';
         } else if (errorCode === 'auth/invalid-continue-uri') {
-            message.innerText = 'Invalid continue URL! Please try again!';
+            message.innerText = 'Reset email has not been sent! Please try again!';
         } else if (errorCode === 'auth/unauthorized-continue-uri') {
-            message.innerText = 'Unauthorized continue URL! Please try again!';
+            message.innerText = 'Reset email has not been sent! Please try again!';
         } else if (errorCode === 'auth/user-not-found') {
             message.innerText = 'User not found! Make sure the email is correct!';
-        } else {
-            alert(errorMessage);
-        }
+        };
     });
 }
 
