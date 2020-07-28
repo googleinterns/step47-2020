@@ -4,7 +4,7 @@ body {
     font-family: 'Raleway',sans-serif;
     height: 100vh; 
     /** background: insert background image */
-    color: #ccc;
+    color: white;
     overflow: hidden;
 }
 
@@ -13,12 +13,34 @@ body {
     flex-direction: column;
     justify-content: center;
     height: 100%;
-    
 }
 
 h1 {
     font-weight: 700;
     margin: 0.4rem;
-    color: #ff5252 !important; 
+    color: white !important; 
 }
 
+.parallax-container {
+    height: 100%; 
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+.btn-large {
+    width: 20vw; 
+    justify-content: center;
+    margin: 0;
+    padding: 0;
+    border-radius: 50px;
+    font-weight: 1000;
+    font-family: 'Raleway',sans-serif;
+    font-size: 1.2rem; 
+}
+
+#button {
+    text-align: center;
+    margin: 5vh;
+}

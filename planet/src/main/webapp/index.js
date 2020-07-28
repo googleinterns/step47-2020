@@ -68,15 +68,17 @@ TypeWriter.prototype.type =  function() {
     setTimeout(() => this.type(), typeSpeed);
 }
 
-/** Init on DOM load */
-document.addEventListener('DOMContentLoaded', init); 
-
-/** Init Home Page */
-function init() {
+/** Initialize Home Page on DOM load */
+document.addEventListener('DOMContentLoaded', function() {
     const txtElement = document.querySelector('.txt-rotate');
     const words = JSON.parse(txtElement.getAttribute('data-words'));
     const period = txtElement.getAttribute('data-period');
 
     // Init TypeWriter
     new TypeWriter(txtElement, words, period);
-}
+});
+
+ /** Initialize parallax effect */
+$(document).ready(function(){
+    $('.parallax').parallax();
+});
