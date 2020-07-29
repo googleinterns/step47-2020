@@ -63,7 +63,7 @@ public final class ItineraryGenerator {
     }
 
     // Function that creates an itinerary by scheduling each event in order.
-    private List<ItineraryItem> scheduleItineraryInOrder(List<Event> events, int openningTime, int endingTime) {
+    private List<ItineraryItem> scheduleItineraryInOrder(List<Event> events, int openingTime, int endingTime) {
         List<ItineraryItem> items = new ArrayList<>();
         boolean optimized = false;
         DirectionsRoute directionsRoute = getDirectionsRoute(events, optimized);
@@ -71,7 +71,7 @@ public final class ItineraryGenerator {
             return items;
         }
         DirectionsLeg[] directionsLegs = directionsRoute.legs;
-        int start = openningTime; 
+        int start = openingTime; 
         for (int i = 0; i < events.size(); i++){
             Event event = events.get(i);
             // Add the event as an itinerary item if the remaining available time is longer than the
@@ -92,7 +92,7 @@ public final class ItineraryGenerator {
     }
 
     // Function that creates an optimized itinerary
-    private List<ItineraryItem> scheduleOptimizedItinerary(List<Event> events, int openningTime, int endingTime) {
+    private List<ItineraryItem> scheduleOptimizedItinerary(List<Event> events, int openingTime, int endingTime) {
         List<ItineraryItem> items = new ArrayList<>();
         boolean optimized = true;
         DirectionsRoute directionsRoute = getDirectionsRoute(events, optimized);
@@ -100,7 +100,7 @@ public final class ItineraryGenerator {
             return items;
         }
         DirectionsLeg[] directionsLegs = directionsRoute.legs;
-        int start = openningTime; 
+        int start = openingTime; 
         int eventIndex = 0;
         for (int i = 0; i < events.size(); i++){
             // waypointOrder gives the ordering of the wayPoints, excluding the origin.
