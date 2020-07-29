@@ -31,11 +31,8 @@ import com.google.maps.model.Duration;
 public final class ItineraryGenerator {
     private String errorMessage;
     
-    public Itinerary generateItinerary(List<Event> events) {
+    public Itinerary generateItinerary(List<Event> events, boolean optimized) {
         errorMessage = null; 
-
-        // TODO: This needs to be removed in the next PR and changed to a function parameter
-        boolean optimized = false;
         
         // Return an empty list if events are empty or only contains the starting point event
         if (events.size() <= 1) { 
