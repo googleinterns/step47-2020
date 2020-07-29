@@ -35,7 +35,7 @@ public final class ItineraryGenerator {
         errorMessage = null; 
 
         // TODO: This needs to be removed in the next PR and changed to a function parameter
-        boolean optimized = true;
+        boolean optimized = false;
         
         // Return an empty list if events are empty or only contains the starting point event
         if (events.size() <= 1) { 
@@ -65,8 +65,7 @@ public final class ItineraryGenerator {
     // Function that creates an itinerary by scheduling each event in order.
     private List<ItineraryItem> scheduleItineraryInOrder(List<Event> events, int openingTime, int endingTime) {
         List<ItineraryItem> items = new ArrayList();
-        boolean optimized = false;
-        DirectionsRoute directionsRoute = getDirectionsRoute(events, optimized);
+        DirectionsRoute directionsRoute = getDirectionsRoute(events, ItineraryOrder.UNOPTIMIZED);
         if (errorMessage != null) { 
             return items;
         }
@@ -94,8 +93,7 @@ public final class ItineraryGenerator {
     // Function that creates an optimized itinerary
     private List<ItineraryItem> scheduleOptimizedItinerary(List<Event> events, int openingTime, int endingTime) {
         List<ItineraryItem> items = new ArrayList();
-        boolean optimized = true;
-        DirectionsRoute directionsRoute = getDirectionsRoute(events, optimized);
+        DirectionsRoute directionsRoute = getDirectionsRoute(events, ItineraryOrder.OPTIMIZED);
         if (errorMessage != null) { 
             return items;
         }
