@@ -14,6 +14,7 @@
 
 const UP_ARROW = 38;
 const DOWN_ARROW = 40;
+const ENTER_KEY = 13;
 
 let elementIndex = -1;
 
@@ -24,6 +25,10 @@ function onKeyUp(event) {
     }
     if (event.keyCode === UP_ARROW) {
         focusOnPreviousElement();
+        return;
+    }
+    if (event.keyCode === ENTER_KEY) {
+        openProfile(document.getElementById('search-result-item-' + elementIndex));
         return;
     }
     const resultsContainer = document.getElementById('search-results-container');
@@ -98,7 +103,7 @@ function addSearchResultElement(name, username, id) {
     usernameElement.style.fontSize = 'min(1.2vw, 12px)';
     usernameElement.style.margin = '0';
 
-    const imageElement = createProfilePic('/images/profile-pic.png');
+    const imageElement = createProfilePicture('/images/profile-pic.png');
     
     newElement.classList.add('row', 'result-element', 'valign-wrapper');
     newElement.style.margin = '0';
@@ -125,7 +130,20 @@ function onMouseLeave(event) {
     event.currentTarget.style.backgroundColor = 'white';  
 }
 
-function createProfilePic(src) {
+function accessProfile(event) {
+    const userElement = event.currentTarget;
+    openProfile(userElement);
+}
+
+function openProfile(userElement) {
+    if (userElement) {
+        let username = userElement.lastElementChild.innerText;
+        username = username.slice(1, username.length - 1);
+        window.location.href = '/user/' + username;
+    }
+}
+
+function createProfilePicture(src) {
     const imageContainer = document.createElement('div');
     imageContainer.classList.add('col', 's1', 'valign-wrapper');
     imageContainer.style.margin = '0';
@@ -137,11 +155,4 @@ function createProfilePic(src) {
 
     imageContainer.appendChild(image);
     return imageContainer;
-}
-
-function accessProfile(event) {
-    const userElement = event.currentTarget;
-    let username = userElement.lastElementChild.innerText;
-    username = username.slice(1, username.length - 1);
-    window.location.href = '/user/' + username;
 }
