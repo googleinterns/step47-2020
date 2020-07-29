@@ -313,8 +313,8 @@ async function generateItinerary() {
         createItinerary([]); //Clear the previous itinerary
         alert(errorMessage);
     } else {
-        const itineraryObject = await itineraryResponse.json();
-        createItinerary(itineraryObject.itineraryItems);
+        const itineraryItems = await itineraryResponse.json();
+        createItinerary(itineraryItems);
     }
 }
 
