@@ -61,7 +61,7 @@ public class ItineraryServlet extends HttpServlet {
             if (optimizedString.equals("true")){
                 itinerary = itineraryGenerator.generateItinerary(events, ItineraryOrder.OPTIMIZED);
             } else if (optimizedString.equals("false")){
-                itinerary = itineraryGenerator.generateItinerary(events, ItineraryOrder.OPTIMIZED);
+                itinerary = itineraryGenerator.generateItinerary(events, ItineraryOrder.UNOPTIMIZED);
             } else {
                 response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                 response.getWriter().println("Optimized can only be true or false");
