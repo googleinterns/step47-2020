@@ -13,12 +13,14 @@
 // limitations under the License.
 
 export const HeaderRenderer = {
-    init: (userId, displayName, location, bio) => {
+    init: (userId, displayName, location, bio, profilePic) => {
         renderName(displayName);
         renderLocation(location, userId);
         renderBio(bio, userId);
+        renderPicture(profilePic);
         if (currentUser !== null && userId === currentUser.uid) {
             addEditButton();
+            addEditProfilePictureIcon();
         }
     },
 }
@@ -58,6 +60,36 @@ function renderBio(bio, userId) {
     addBioLink.addEventListener('click', addNewBioForm);
     addBioLink.innerText = 'Add Bio';
     document.getElementById('bio').appendChild(addBioLink);
+}
+
+function renderPicture(url) {
+    if (url) {
+        document.getElementById('profile-pic').src = url;
+        return;
+    }
+    document.getElementById('profile-pic').src = '/images/profile-pic.png';
+}
+
+function addEditProfilePictureIcon() {
+    const profilePictureElement = document.getElementById('profile-pic-container');
+    profilePictureElement.style.cursor = 'pointer';
+    profilePictureElement.addEventListener('mouseenter', (event) => {
+        event.currentTarget.style.opacity = '0.7';
+        const iconContainer = document.createElement('div');
+        iconContainer.classList.add('center-align');
+        iconContainer.style.position = 'absolute';
+        iconContainer.style.width = '23%';
+        const editIcon = document.createElement('i');
+        editIcon.classList.add('material-icons');
+        editIcon.style.fontSize = '3vw';
+        editIcon.innerHTML = 'photo_camera';
+        iconContainer.appendChild(editIcon);
+        document.getElementById('profile-pic-container').appendChild(iconContainer);
+    });
+    profilePictureElement.addEventListener('mouseleave', (event) => {
+        event.currentTarget.style.opacity = '1';
+        document.getElementById('profile-pic-container').lastElementChild.remove();
+    });
 }
 
 function addNewLocationForm() {

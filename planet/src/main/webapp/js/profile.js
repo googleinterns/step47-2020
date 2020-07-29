@@ -107,7 +107,8 @@ async function loadUserInformation(username) {
                 userId,
                 user['name'],
                 user['location'],
-                user['bio']
+                user['bio'],
+                user['profilePic']
             );
             AboutSectionRenderer.init(
                 user['work'],
