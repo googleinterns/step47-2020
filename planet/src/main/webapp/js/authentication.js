@@ -38,6 +38,7 @@ document.addEventListener('DOMContentLoaded', function() {
     loadElement('signin.html', 'sign-in-modal');
     loadElement('signup.html', 'sign-up-modal');
     loadElement('navbar.html', 'nav-bar');
+    loadElement('resetpwd.html', 'reset-pwd-modal');
     database = firebase.database();
     currentUser = firebase.auth().currentUser;
     firebase.auth().onAuthStateChanged(checkUserSignIn);
@@ -45,11 +46,20 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function checkUserSignIn() {
     currentUser = firebase.auth().currentUser;
-    if (currentUser !== null) {
+    if (currentUser !== null && currentUser.emailVerified) {
         document.getElementById('profile-button').innerText = currentUser.displayName;
         document.getElementById('profile-button').style.display = 'block';
         document.getElementById('sign-out-button').style.display = 'block';
         document.getElementById('sign-in-button').style.display = 'none';
+        // Set the emailVerified property to true
+        database.ref('users/' + currentUser.uid).once('value', (userSnapshot) => {
+            if (userSnapshot.exists()) {
+                database.ref('users/' + currentUser.uid).update({
+                    emailVerified: true
+                });
+            }
+        });
+
     } else {
         document.getElementById('profile-button').style.display = 'none';
         document.getElementById('sign-out-button').style.display = 'none';
@@ -87,12 +97,59 @@ async function generateUsername(displayName) {
     return username;
 }
 
-function addUserToDatabase(uid, name, phoneNumber, email, username) {
+function addUserToDatabase(uid, name, phoneNumber, email, username, emailVerified) {
+    // We need to be signed in to be able to add the user to the database
+    // even if the user hasn't verified their email yet
     database.ref('users/' + uid).set({
         name: name,
         email: email,
         phoneNumber: phoneNumber,
         username: username,
+        emailVerified: emailVerified,
+    }).then(() => {
+        // Once the user has been added, if the email is not verified, we sign out
+        if (!emailVerified) {
+            signOut();
+        }
+    });
+}
+
+function sendEmailVerification(user, displayName, email, phoneNumber, username) {
+    user.sendEmailVerification().then(function() {
+        const modalElement = document.getElementById('account-created-modal');
+        const line1 = document.createElement('p');
+        line1.style.textAlign = 'center';
+        line1.style.marginBottom = '0';
+        line1.innerText = 'Your account has been successfully created and a verification\
+        email has been sent to you.';
+        const line2 = document.createElement('p');
+        line2.style.textAlign = 'center';
+        line2.style.marginTop = '0';
+        line2.innerText = 'Please verify your email and log in again!';
+        modalElement.innerHTML = '';
+        modalElement.appendChild(line1);
+        modalElement.appendChild(line2);
+        closeModal('sign-up-modal');
+        openModal('account-created-modal');
+        addUserToDatabase(user.uid, displayName, phoneNumber, email, 
+            username, user.emailVerified);
+    })
+    .catch(function(error) {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        if (errorCode === 'auth/missing-android-pkg-name') {
+            console.log('Android package name is missing');
+        } else if (errorCode === 'auth/missing-continue-uri') {
+            console.log('Continue URL is missing');
+        } else if (errorCode === 'missing-ios-bundle-id') {
+            console.log('IOS bundle id is missing');
+        } else if (errorCode === 'auth/invalid-continue-uri') {
+            console.log('Continue URL is invalid');
+        } else if (errorCode === 'auth/unauthorized-continue-uri') {
+            console.log('The domain of the continue URL is not whitelisted');
+        } else {
+            console.log(errorMessage);
+        }
     });
 }
 
@@ -112,16 +169,12 @@ async function signUp() {
     firebase.auth().createUserWithEmailAndPassword(email, password)
     .then(function() {
         const user = firebase.auth().currentUser;
-        addUserToDatabase(user.uid, displayName, email, phoneNumber, username);
+        sendEmailVerification(user, displayName, email, phoneNumber, username);
         user.updateProfile({
             displayName: displayName,
-        }).then(function() {
-            closeModal('sign-up-modal');
-            checkUserSignIn();
         });
     }).catch(function(error) {
         // Handle Errors here.
-        console.log(error);
         const errorCode = error.code;
         const errorMessage = error.message;
         if (errorCode === 'auth/email-already-in-use') {
@@ -144,8 +197,13 @@ function signIn() {
     resetForm('input-sign-in');
     firebase.auth().signInWithEmailAndPassword(email, password)
     .then(function() {
-        closeModal('sign-in-modal');
         checkUserSignIn(); 
+        if (!currentUser.emailVerified) {
+            signOut();
+            alert('Email not verified!');
+            return;
+        };
+        closeModal('sign-in-modal');
     }).catch(function(error) {
         // Handle Errors here.
         console.log(error);
@@ -184,22 +242,21 @@ function signInWithGithub() {
 function signInWithProvider(provider) {
     firebase.auth().signInWithPopup(provider).then(async function() {
         // The signed-in user info.
-        closeModal('sign-in-modal');
-        checkUserSignIn();
+        currentUser = firebase.auth().currentUser;
         const username = await generateUsername(currentUser.displayName);
-        const refrence = database.ref('users' + currentUser.uid);
+        const refrence = database.ref('users/' + currentUser.uid);
         refrence.once('value').then(function(snapshot) {
             if (!snapshot.exists()) {
                 addUserToDatabase(currentUser.uid,
                     currentUser.displayName,
                     currentUser.phoneNumber,
                     currentUser.email,
-                    username);
+                    username,
+                    currentUser.emailVerified);
             }
-        })
+            closeModal('sign-in-modal');
+        });
     }).catch(function(error) {
-        console.log(error);
-        // TODO: We will be handling errors here
         const errorCode = error.code;
         const errorMessage = error.message;
         if (errorCode === 'auth/account-exists-with-different-credential') {
@@ -221,6 +278,39 @@ function signInWithProvider(provider) {
         } else {
             alert(errorMessage);
         }
+    });
+}
+
+function onForgotPassword() {
+    closeModal('sign-in-modal'); 
+    openModal('reset-pwd-modal');
+    document.getElementById('submit-message').innerHTML = '';
+    document.getElementById('email-reset-pwd').value = '';
+}
+
+function resetPassword() {
+    const email = document.getElementById('email-reset-pwd');
+    if (email === null) {
+        console.log('Email element not found');
+        return;
+    }
+    const message = document.getElementById('submit-message');
+    message.style.textAlign = 'center';
+    message.style.width = '100%';
+    message.style.height = 'auto';
+    message.style.marginBottom = '2%';
+    message.style.backgroundColor = 'lightgreen';
+    firebase.auth().sendPasswordResetEmail(email.value)
+    .then(function() {
+        message.innerText = 'If the account was found, an email was sent to' + 
+            email.value + 'to reset your password!';
+        email.value = '';
+    })
+    .catch(function(error) {
+        console.log(error.message);
+        message.innerText = 'If the account was found, an email was sent to' + 
+            email.value + 'to reset your password!';
+        email.value = '';
     });
 }
 
