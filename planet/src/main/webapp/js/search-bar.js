@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-function onKeyUp() {
+function getSearchResults() {
     const resultsContainer = document.getElementById('search-results-container');
     resultsContainer.innerHTML = '';
     const searchInput = document.getElementById('search-input').value;
@@ -60,7 +60,6 @@ function addSearchResultElement(name, username) {
     usernameElement.innerText = '(' + username + ')';
     usernameElement.style.fontSize = 'min(1.2vw, 12px)';
     usernameElement.style.margin = '0';
-    
     
     newElement.classList.add('row', 'result-element');
     newElement.style.margin = '0';
