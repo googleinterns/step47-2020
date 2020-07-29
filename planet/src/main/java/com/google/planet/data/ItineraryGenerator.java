@@ -34,7 +34,7 @@ public final class ItineraryGenerator {
     public Itinerary generateItinerary(List<Event> events) {
         errorMessage = null; 
 
-        // This needs to be removed in the next PR and changed to a function parameter
+        // TODO: This needs to be removed in the next PR and changed to a function parameter
         boolean optimized = true;
         
         // Return an empty list if events are empty or only contains the starting point event
@@ -51,7 +51,7 @@ public final class ItineraryGenerator {
         int END = events.get(0).getOpeningHours().end();
 
         Collections.sort(events, Event.SortByOrder);
-        List<ItineraryItem> items = new ArrayList<>();
+        List<ItineraryItem> items = new ArrayList();
         if (optimized) {
             items = scheduleOptimizedItinerary(events, START, END);
         }else {
@@ -64,7 +64,7 @@ public final class ItineraryGenerator {
 
     // Function that creates an itinerary by scheduling each event in order.
     private List<ItineraryItem> scheduleItineraryInOrder(List<Event> events, int openingTime, int endingTime) {
-        List<ItineraryItem> items = new ArrayList<>();
+        List<ItineraryItem> items = new ArrayList();
         boolean optimized = false;
         DirectionsRoute directionsRoute = getDirectionsRoute(events, optimized);
         if (errorMessage != null) { 
@@ -84,7 +84,7 @@ public final class ItineraryGenerator {
                 // Update the next event's start time
                 start += event.getDurationInMinutes() + getTravelDurationInMinutes(directionsLegs[i].duration);
             }else {
-                errorMessage = "Sorry, you have too many events in a day!";
+                errorMessage = "Sorry, you have too many events in a day! Try removing some events or shorten their duration";
                 return Arrays.asList();
             }
         }
@@ -93,7 +93,7 @@ public final class ItineraryGenerator {
 
     // Function that creates an optimized itinerary
     private List<ItineraryItem> scheduleOptimizedItinerary(List<Event> events, int openingTime, int endingTime) {
-        List<ItineraryItem> items = new ArrayList<>();
+        List<ItineraryItem> items = new ArrayList();
         boolean optimized = true;
         DirectionsRoute directionsRoute = getDirectionsRoute(events, optimized);
         if (errorMessage != null) { 
