@@ -20,6 +20,7 @@ import com.google.gson.reflect.TypeToken;
 import com.google.planet.data.Event;
 import com.google.planet.data.ItineraryGenerator;
 import com.google.planet.data.ItineraryItem;
+import com.google.planet.data.ItineraryOrder;
 import com.google.planet.data.ItineraryException;
 import com.google.planet.data.TimeRange;
 import com.google.appengine.api.datastore.DatastoreService;
@@ -45,6 +46,7 @@ public class ItineraryServlet extends HttpServlet {
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         BufferedReader br = request.getReader();
+        String optimizedString = request.getParameterMap().get("optimized")[0];
         String eventsJson = "";
 
         if (br != null) {
@@ -56,7 +58,14 @@ public class ItineraryServlet extends HttpServlet {
 
             try {
                 ItineraryGenerator itineraryGenerator = new ItineraryGenerator();
-                List<ItineraryItem> itinerary = itineraryGenerator.generateItinerary(events);
+                List<ItineraryItem> itinerary = new ArrayList();
+                if (optimizedString.equals("true")){
+                    itinerary = itineraryGenerator.generateItinerary(events, ItineraryOrder.OPTIMIZED);
+                } else if (optimizedString.equals("false")){
+                    itinerary = itineraryGenerator.generateItinerary(events, ItineraryOrder.UNOPTIMIZED);
+                } else {
+                    throw new ItineraryException("Optimized can only be true or false");
+                }
                 response.setContentType("application/json");
                 String json = new Gson().toJson(itinerary);
                 response.getWriter().println(json);
