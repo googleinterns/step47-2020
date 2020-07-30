@@ -106,7 +106,7 @@ public final class ItineraryGeneratorTest {
         Mockito.doReturn(constructFakeRouteInOrder(durationsInSeconds)).
             when(itinerary).getDirectionsRoute(events, ItineraryOrder.UNOPTIMIZED);
        
-        List<ItineraryItem> actual = itinerary.generateItinerary(events);
+        List<ItineraryItem> actual = itinerary.generateItinerary(events, ItineraryOrder.UNOPTIMIZED);
         List<ItineraryItem> expected = Arrays.asList(
             new ItineraryItem("Start", "Address 0", TimeRange.fromStartEnd(480, 480)),
             new ItineraryItem("Event 1", "Address 1", TimeRange.fromStartEnd(510, 570)),
@@ -141,7 +141,7 @@ public final class ItineraryGeneratorTest {
         Mockito.doReturn(constructFakeRouteInOrder(durationsInSeconds)).
             when(itinerary).getDirectionsRoute(events, ItineraryOrder.UNOPTIMIZED);
        
-        List<ItineraryItem> actual = itinerary.generateItinerary(events);
+        List<ItineraryItem> actual = itinerary.generateItinerary(events, ItineraryOrder.UNOPTIMIZED);
         List<ItineraryItem> expected = Arrays.asList(
             new ItineraryItem("Start", "Address 0", TimeRange.fromStartEnd(480, 480)),
             new ItineraryItem("Event 1", "Address 1", TimeRange.fromStartEnd(510, 570)),
