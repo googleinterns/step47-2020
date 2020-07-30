@@ -6,9 +6,13 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
     <script src=" https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-beta/js/materialize.min.js"></script>
     <link rel="stylesheet" href="index.css">
+    <!--Import Google Icon Font-->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!--Import materialize.css-->
+    <link type="text/css" rel="stylesheet" href="css/materialize.min.css"  media="screen,projection"/>
 </head>
 
-<header>
+<header id="header">
     <script src="index.js"></script>
     <nav>
         <div class="nav-wrapper indigo darken-2">
@@ -41,10 +45,41 @@
             </div>
         </div>
     </div>
-    <div class="section white middle" id="next">
-        <div class="row container">
-            <p>Insert text here. To be determined.</p>
+    <div id="next">              
+    <a id="up" href=#header class="waves-effect waves-light btn-floating btn red accent-2"><i class="material-icons">expand_less</i></a>        
+        <div class="row card-container center">
+            <div class="column center">
+                <div class="card">
+                    <h3>Step 1:</h3>
+                    <h3>Sign up and Create a profile</h3>
+                    <hr/>
+                    <p>Sign up or log in to get started. Create a profile and connect with other travellers. View the travellers visiting the same places as you.</p>
+                    <button>Next</button>
+                </div>                
+            </div>
+            <div class="column center">
+                <div class="card">
+                    <h3>Step 2:</h3>
+                    <h3>Search Destinations</h3>
+                    <hr/>
+                    <p>Navigate to the Planet home page and start searching and saving destinations. </p>
+                    <button>Home</button>
+                </div>            
+            </div>
+            <div class="column center">
+                <div class="card">
+                    <h3>Step 3:</h3>
+                    <h3>Generate an Itinerary</h3>
+                    <hr/>
+                    <p>On the Itinerary page, pick and choose from your saved places to generate an itinerary. Enter in an estimated visit time and create custom events to add.</p>
+                    <button>Itinerary</button>
+                </div>
+            </div>
         </div>
+    </div>
+    <div id="footer">
+        <p>Planet was created and designed by Alice Zhou, Emily Zhao and Nabil Dabouz.</p>
+        </p>With the help of Erick Dransch and Xingyu "Alex" Zhang</p>
     </div>
 </body>
 </html>

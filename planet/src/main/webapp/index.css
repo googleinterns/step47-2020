@@ -3,9 +3,7 @@
 body {
     font-family: 'Raleway',sans-serif;
     height: 100vh; 
-    /** background: insert background image */
     color: white;
-    overflow: hidden;
 }
 
 .container {
@@ -19,6 +17,12 @@ h1 {
     font-weight: 700;
     margin: 0.4rem;
     color: white !important; 
+}
+
+h3 {
+    color: black;
+    font-size: 2.5rem;
+    margin: 0.89vw;
 }
 
 .parallax-container {
@@ -37,10 +41,108 @@ html {
     border-radius: 50px;
     font-weight: 1000;
     font-family: 'Raleway',sans-serif;
-    font-size: 1.2rem; 
+    font-size: 1.2rem2rem; 
+}
+
+.btn {
+    border-radius: 50px;
 }
 
 #button {
     text-align: center;
     margin: 5vh;
+}
+
+.section {
+    height: 75%;
+}
+
+p {
+    color: black;
+}
+
+.row {
+    margin-top: 7.5vh;
+}
+
+.card{
+    background-color: white;
+    outline: 5px #ff5252;
+    width: 23vh;
+    height: 40vh;
+    margin-left: auto;
+    margin-right: auto; 
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: column;
+            flex-direction: column;
+    padding: 0.6vw;
+    margin: 0.3vw;
+    
+    box-shadow: -20px -20px 0px 0px #ff5252;
+    border-radius: 10px;
+    
+    -webkit-animation-name: shadow-show; /* Safari 4.0 - 8.0 */
+    -webkit-animation-duration: 1.5s; /* Safari 4.0 - 8.0 */
+    animation-name: shadow-show;
+    animation-duration: 1.5s;
+    
+    -webkit-transition-timing-function: cubic-bezier(0.795, 0.000, 0.165, 1.000);
+    -o-transition-timing-function: cubic-bezier(0.795, 0.000, 0.165, 1.000);
+    transition-timing-function: cubic-bezier(0.795, 0.000, 0.165, 1.000); /* custom */
+}
+
+.card-container{
+    width: 100%;
+    min-height: 60vh;  
+    display: -webkit-box;  
+    display: -ms-flexbox;  
+    display: flex;
+    -ms-flex-wrap: wrap;
+        flex-wrap: wrap;
+    
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.column {
+  float: left;
+  margin: 3vw;
+}
+
+/* Clear floats after the columns */
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+hr  {
+    display: block;
+    border: none;
+    height: 3px;
+    background-color: #ff5252;
+    margin: 0px;
+}
+
+.center{
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+}
+
+#next {
+    text-align: center;
+    background-color: #263238;
+}
+
+#up {
+    margin: 7vw 3vw 3vw 0vw; 
+    margin-left: auto;
+    margin-right: auto;
 }
