@@ -31,7 +31,7 @@ import com.google.maps.model.Duration;
 
 public class ItineraryGenerator {
     public List<ItineraryItem> generateItinerary(List<Event> events, boolean optimized) throws ItineraryException{
-        
+
         // Return an empty list if events are empty or only contains the starting point event
         if (events.size() <= 1) { 
             throw new ItineraryException("Itinerary can only be generated with at least one event!");
