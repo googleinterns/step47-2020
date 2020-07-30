@@ -20,12 +20,8 @@ import com.google.gson.reflect.TypeToken;
 import com.google.planet.data.Event;
 import com.google.planet.data.ItineraryGenerator;
 import com.google.planet.data.ItineraryItem;
-<<<<<<< HEAD
 import com.google.planet.data.ItineraryOrder;
-import com.google.planet.data.Itinerary;
-=======
 import com.google.planet.data.ItineraryException;
->>>>>>> ba2c40a080918f5f34b1f4f49326ce35e9865ae1
 import com.google.planet.data.TimeRange;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
@@ -62,7 +58,7 @@ public class ItineraryServlet extends HttpServlet {
 
             try {
                 ItineraryGenerator itineraryGenerator = new ItineraryGenerator();
-                List<ItineraryItem> itinerary = ArrayList();
+                List<ItineraryItem> itinerary = new ArrayList();
                 if (optimizedString.equals("true")){
                     itinerary = itineraryGenerator.generateItinerary(events, ItineraryOrder.OPTIMIZED);
                 } else if (optimizedString.equals("false")){
