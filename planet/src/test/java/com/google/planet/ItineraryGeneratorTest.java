@@ -49,27 +49,12 @@ public final class ItineraryGeneratorTest {
         itinerary = Mockito.spy(new ItineraryGenerator());
     }
 
-    // Function that builds a fake unoptimized DirectionsRoute
+    // Function that builds a fake DirectionsRoute
     // An array of arbitrary durations will be passed in and assigned to 
     // the duration of each leg
-    public DirectionsRoute constructFakeRouteInOrder(long[] durationsInSeconds) {
-        DirectionsRoute route = new DirectionsRoute();
-        route.legs = new DirectionsLeg[durationsInSeconds.length];
-        for (int i = 0; i < durationsInSeconds.length; i++) {
-            Duration duration = new Duration();
-            duration.inSeconds = durationsInSeconds[i];
-            DirectionsLeg leg = new DirectionsLeg();
-            leg.duration = duration;
-            route.legs[i] = leg;
-        }
-        return route;
-    }
-
-    // Function that builds a fake optimized DirectionsRoute
-    // An array of arbitrary durations will be passed in and assigned to 
-    // the duration of each leg
-    // In addition, an arbitrary waypointOrder will be assigned
-    public DirectionsRoute constructFakeOptimizedRoute(long[] durationsInSeconds, int[] waypointOrder) {
+    // In addition, an arbitrary waypointOrder will be assigned.
+    // The waypointOrder will be sorted for an unoptimized route
+    public DirectionsRoute constructFakeRoute(long[] durationsInSeconds, int[] waypointOrder) {
         DirectionsRoute route = new DirectionsRoute();
         route.legs = new DirectionsLeg[durationsInSeconds.length];
         route.waypointOrder = waypointOrder;
@@ -103,7 +88,8 @@ public final class ItineraryGeneratorTest {
                                     DURATION_30MINUTES_INSECONDS, 
                                     DURATION_1HOUR_INSECONDS,
                                     DURATION_1HOUR_INSECONDS};
-        Mockito.doReturn(constructFakeRouteInOrder(durationsInSeconds)).
+        int[] waypointOrder = {0, 1, 2}; // A sorted order
+        Mockito.doReturn(constructFakeRoute(durationsInSeconds, waypointOrder)).
             when(itinerary).getDirectionsRoute(events, ItineraryOrder.UNOPTIMIZED);
        
         List<ItineraryItem> actual = itinerary.generateItinerary(events, ItineraryOrder.UNOPTIMIZED);
@@ -137,8 +123,8 @@ public final class ItineraryGeneratorTest {
                                     DURATION_30MINUTES_INSECONDS, 
                                     DURATION_1HOUR_INSECONDS,
                                     DURATION_1HOUR_INSECONDS};
-        int[] waypointOrder = {2, 1, 0}; //an arbitrary order
-        Mockito.doReturn(constructFakeOptimizedRoute(durationsInSeconds, waypointOrder)).
+        int[] waypointOrder = {2, 1, 0}; // An arbitrary order
+        Mockito.doReturn(constructFakeRoute(durationsInSeconds, waypointOrder)).
             when(itinerary).getDirectionsRoute(events, ItineraryOrder.OPTIMIZED);
        
         List<ItineraryItem> actual = itinerary.generateItinerary(events, ItineraryOrder.OPTIMIZED);
