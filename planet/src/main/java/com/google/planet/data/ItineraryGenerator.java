@@ -47,46 +47,15 @@ public final class ItineraryGenerator {
         int END = events.get(0).getOpeningHours().end();
 
         Collections.sort(events, Event.SortByOrder);
-        List<ItineraryItem> items = new ArrayList();
-        if (optimized) {
-            items = scheduleOptimizedItinerary(events, START, END);
-        }else {
-            items = scheduleItineraryInOrder(events, START, END);
-        }
-        
+        List<ItineraryItem> items = scheduleItinerary(events, START, END, optimized);
         return items;
     }
 
-    // Function that creates an itinerary by scheduling each event in order.
-    private List<ItineraryItem> scheduleItineraryInOrder(List<Event> events, int openingTime, int endingTime) 
-                                    throws ItineraryException{
+    // Function that creates an itinerary
+    private List<ItineraryItem> scheduleItinerary(List<Event> events, int openingTime, int endingTime,
+                                            boolean optimized) throws ItineraryException {
         List<ItineraryItem> items = new ArrayList();
-        DirectionsRoute directionsRoute = getDirectionsRoute(events, ItineraryOrder.UNOPTIMIZED);
-        DirectionsLeg[] directionsLegs = directionsRoute.legs;
-        int start = openingTime; 
-        for (int i = 0; i < events.size(); i++){
-            Event event = events.get(i);
-            // Add the event as an itinerary item if the remaining available time is longer than the
-            // event duration.
-            if (start + event.getDurationInMinutes() <= endingTime) {
-                ItineraryItem item = new ItineraryItem(event.getName(), event.getAddress(),
-                    TimeRange.fromStartDuration(start, event.getDurationInMinutes()));
-                items.add(item);
-
-                // Update the next event's start time
-                start += event.getDurationInMinutes() + getTravelDurationInMinutes(directionsLegs[i].duration);
-            }else {
-                throw new ItineraryException("Sorry, you have too many events in a day! Try removing some events or shorten their duration");
-            }
-        }
-        return items;
-    }
-
-    // Function that creates an optimized itinerary
-    private List<ItineraryItem> scheduleOptimizedItinerary(List<Event> events, int openingTime, int endingTime) 
-                                            throws ItineraryException {
-        List<ItineraryItem> items = new ArrayList();
-        DirectionsRoute directionsRoute = getDirectionsRoute(events, ItineraryOrder.OPTIMIZED);
+        DirectionsRoute directionsRoute = getDirectionsRoute(events, optimized);
         DirectionsLeg[] directionsLegs = directionsRoute.legs;
         int start = openingTime; 
         int eventIndex = 0;
