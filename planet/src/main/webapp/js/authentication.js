@@ -35,9 +35,10 @@ document.addEventListener('DOMContentLoaded', function() {
     M.Modal.init(elements, {
         opacity: 0.7
     });
-    loadElement('signin.html', 'sign-in-modal');
-    loadElement('signup.html', 'sign-up-modal');
-    loadElement('resetpwd.html', 'reset-pwd-modal');
+    loadElement('/signin.html', 'sign-in-modal');
+    loadElement('/signup.html', 'sign-up-modal');
+    loadElement('/resetpwd.html', 'reset-pwd-modal');
+    loadElement('/uploadpic.html', 'upload-picture-modal');
     database = firebase.database();
     currentUser = firebase.auth().currentUser;
     firebase.auth().onAuthStateChanged(checkUserSignIn);
