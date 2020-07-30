@@ -55,6 +55,9 @@ public final class Event {
     public TimeRange getOpeningHours(){
         return TimeRange.fromStartEnd(this.openingTime, this.closingTime);
     }
+    public long getOrder(){
+        return this.order;
+    }
 
     /**
     * A comparator for sorting events by the duration of their opening hours, in ascending order.
