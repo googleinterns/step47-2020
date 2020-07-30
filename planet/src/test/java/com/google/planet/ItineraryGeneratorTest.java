@@ -49,6 +49,9 @@ public final class ItineraryGeneratorTest {
         itinerary = Mockito.spy(new ItineraryGenerator());
     }
 
+    // Function that builds a fake unoptimized DirectionsRoute
+    // An array of arbituary durations will be passed in and assigned to 
+    // the duration of each leg
     public DirectionsRoute constructFakeDirectionsRouteInOrder(long[] durationsInSeconds) {
         DirectionsRoute route = new DirectionsRoute();
         route.legs = new DirectionsLeg[durationsInSeconds.length];
@@ -63,7 +66,9 @@ public final class ItineraryGeneratorTest {
     }
 
     @Test
-    public void scheduleItineraryInOrder() throws Exception {
+    // This function tests a valid output of the scheduleItineraryInOrder case
+    // We should expect a list of itinerary items the same order as the list of events
+    public void itineraryInOrder() throws Exception {
         List<Event> events = new ArrayList<>();
 
         Event start = new Event("Start", "Address 0", 0);
