@@ -125,8 +125,8 @@ public final class ItineraryGeneratorTest {
 
         Event start = new Event("Start", "Address 0", 0);
         Event event1 = new Event("Event 1", "Address 1", DURATION_1HOUR, TIME_0800AM, TIME_0500PM, 1);
-        Event event2 = new Event("Event 2", "Address 2", DURATION_2HOUR, TIME_0800AM, TIME_0500PM, 2);
-        Event event3 = new Event("Event 3", "Address 3", DURATION_1HOUR, TIME_0800AM, TIME_0500PM, 3);
+        Event event2 = new Event("Event 2", "Address 2", DURATION_1HOUR, TIME_0800AM, TIME_0500PM, 2);
+        Event event3 = new Event("Event 3", "Address 3", DURATION_2HOUR, TIME_0800AM, TIME_0500PM, 3);
         events.add(start);
         events.add(event1);
         events.add(event2);
@@ -138,15 +138,15 @@ public final class ItineraryGeneratorTest {
                                     DURATION_1HOUR_INSECONDS,
                                     DURATION_1HOUR_INSECONDS};
         int[] waypointOrder = {2, 1, 0}; //an arbitrary order
-        Mockito.doReturn(constructFakeRouteInOrder(durationsInSeconds)).
-            when(itinerary).getDirectionsRoute(events, ItineraryOrder.UNOPTIMIZED);
+        Mockito.doReturn(constructFakeOptimizedRoute(durationsInSeconds, waypointOrder)).
+            when(itinerary).getDirectionsRoute(events, ItineraryOrder.OPTIMIZED);
        
-        List<ItineraryItem> actual = itinerary.generateItinerary(events, ItineraryOrder.UNOPTIMIZED);
+        List<ItineraryItem> actual = itinerary.generateItinerary(events, ItineraryOrder.OPTIMIZED);
         List<ItineraryItem> expected = Arrays.asList(
             new ItineraryItem("Start", "Address 0", TimeRange.fromStartEnd(480, 480)),
-            new ItineraryItem("Event 1", "Address 1", TimeRange.fromStartEnd(510, 570)),
-            new ItineraryItem("Event 2", "Address 2", TimeRange.fromStartEnd(600, 720)),
-            new ItineraryItem("Event 3", "Address 3", TimeRange.fromStartEnd(780, 840))
+            new ItineraryItem("Event 3", "Address 3", TimeRange.fromStartEnd(510, 630)),
+            new ItineraryItem("Event 2", "Address 2", TimeRange.fromStartEnd(660, 720)),
+            new ItineraryItem("Event 1", "Address 1", TimeRange.fromStartEnd(780, 840))
         );
 
         Assert.assertEquals(expected, actual);
