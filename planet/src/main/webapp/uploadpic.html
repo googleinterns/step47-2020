@@ -7,11 +7,22 @@
     <div class="center-align" style="padding: 2%; border: 1px solid black">
         <img id="image-display" class="responsive-img" src="/images/profile-pic.png">
     </div>
-    <div>
+    <div class="row" style="margin: 0;">
         <label for="image-upload" class="btn waves-effect waves-light" 
             style="background-color: dodgerblue; width: 96%; margin: 2%; border-radius: 10px;">
             Select Picture From Desktop
         </label>
-        <input type="file" id="image-upload" name="image-upload" style="width: 0; opacity: 0;" onchange="updateImage()">
+        <input type="file" id="image-upload" name="image-upload" style="width: 0; height: 0; opacity: 0;" onchange="updateImage()">
+    </div>
+    <div class="row">
+        <div class="input-field col s4"></div>
+        <div class="input-field col s4">
+            <button type="button" class="btn sign-in-button waves-effect waves-light"
+                style="background-color: #f44336;" onclick="resetProfilePicture()">Reset</button>
+        </div>
+        <div class="input-field col s4">
+            <button class="btn sign-in-button waves-effect waves-light" type="button"
+                style="background-color: #4CAF50;">Confirm</button>
+        </div>
     </div>
 </form>
