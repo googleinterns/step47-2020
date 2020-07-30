@@ -12,7 +12,7 @@
     <link type="text/css" rel="stylesheet" href="css/materialize.min.css"  media="screen,projection"/>
 </head>
 
-<header id="header">
+<header>
     <script src="index.js"></script>
     <nav>
         <div class="nav-wrapper indigo darken-2">
@@ -46,15 +46,15 @@
         </div>
     </div>
     <div id="next">              
-    <a id="up" href=#header class="waves-effect waves-light btn-floating btn red accent-2"><i class="material-icons">expand_less</i></a>        
+    <a id="up" href=# class="waves-effect waves-light btn-floating btn red accent-2"><i class="material-icons">expand_less</i></a>        
         <div class="row card-container center">
             <div class="column center">
                 <div class="card">
                     <h3>Step 1:</h3>
-                    <h3>Sign up and Create a profile</h3>
+                    <h3>Create a profile</h3>
                     <hr/>
                     <p>Sign up or log in to get started. Create a profile and connect with other travellers. View the travellers visiting the same places as you.</p>
-                    <button>Next</button>
+                    <a class="go waves-effect waves-light btn red accent-2">GO</a>
                 </div>                
             </div>
             <div class="column center">
@@ -62,8 +62,9 @@
                     <h3>Step 2:</h3>
                     <h3>Search Destinations</h3>
                     <hr/>
-                    <p>Navigate to the Planet home page and start searching and saving destinations. </p>
-                    <button>Home</button>
+                    <p>Navigate to the Planet home page and start searching and saving destinations. View your searched locations on our map and browse through a list
+                        with details about each place.</p>
+                    <a href="places.html" class="go waves-effect waves-light btn red accent-2">GO</a>
                 </div>            
             </div>
             <div class="column center">
@@ -71,15 +72,18 @@
                     <h3>Step 3:</h3>
                     <h3>Generate an Itinerary</h3>
                     <hr/>
-                    <p>On the Itinerary page, pick and choose from your saved places to generate an itinerary. Enter in an estimated visit time and create custom events to add.</p>
-                    <button>Itinerary</button>
+                    <p>On the Itinerary page, pick and choose from your saved places to generate an itinerary. Enter in an estimated visit time and create custom 
+                        events to add. Choose between optimized and ordered itineraries to generate.</p>
+                    <a href="itinerary.html" class="go waves-effect waves-light btn red accent-2">GO</a>
                 </div>
             </div>
         </div>
     </div>
     <div id="footer">
-        <p>Planet was created and designed by Alice Zhou, Emily Zhao and Nabil Dabouz.</p>
-        </p>With the help of Erick Dransch and Xingyu "Alex" Zhang</p>
+        <p>Planet was created and designed by Alice Zhou, Emily Zhao and Nabil Dabouz</p>
+        <p>With the help of Erick Dransch and Xingyu "Alex" Zhang</p>
+        <p>Google STEP Capstone Project</p>
+        <p>July 2020 - August 2020</p>
     </div>
 </body>
 </html>

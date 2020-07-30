@@ -39,7 +39,7 @@ html {
     margin: 0;
     padding: 0;
     border-radius: 50px;
-    font-weight: 1000;
+    font-weight: bold;
     font-family: 'Raleway',sans-serif;
     font-size: 1.2rem2rem; 
 }
@@ -59,6 +59,7 @@ html {
 
 p {
     color: black;
+    text-align: center;
 }
 
 .row {
@@ -69,7 +70,7 @@ p {
     background-color: white;
     outline: 5px #ff5252;
     width: 23vh;
-    height: 40vh;
+    height: 35vh;
     margin-left: auto;
     margin-right: auto; 
     display: -webkit-box;
@@ -79,20 +80,10 @@ p {
     -webkit-box-direction: normal;
         -ms-flex-direction: column;
             flex-direction: column;
-    padding: 0.6vw;
+    padding: 1vw;
     margin: 0.3vw;
-    
     box-shadow: -20px -20px 0px 0px #ff5252;
     border-radius: 10px;
-    
-    -webkit-animation-name: shadow-show; /* Safari 4.0 - 8.0 */
-    -webkit-animation-duration: 1.5s; /* Safari 4.0 - 8.0 */
-    animation-name: shadow-show;
-    animation-duration: 1.5s;
-    
-    -webkit-transition-timing-function: cubic-bezier(0.795, 0.000, 0.165, 1.000);
-    -o-transition-timing-function: cubic-bezier(0.795, 0.000, 0.165, 1.000);
-    transition-timing-function: cubic-bezier(0.795, 0.000, 0.165, 1.000); /* custom */
 }
 
 .card-container{
@@ -145,4 +136,19 @@ hr  {
     margin: 7vw 3vw 3vw 0vw; 
     margin-left: auto;
     margin-right: auto;
+}
+
+#footer {
+    padding: 0.78vh 0vh 7vh 0vh;
+}
+
+.go {
+    width:40%;
+    margin-left:auto;
+    margin-right:auto;
+    position: absolute;
+    bottom:2.3vh;
+    right: 5%;
+    left: 5%;
+    font-weight: bold;
 }
