@@ -19,6 +19,7 @@ import {AboutSectionRenderer} from './about-section-renderer.js';
 window.loadUserInformation = loadUserInformation;
 window.switchSection = switchSection;
 window.updateImage = updateImage;
+window.resetProfilePicture = resetProfilePicture;
 
 const validFileTypes = [
     "image/apng",
@@ -149,4 +150,13 @@ function updateImage() {
             imageElement.src = URL.createObjectURL(fileInput.files[0]);
         }
     }
+}
+
+function resetProfilePicture() {
+    const fileInput = document.getElementById('image-upload');
+    fileInput.value = '';
+    document.getElementById('image-display').src = 
+        user['profilePic'] !== undefined ?
+        user['profilePic'] : 
+        '/images/profile-pic.png';
 }
