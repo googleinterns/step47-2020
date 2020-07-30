@@ -120,7 +120,7 @@ public final class ItineraryGenerator {
     // and will contain the new order of waypoints if optimized is set to true
     // For the MVP, real time traffic is NOT used.
     private DirectionsRoute getDirectionsRoute(List<Event> events, boolean optimized) throws ItineraryException{
-        String GoogleApiKey = "AIzaSyDK36gDoYgOj4AlbCqh1IuaUuTlcpKF0ns";
+        String GoogleApiKey = Keys.GOOGLE_MAPS_API_KEY;
         String origin = events.get(0).getAddress();
         String destination = origin; // The ending location should be assumed as the starting location 
                                      // since users most likely want a round trip
