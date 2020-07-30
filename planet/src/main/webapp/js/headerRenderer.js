@@ -73,6 +73,9 @@ function renderPicture(url) {
 function addEditProfilePictureIcon() {
     const profilePictureElement = document.getElementById('profile-pic-container');
     profilePictureElement.style.cursor = 'pointer';
+    profilePictureElement.addEventListener('click', () => {
+        openModal('upload-picture-modal');
+    });
     profilePictureElement.addEventListener('mouseenter', (event) => {
         event.currentTarget.style.opacity = '0.7';
         const iconContainer = document.createElement('div');
