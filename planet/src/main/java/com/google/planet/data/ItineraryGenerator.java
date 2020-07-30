@@ -85,8 +85,7 @@ public final class ItineraryGenerator {
     // Function that makes a request to the Directions API and return a direction route
     // A DirectionsRoute has field legs, which is an array of DirectionsLegs
     // Each DirectionsLeg contains starting address, ending address, and duration
-    // DirectionRoute also has int[] waypointOrder, which will be empty if optimized is set to false,
-    // and will contain the new order of waypoints if optimized is set to true
+    // DirectionRoute also has int[] waypointOrder, which will contain the order of the waypoints
     // For the MVP, real time traffic is NOT used.
     private DirectionsRoute getDirectionsRoute(List<Event> events, boolean optimized) throws ItineraryException{
         String origin = events.get(0).getAddress();
