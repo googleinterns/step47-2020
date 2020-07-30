@@ -19,6 +19,7 @@ import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.stream.*;
+import com.google.planet.data.ItineraryException;
 import com.google.maps.GeoApiContext;
 import com.google.maps.DirectionsApi;
 import com.google.maps.DirectionsApiRequest;
@@ -29,16 +30,11 @@ import com.google.maps.model.DirectionsLeg;
 import com.google.maps.model.Duration;
 
 public final class ItineraryGenerator {
-    private String errorMessage;
-    
-    public Itinerary generateItinerary(List<Event> events, boolean optimized) {
-        errorMessage = null; 
-        
+    public List<ItineraryItem> generateItinerary(List<Event> events, boolean optimized) throws ItineraryException{
+
         // Return an empty list if events are empty or only contains the starting point event
         if (events.size() <= 1) { 
-            errorMessage = "Itinerary can only be generated with at least one event!";
-            Itinerary itinerary = new Itinerary(Arrays.asList(), errorMessage);
-            return itinerary;
+            throw new ItineraryException("Itinerary can only be generated with at least one event!");
         }
 
         // For the MVP, just find the shortest opening hours and 
@@ -55,17 +51,14 @@ public final class ItineraryGenerator {
             items = scheduleItineraryInOrder(events, START, END);
         }
         
-        Itinerary itinerary = new Itinerary(items, errorMessage);
-        return itinerary;
+        return items;
     }
 
     // Function that creates an itinerary by scheduling each event in order.
-    private List<ItineraryItem> scheduleItineraryInOrder(List<Event> events, int openingTime, int endingTime) {
+    private List<ItineraryItem> scheduleItineraryInOrder(List<Event> events, int openingTime, int endingTime) 
+                                    throws ItineraryException{
         List<ItineraryItem> items = new ArrayList();
         DirectionsRoute directionsRoute = getDirectionsRoute(events, ItineraryOrder.UNOPTIMIZED);
-        if (errorMessage != null) { 
-            return items;
-        }
         DirectionsLeg[] directionsLegs = directionsRoute.legs;
         int start = openingTime; 
         for (int i = 0; i < events.size(); i++){
@@ -80,20 +73,17 @@ public final class ItineraryGenerator {
                 // Update the next event's start time
                 start += event.getDurationInMinutes() + getTravelDurationInMinutes(directionsLegs[i].duration);
             }else {
-                errorMessage = "Sorry, you have too many events in a day! Try removing some events or shorten their duration";
-                return Arrays.asList();
+                throw new ItineraryException("Sorry, you have too many events in a day! Try removing some events or shorten their duration");
             }
         }
         return items;
     }
 
     // Function that creates an optimized itinerary
-    private List<ItineraryItem> scheduleOptimizedItinerary(List<Event> events, int openingTime, int endingTime) {
+    private List<ItineraryItem> scheduleOptimizedItinerary(List<Event> events, int openingTime, int endingTime) 
+                                            throws ItineraryException {
         List<ItineraryItem> items = new ArrayList();
         DirectionsRoute directionsRoute = getDirectionsRoute(events, ItineraryOrder.OPTIMIZED);
-        if (errorMessage != null) { 
-            return items;
-        }
         DirectionsLeg[] directionsLegs = directionsRoute.legs;
         int start = openingTime; 
         int eventIndex = 0;
@@ -114,8 +104,7 @@ public final class ItineraryGenerator {
                 // Update the next event's start time
                 start += event.getDurationInMinutes() + getTravelDurationInMinutes(directionsLegs[i].duration);
             }else {
-                errorMessage = "Sorry, you have too many events in a day!";
-                return Arrays.asList();
+                throw new ItineraryException("Sorry, you have too many events in a day! Try removing some events or shorten their duration");
             }
         }
         return items;
@@ -127,7 +116,7 @@ public final class ItineraryGenerator {
     // DirectionRoute also has int[] waypointOrder, which will be empty if optimized is set to false,
     // and will contain the new order of waypoints if optimized is set to true
     // For the MVP, real time traffic is NOT used.
-    private DirectionsRoute getDirectionsRoute(List<Event> events, boolean optimized) {
+    private DirectionsRoute getDirectionsRoute(List<Event> events, boolean optimized) throws ItineraryException{
         String GoogleApiKey = "AIzaSyDK36gDoYgOj4AlbCqh1IuaUuTlcpKF0ns";
         String origin = events.get(0).getAddress();
         String destination = origin; // The ending location should be assumed as the starting location 
@@ -147,8 +136,7 @@ public final class ItineraryGenerator {
             DirectionsRoute directionsRoute = directionsResult.routes[0];
             return directionsRoute;
         } catch (Exception e) {
-            errorMessage = "Oops, one of your addresses is invalid, please use a valid address.";
-            return null;
+            throw new ItineraryException("Oops, one of your addresses is invalid, please use a valid address.");
         }
     }
 

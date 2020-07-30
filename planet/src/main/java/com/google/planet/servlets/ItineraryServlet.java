@@ -20,8 +20,12 @@ import com.google.gson.reflect.TypeToken;
 import com.google.planet.data.Event;
 import com.google.planet.data.ItineraryGenerator;
 import com.google.planet.data.ItineraryItem;
+<<<<<<< HEAD
 import com.google.planet.data.ItineraryOrder;
 import com.google.planet.data.Itinerary;
+=======
+import com.google.planet.data.ItineraryException;
+>>>>>>> ba2c40a080918f5f34b1f4f49326ce35e9865ae1
 import com.google.planet.data.TimeRange;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
@@ -56,30 +60,26 @@ public class ItineraryServlet extends HttpServlet {
             Type eventListType = new TypeToken<ArrayList<Event>>(){}.getType();
             List<Event> events = new Gson().fromJson(eventsJson, eventListType);
 
-            ItineraryGenerator itineraryGenerator = new ItineraryGenerator();
-            Itinerary itinerary = null;
-            if (optimizedString.equals("true")){
-                itinerary = itineraryGenerator.generateItinerary(events, ItineraryOrder.OPTIMIZED);
-            } else if (optimizedString.equals("false")){
-                itinerary = itineraryGenerator.generateItinerary(events, ItineraryOrder.UNOPTIMIZED);
-            } else {
+            try {
+                ItineraryGenerator itineraryGenerator = new ItineraryGenerator();
+                List<ItineraryItem> itinerary = ArrayList();
+                if (optimizedString.equals("true")){
+                    itinerary = itineraryGenerator.generateItinerary(events, ItineraryOrder.OPTIMIZED);
+                } else if (optimizedString.equals("false")){
+                    itinerary = itineraryGenerator.generateItinerary(events, ItineraryOrder.UNOPTIMIZED);
+                } else {
+                    throw new ItineraryException("Optimized can only be true or false");
+                }
+                response.setContentType("application/json");
+                String json = new Gson().toJson(itinerary);
+                response.getWriter().println(json);
+            } catch (ItineraryException e) {
                 response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                response.getWriter().println("Optimized can only be true or false");
-                return;
+                response.getWriter().println(e.getMessage());
             }
-                
-            if (itinerary.errorMessage != null) {
-                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                response.getWriter().println(itinerary.errorMessage);
-                return;
-            }
-
-            response.setContentType("application/json");
-            String json = new Gson().toJson(itinerary);
-            response.getWriter().println(json);
         } else {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             response.getWriter().println("");
         }
-  }
+    }
 }

@@ -14,15 +14,12 @@
 
 package com.google.planet.data;
 
-import java.util.List;
-import java.util.Arrays;
+public class ItineraryException extends Exception {
+  public ItineraryException(String message) {
+    super(message);
+  }
 
-public final class Itinerary {
-    public final List<ItineraryItem> itineraryItems; 
-    public final String errorMessage;
-
-    public Itinerary(List<ItineraryItem> itineraryItems, String errorMessage) {
-        this.itineraryItems = itineraryItems;
-        this.errorMessage = errorMessage;
-    }
+  public ItineraryException(String message, Throwable cause) {
+    super(message, cause);
+  }
 }
