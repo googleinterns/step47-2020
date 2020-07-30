@@ -29,7 +29,7 @@ import com.google.maps.model.DirectionsRoute;
 import com.google.maps.model.DirectionsLeg;
 import com.google.maps.model.Duration;
 
-public final class ItineraryGenerator {
+public class ItineraryGenerator {
     public List<ItineraryItem> generateItinerary(List<Event> events) throws ItineraryException{
 
         // TODO: This needs to be removed in the next PR and changed to a function parameter
@@ -119,7 +119,7 @@ public final class ItineraryGenerator {
     // DirectionRoute also has int[] waypointOrder, which will be empty if optimized is set to false,
     // and will contain the new order of waypoints if optimized is set to true
     // For the MVP, real time traffic is NOT used.
-    private DirectionsRoute getDirectionsRoute(List<Event> events, boolean optimized) throws ItineraryException{
+    public DirectionsRoute getDirectionsRoute(List<Event> events, boolean optimized) throws ItineraryException{
         String GoogleApiKey = "AIzaSyDK36gDoYgOj4AlbCqh1IuaUuTlcpKF0ns";
         String origin = events.get(0).getAddress();
         String destination = origin; // The ending location should be assumed as the starting location 
