@@ -353,10 +353,21 @@ function renderResult(placeInfo) {
     document.getElementById('greeting').innerHTML = 'Find a location: ' + document.getElementById('pac-input').value;
 }
 
+/** Create and add save icon */
 function createIcon(placeID) {
-    // Create and add save icon 
     let icon = document.createElement('i');
-    icon.innerHTML = 'favorite_border';
+    let userID = currentUser.uid; 
+    
+    database.ref('users/' + userID +'/places').child(placeID).once('value').then(function(snapshot) {
+        // Check if place is already saved in database
+        let exists = snapshot.exists();
+        if (exists) {
+            icon.innerHTML = 'favorite'; 
+        }
+        else {
+            icon.innerHTML = 'favorite_border';
+        }
+    }); 
     icon.classList.add('material-icons','small');
     icon.setAttribute('onclick','savePlace(this);');
     icon.setAttribute('name',placeID);
