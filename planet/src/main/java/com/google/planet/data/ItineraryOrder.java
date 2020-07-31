@@ -14,7 +14,13 @@
 
 package com.google.planet.data;
 
-public final class ItineraryOrder {
-    public static final boolean OPTIMIZED = true;
-    public static final boolean UNOPTIMIZED = false;
+public enum ItineraryOrder {
+    OPTIMIZED (true),
+    UNOPTIMIZED (false);
+
+    public final boolean value;
+
+    private ItineraryOrder(boolean value) {
+      this.value = value;
+    }
 }
