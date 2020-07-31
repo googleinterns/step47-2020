@@ -294,12 +294,12 @@ function renderResult(placeInfo) {
     let close = document.createTextNode(placeInfo['Closing']);
     let img = document.createElement('img');
         
-    // Check if user is signed in
-    if (currentUser) {
+    // // Check if user is signed in
+    // if (currentUser) {
         // Display save icons
         let icon = createIcon(placeInfo['PlaceID']);
         div3.append(icon);
-    }
+    // }
 
     // Check for missing details, otherwise display through HTML
     p.appendChild(name);        
@@ -356,20 +356,26 @@ function renderResult(placeInfo) {
 /** Create and add save icon */
 function createIcon(placeID) {
     let icon = document.createElement('i');
-    let userID = currentUser.uid; 
-    
-    database.ref('users/' + userID +'/places').child(placeID).once('value').then(function(snapshot) {
-        // Check if place is already saved in database
-        let exists = snapshot.exists();
-        if (exists) {
-            icon.innerHTML = 'favorite'; 
-        }
-        else {
-            icon.innerHTML = 'favorite_border';
-        }
-    }); 
+
+    if (currentUser) {
+        database.ref('users/' + currentUser.uid +'/places').child(placeID).once('value').then(function(snapshot) {
+            // Places exist in the database if and only if they've previously been favourited by the user
+            let exists = snapshot.exists();
+            if (exists) {
+                icon.innerHTML = 'favorite'; 
+            }
+            else {
+                icon.innerHTML = 'favorite_border';
+            }
+        }); 
+        // Allow user to save place if signed in
+        icon.setAttribute('onclick','savePlace(this);');
+    }
+    else {
+        icon.innerHTML = 'favorite_border'; 
+        icon.setAttribute('onclick','createToast();');
+    }
     icon.classList.add('material-icons','small');
-    icon.setAttribute('onclick','savePlace(this);');
     icon.setAttribute('name',placeID);
     return icon; 
 }
@@ -403,4 +409,9 @@ function updateDatabase(placeID, userID) {
 /** Delete placeID from current user when place is unsaved by user */
 function deletePlace(placeID, userID) {
     database.ref('users/' + userID + '/places').child(placeID).remove();
+}
+
+/** Create toast alert when user saves place when not signed in */
+function createToast() {
+     M.toast({html: 'Sign in to start saving!', classes:'rounded'})
 }
