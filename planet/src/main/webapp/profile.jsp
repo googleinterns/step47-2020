@@ -2,6 +2,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="com.google.planet.servlets.UserServlet" %>
 <% String username = (String) request.getAttribute("username"); %>
+<% String blobKey = (String) request.getAttribute("blob-key"); %>
 <html>
 
 <head>
@@ -24,7 +25,7 @@
     <title>Profile</title>
 </head>
 
-<body onload="loadUserInformation('<%= username %>')">
+<body onload="loadUserInformation('<%= username %>', '<%= blobKey %>')">
     <div id="not-found-message" style="display: none; font-size: 30px; font-family: initial;">
         Profile Not Found
     </div>
