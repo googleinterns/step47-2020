@@ -13,14 +13,14 @@
 // limitations under the License.
 
 export const HeaderRenderer = {
-    init: (userId, displayName, location, bio, profilePic) => {
+    init: (userId, displayName, location, bio, profilePic, username) => {
         renderName(displayName);
         renderLocation(location, userId);
         renderBio(bio, userId);
         renderPicture(profilePic);
         if (currentUser !== null && userId === currentUser.uid) {
             addEditButton();
-            addEditProfilePictureIcon();
+            addEditProfilePictureIcon(username);
         }
     },
 }
@@ -70,12 +70,19 @@ function renderPicture(url) {
     document.getElementById('profile-pic').src = '/images/profile-pic.png';
 }
 
-function addEditProfilePictureIcon() {
+function addEditProfilePictureIcon(username) {
     const profilePictureElement = document.getElementById('profile-pic-container');
     profilePictureElement.style.cursor = 'pointer';
     // Open the update profile dialog when the user clicks on the profile picture
     profilePictureElement.addEventListener('click', () => {
         openModal('upload-picture-modal');
+        fetch('/blobstore-upload-url?username=' + username)
+        .then((response) => {
+            return response.text();
+        })
+        .then((fileUrl) => {
+            document.getElementById('upload-pic-form').action = fileUrl;
+        });
     });
     // Display the photo camera icon when the mouse enters the profile picture
     profilePictureElement.addEventListener('mouseenter', (event) => {
