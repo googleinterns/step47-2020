@@ -35,10 +35,10 @@ document.addEventListener('DOMContentLoaded', function() {
     M.Modal.init(elements, {
         opacity: 0.7
     });
-    loadElement('signin.html', 'sign-in-modal');
-    loadElement('signup.html', 'sign-up-modal');
-    loadElement('navbar.html', 'nav-bar');
-    loadElement('resetpwd.html', 'reset-pwd-modal');
+    loadElement('/signin.html', 'sign-in-modal');
+    loadElement('/signup.html', 'sign-up-modal');
+    loadElement('/navbar.html', 'nav-bar');
+    loadElement('/resetpwd.html', 'reset-pwd-modal');
     database = firebase.database();
     currentUser = firebase.auth().currentUser;
     firebase.auth().onAuthStateChanged(checkUserSignIn);
@@ -50,6 +50,7 @@ function checkUserSignIn() {
         document.getElementById('profile-button').innerText = currentUser.displayName;
         document.getElementById('profile-button').style.display = 'block';
         document.getElementById('sign-out-button').style.display = 'block';
+        document.getElementById('search-bar-container').style.display = 'block';
         document.getElementById('sign-in-button').style.display = 'none';
         // Set the emailVerified property to true
         database.ref('users/' + currentUser.uid).once('value', (userSnapshot) => {
@@ -63,6 +64,7 @@ function checkUserSignIn() {
     } else {
         document.getElementById('profile-button').style.display = 'none';
         document.getElementById('sign-out-button').style.display = 'none';
+        document.getElementById('search-bar-container').style.display = 'none';
         document.getElementById('sign-in-button').style.display = 'block';
     }
 }
