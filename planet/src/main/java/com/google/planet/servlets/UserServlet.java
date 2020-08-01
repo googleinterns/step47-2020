@@ -16,7 +16,9 @@ public class UserServlet extends HttpServlet {
   public void doGet(HttpServletRequest request, HttpServletResponse response)
       throws IOException, ServletException {
     final String username = request.getPathInfo().substring(1);
+    final String blobKey = request.getParameter("blob-key");
     request.setAttribute("username", username);
+    request.setAttribute("blob-key", blobKey);
     final RequestDispatcher requestDispatcher = request.getRequestDispatcher("/profile.jsp");
     requestDispatcher.forward(request, response);
   }
