@@ -73,9 +73,11 @@ function renderPicture(url) {
 function addEditProfilePictureIcon() {
     const profilePictureElement = document.getElementById('profile-pic-container');
     profilePictureElement.style.cursor = 'pointer';
+    // Open the update profile dialog when the user clicks on the profile picture
     profilePictureElement.addEventListener('click', () => {
         openModal('upload-picture-modal');
     });
+    // Display the photo camera icon when the mouse enters the profile picture
     profilePictureElement.addEventListener('mouseenter', (event) => {
         event.currentTarget.style.opacity = '0.7';
         const iconContainer = document.createElement('div');
@@ -89,6 +91,7 @@ function addEditProfilePictureIcon() {
         iconContainer.appendChild(editIcon);
         document.getElementById('profile-pic-container').appendChild(iconContainer);
     });
+    // Reset the profile picture styling
     profilePictureElement.addEventListener('mouseleave', (event) => {
         event.currentTarget.style.opacity = '1';
         document.getElementById('profile-pic-container').lastElementChild.remove();

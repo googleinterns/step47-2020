@@ -21,7 +21,7 @@ window.switchSection = switchSection;
 window.updateImage = updateImage;
 window.resetProfilePicture = resetProfilePicture;
 
-const validFileTypes = [
+const VALIS_FILE_TYPES = [
     "image/apng",
     "image/bmp",
     "image/gif",
@@ -145,7 +145,7 @@ function updateImage() {
     const imageElement = document.getElementById('image-display');
     if (fileInput && imageElement) {
         if (fileInput.files.length !== 0 // At least one file is selected
-            && validFileTypes.includes(fileInput.files[0].type) // The type must be valid
+            && VALIS_FILE_TYPES.includes(fileInput.files[0].type) // The type must be valid
             ) {
             imageElement.src = URL.createObjectURL(fileInput.files[0]);
         }
