@@ -14,34 +14,31 @@
 
 
 // Declare global constantes and variables
-const firebaseConfig = {
-    apiKey: 'AIzaSyCAZ83Nbjr6HIgz7BHM2cAG7ktLyPp2mVk',
-    authDomain: 'ndabouz-step-2020-2.firebaseapp.com',
-    databaseURL: 'https://ndabouz-step-2020-2.firebaseio.com',
-    projectId: 'ndabouz-step-2020-2',
-    storageBucket: 'ndabouz-step-2020-2.appspot.com',
-    messagingSenderId: '966794754966',
-    appId: '1:966794754966:web:e2f42bafdd3c5ec2c77bb7',
-    measurementId: 'G-9W48MVBXLE'
-};
+let firebaseConfig;
 let currentUser;
 let database;
 
-// Initialize the Firebase Application
-firebase.initializeApp(firebaseConfig);
+// Load the Firebase Configurations
+fetch('/firebase-config.json')
+.then(response => response.json())
+.then(firebaseConfig => {
+    // Initialize the Firebase Application
+    firebase.initializeApp(firebaseConfig);
+    database = firebase.database();
+    currentUser = firebase.auth().currentUser;
+    loadElement('/navbar.html', 'nav-bar', () => {
+        firebase.auth().onAuthStateChanged(checkUserSignIn);
+    });
+    loadElement('/signin.html', 'sign-in-modal');
+    loadElement('/signup.html', 'sign-up-modal');
+    loadElement('/resetpwd.html', 'reset-pwd-modal');
+});
 
 document.addEventListener('DOMContentLoaded', function() {
     const elements = document.querySelectorAll('.modal');
     M.Modal.init(elements, {
         opacity: 0.7
     });
-    loadElement('/signin.html', 'sign-in-modal');
-    loadElement('/signup.html', 'sign-up-modal');
-    loadElement('/navbar.html', 'nav-bar');
-    loadElement('/resetpwd.html', 'reset-pwd-modal');
-    database = firebase.database();
-    currentUser = firebase.auth().currentUser;
-    firebase.auth().onAuthStateChanged(checkUserSignIn);
 });
 
 function checkUserSignIn() {
@@ -332,15 +329,20 @@ function openModal(modalElement) {
     M.Modal.getInstance(modal).open();
 }
 
-function loadElement(href, elementId) {
+function loadElement(href, elementId, hanlder = () => {return;}) {
     const element = document.getElementById(elementId);
     if (element === null) {
         return;
     }
     const xmlhttp = new XMLHttpRequest();
-    xmlhttp.open("GET", href, false);
+    xmlhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+          element.innerHTML = xmlhttp.responseText;
+          hanlder();
+        }
+    };
+    xmlhttp.open("GET", href, true);
     xmlhttp.send();
-    element.innerHTML = xmlhttp.responseText;
 }
 
 function openProfile() {
