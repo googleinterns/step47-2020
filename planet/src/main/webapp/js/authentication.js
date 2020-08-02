@@ -203,6 +203,7 @@ function signIn() {
             return;
         };
         closeModal('sign-in-modal');
+        window.location.reload();
     }).catch(function(error) {
         // Handle Errors here.
         console.log(error);
@@ -224,6 +225,7 @@ function signIn() {
 
 function signOut() {
     firebase.auth().signOut().then(checkUserSignIn);
+    window.location.reload();
 }
 
 function signInWithGoogle() {
@@ -254,6 +256,7 @@ function signInWithProvider(provider) {
                     currentUser.emailVerified);
             }
             closeModal('sign-in-modal');
+            window.location.reload();
         });
     }).catch(function(error) {
         const errorCode = error.code;
