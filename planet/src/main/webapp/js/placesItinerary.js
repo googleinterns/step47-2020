@@ -254,16 +254,6 @@ async function submitPlace(placeId) {
         order: order,
     });
 
-    // Update the place's visitors
-    // This will add the user id to the visitors list, along with the most recent timestamp 
-    // In the future, the timestamp should be modified to when the users indicate they will visit 
-    // the place, rather than when they add the place as an event
-    const date = new Date();
-    const timestamp = date.getTime();
-    database.ref('places/' + placeId + '/visitors').update({
-        [userId]: timestamp
-    });
-
     closeAddPlaceForm();
     disablePlaceButton(placeId);
 }
