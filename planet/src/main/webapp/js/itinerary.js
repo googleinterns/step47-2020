@@ -260,8 +260,9 @@ function deleteEvent(listName, ref) {
 
 async function saveEvents() {
     const listName = document.getElementById('save-events-name').value;
-    if (!listName) {
-        alert('Please input a list name!');
+    const listDate = document.getElementById('save-events-date').value;
+    if (!listName || !listDate) {
+        alert('Please input a list name and a date!');
         return;
     }
     const userId = firebase.auth().currentUser.uid;
@@ -273,12 +274,32 @@ async function saveEvents() {
         return;
     }
     newListRef.set(currentListSnapshot.val());
+    addUserToAllPlaces(userId, currentListSnapshot, listDate);
     // Clear current list
     currentListRef.remove();
     // Update the select tag options and close save events form
     renderListOptions();
     closeSaveEventsForm();
     renderPlaceButtons();
+}
+
+function addUserToAllPlaces(userId, eventsSnapshot, date) {
+    let time = 600;
+    eventsSnapshot.forEach((eventSnapshot) => {
+        addVisitor(userId, eventSnapshot.key, date, time);
+        time += parseInt(eventSnapshot.val()['duration']) * 60; 
+    });
+}
+
+async function addVisitor(userId, placeId, date, time) {
+    const placeSnapshot = await database.ref('users/' + userId + '/places/' + placeId).once('value');
+    const newPlaceRef = database.ref('places/' + placeId + '/' + userId);
+    if (placeSnapshot.val()) {
+        newPlaceRef.set({
+            day: date,
+            time: time
+        });
+    }
 }
 
 function handleItinerarySelectionChange() {
