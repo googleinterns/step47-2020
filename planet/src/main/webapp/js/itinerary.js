@@ -192,13 +192,15 @@ function renderEvents(listName) {
         const eventsContainer = document.getElementById('events');
         eventsContainer.innerHTML = '';
         eventListSnapshot.forEach(function(childEvent) {
-            let eventObject = childEvent.val();
-            let eventElement = createEventElement (listName,
-                                                childEvent.key,
-                                                eventObject.name, 
-                                                eventObject.address, 
-                                                eventObject.duration);
-            eventsContainer.appendChild(eventElement);
+            if (childEvent.key !== 'date') {
+                let eventObject = childEvent.val();
+                let eventElement = createEventElement (listName,
+                                                    childEvent.key,
+                                                    eventObject.name, 
+                                                    eventObject.address, 
+                                                    eventObject.duration);
+                eventsContainer.appendChild(eventElement);
+            }
         });
     });
 }
@@ -228,27 +230,30 @@ async function deleteEvent(listName, ref) {
     const userId = firebase.auth().currentUser.uid;
     const eventListRef = database.ref('events/' + userId + '/' + listName);
     const toBeDeletedEventRef = eventListRef.child(ref);
-    const toBeDeletedEventSnap = await toBeDeletedEventRef.once('value');
-    const eventDate = toBeDeletedEventSnap.val()['date'];
+    let eventDate = '08/07/2020'; // Default value
     toBeDeletedEventRef.remove();
 
     // Fix order after deleting the event
     eventListRef.orderByChild('order').once('value', (eventListSnapshot) => {
         let count = 1;
         eventListSnapshot.forEach(function(childEvent) {
-            let event = childEvent.val();
-            let eventKey = childEvent.key;
-            if (event.order !== count) {
-                eventListRef.child(eventKey).update({
-                    order: count
-                });
+            if (childEvent.key !== 'date'){
+                let event = childEvent.val();
+                let eventKey = childEvent.key;
+                if (event.order !== count) {
+                    eventListRef.child(eventKey).update({
+                        order: count
+                    });
+                }
+                count += 1;
+            } else {
+                eventDate = childEvent.val();
             }
-            count += 1;
         });
     });
 
     if (listName !== 'currentList') {
-        removeVisitor(userId, ref, eventDate);
+        deleteVisitor(userId, ref, eventDate);
     }
 
     // Render places again since the icons might need to change
@@ -271,7 +276,10 @@ async function saveEvents() {
         return;
     }
     newListRef.set(currentListSnapshot.val());
-    addUserToAllPlaces(userId, newListRef, listDate);
+    newListRef.update({
+        date: listDate
+    });
+    addUserToAllPlaces(userId, currentListSnapshot, listDate);
     // Clear current list
     currentListRef.remove();
     // Update the select tag options and close save events form
@@ -280,15 +288,11 @@ async function saveEvents() {
     renderPlaceButtons();
 }
 
-async function addUserToAllPlaces(userId, eventsReference, date) {
-    const eventsSnapshot = await eventsReference.once('value');
+async function addUserToAllPlaces(userId, eventsSnapshot, date) {
     // TODO: Consider the real time range of the events
     let time = 600;
     eventsSnapshot.forEach((eventSnapshot) => {
         addVisitor(userId, eventSnapshot.key, date, time);
-        eventsReference.child(eventSnapshot.key).update({
-            date: date
-        });
         // Add the duration of the event to the time variable
         time += parseInt(eventSnapshot.val()['duration']) * 60; 
     });
@@ -305,9 +309,12 @@ async function addVisitor(userId, placeId, date, time) {
     }
 }
 
-function removeVisitor(userId, placeId, date) {
+async function deleteVisitor(userId, placeId, date) {
     const visistsReference = database.ref('places/' + placeId + '/' + date);
-    visistsReference.child(userId).remove();
+    const visitsSnapshot = await visistsReference.once('value');
+    if (visitsSnapshot.val()) {
+        visistsReference.child(userId).remove();
+    }
 }
 
 function handleItinerarySelectionChange() {
