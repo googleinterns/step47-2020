@@ -284,20 +284,21 @@ async function saveEvents() {
 }
 
 function addUserToAllPlaces(userId, eventsSnapshot, date) {
+    // TODO: Consider the real time range of the events
     let time = 600;
     eventsSnapshot.forEach((eventSnapshot) => {
         addVisitor(userId, eventSnapshot.key, date, time);
+        // Add the duration of the event to the time variable
         time += parseInt(eventSnapshot.val()['duration']) * 60; 
     });
 }
 
 async function addVisitor(userId, placeId, date, time) {
     const placeSnapshot = await database.ref('users/' + userId + '/places/' + placeId).once('value');
-    const newPlaceRef = database.ref('places/' + placeId + '/' + userId);
+    const visistsReference = database.ref('places/' + placeId + '/' + date);
     if (placeSnapshot.val()) {
-        newPlaceRef.set({
-            day: date,
-            time: time
+        visistsReference.update({
+            [userId]: time
         });
     }
 }
