@@ -348,7 +348,9 @@ async function generateItinerary(optimized) {
     const eventListRef = database.ref('events/' + userId + '/' + listName);
     const eventListSnapshot = await eventListRef.once('value');
     eventListSnapshot.forEach(function(childEvent) {
-        requestBody.push(childEvent.val());
+        if (childEvent.key !== 'date') {
+            requestBody.push(childEvent.val());
+        }
     });
     const itineraryResponse = await fetch('/generate-itinerary?optimized=' + optimized, 
                         {method: 'POST', 
