@@ -39,7 +39,7 @@ function onKeyUp(event) {
     }
     elementIndex = -1;
     database.ref('users').orderByChild('name')  // Order elements by name
-    .startAt(searchInput + ' ') // Start at the users whose names start with searchInput + 'A'
+    .startAt(searchInput + ' ') // Start at the users whose names start with searchInput + ' '
     .endAt(searchInput + 'z')   // End with the users whose names start with searchInput + 'z'
     .limitToFirst(5) // Get the first 5 results
     .once('value', (usersSnapshot) => {
@@ -59,6 +59,7 @@ function onKeyUp(event) {
 
 function focusOnNextElement() {
     const resultsContainer = document.getElementById('search-results-container');
+    // Check if there is a next element
     if (elementIndex + 1 < resultsContainer.childNodes.length) {
         if (elementIndex >= 0) {
             document.getElementById('search-result-item-' + elementIndex).style.backgroundColor = 'white';
@@ -69,6 +70,7 @@ function focusOnNextElement() {
 }
 
 function focusOnPreviousElement() {
+    // Check if there is a previous element
     if (elementIndex - 1 >= 0) {
         document.getElementById('search-result-item-' + elementIndex).style.backgroundColor = 'white';
         elementIndex--;
@@ -123,6 +125,8 @@ function onMouseEnter(event) {
     if (element) {
         element.style.backgroundColor = 'white';
     }
+    // Get the element index from the id
+    // The id of the 3rd elements, for instance, is search-result-item-3
     elementIndex = event.currentTarget.id[event.currentTarget.id.length - 1];
 }
 
