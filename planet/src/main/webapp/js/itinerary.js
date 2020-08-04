@@ -267,6 +267,10 @@ async function saveEvents() {
         alert('Please input a list name and a date!');
         return;
     }
+    if (!isDateValid(listDate)) {
+        alert('The chosen date is earlier than today!');
+        return;
+    }
     const userId = firebase.auth().currentUser.uid;
     const currentListRef = database.ref('events/' + userId + '/currentList');
     const newListRef = database.ref('events/' + userId + '/' + listName);
@@ -288,13 +292,18 @@ async function saveEvents() {
     renderPlaceButtons();
 }
 
+function isDateValid(date) {
+    return Date.parse(date) > Date.now();
+}
+
 async function addUserToAllPlaces(userId, eventsSnapshot, date) {
     // TODO: Consider the real time range of the events
     let time = 600;
+    const HOUR_IN_MIN = 60;
     eventsSnapshot.forEach((eventSnapshot) => {
         addVisitor(userId, eventSnapshot.key, date, time);
         // Add the duration of the event to the time variable
-        time += parseInt(eventSnapshot.val()['duration']) * 60; 
+        time += parseInt(eventSnapshot.val()['duration']) * HOUR_IN_MIN; 
     });
 }
 
