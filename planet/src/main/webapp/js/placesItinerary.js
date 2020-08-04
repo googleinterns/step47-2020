@@ -254,8 +254,32 @@ async function submitPlace(placeId) {
         order: order,
     });
 
+    const eventListDateSnapshot = await eventListRef.child('date').once('value');
+    const eventListDate = eventListDateSnapshot.val();
+    if (eventListDate) {
+        let time = 600;
+        const HOUR_IN_MIN = 60;
+        eventListSnapshot.forEach((eventSnapshot) => {
+            if (eventSnapshot.key !== placeId && eventSnapshot.key !== 'date') {
+                time += parseInt(eventSnapshot.val()['duration']) * HOUR_IN_MIN; 
+            }
+        });
+        addVisitor(userId, placeId, eventListDate, time);
+    }
+
     closeAddPlaceForm();
     disablePlaceButton(placeId);
+}
+
+export async function addVisitor(userId, placeId, date, time) {
+    const placeSnapshot = await database.ref('users/' + userId + '/places/' + placeId).once('value');
+    const visistsReference = database.ref('places/' + placeId + '/' + date);
+    // Check that the place is in the user's wish list
+    if (placeSnapshot.val()) {
+        visistsReference.update({
+            [userId]: time
+        });
+    }
 }
 
 function validatePlaceDuration(duration) {
