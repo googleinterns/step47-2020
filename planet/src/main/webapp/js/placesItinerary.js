@@ -20,16 +20,18 @@ import TimeRange from './TimeRange.js';
 window.openAddPlaceForm = openAddPlaceForm;
 window.closeAddPlaceForm = closeAddPlaceForm;
 window.initAutocomplete = initAutocomplete; 
+window.makePlaceRequests = makePlaceRequests;
 
 // Declare global variables/constants.
 const database = firebase.database();
 let map;
-let displayedPlaces = {};  // Object that contains all the places information
+let displayedPlaces = {};  // Object that contains all the places information that are rendered
+let toBeProcessedPlaces = []; // Array that contains all the placeIds to be used in Google Maps API call
 
 // Declare global variables 
 let autocompleteStart;
 let autocompleteEvent;
-
+ 
 /** Adds autocomplete to input boxes */
 function initAutocomplete() {
     map = new google.maps.Map(document.getElementById('empty-map'));
@@ -38,29 +40,52 @@ function initAutocomplete() {
     let options = {
         types: ['geocode']
     };
-    autocompleteStart = new google.maps.places.Autocomplete(startAddress,options); 
+    autocompleteStart = new google.maps.places.Autocomplete(startAddress,options);
+    autocompleteStart.setFields(['address_component']);
+    autocompleteStart.addListener('place_changed', updateStartingAddress);
+
     autocompleteEvent = new google.maps.places.Autocomplete(eventAddress,options);
+}
+
+function updateStartingAddress() {
+    const startAddress = document.getElementById('starting-address');
+    sessionStorage.setItem('start', startAddress.value);
 }
 
 export function renderPlaces() {
     displayedPlaces = {};
+    toBeProcessedPlaces = [];
     const userId = firebase.auth().currentUser.uid;
     const placesRef = database.ref('users/' + userId + '/places');
-    placesRef.once('value', (placesSnapshot) => {
+    placesRef.orderByValue().once('value', (placesSnapshot) => {
         const placesContainer = document.getElementById('places');
         placesContainer.innerHTML = '';
-        const savedPlaces = placesSnapshot.val();
-        for (const placeId in savedPlaces) {
-            // Make request with fields
-            let placeRequest = {
-                placeId: placeId,
-                fields: ['place_id','name','rating','formatted_address',
-                    'opening_hours','photos','url']
-            };
-            let service = new google.maps.places.PlacesService(map);
-            service.getDetails(placeRequest, renderPlaceDetailsCallback); 
-        }
+        placesSnapshot.forEach(function(childPlace) {
+            const placeId = childPlace.key;
+            toBeProcessedPlaces.push(placeId);
+        });
+        makePlaceRequests();
     });
+}
+
+function makePlaceRequests() {
+    hideLoadMoreButton();
+    let service = new google.maps.places.PlacesService(map);
+    const maxNumOfRequests = 10;
+    for (let i = 0; i < Math.min(maxNumOfRequests, toBeProcessedPlaces.length); i++) {
+        let placeId = toBeProcessedPlaces[i];
+        // Make request with fields
+        let placeRequest = {
+            placeId: placeId,
+            fields: ['place_id','name','rating','formatted_address',
+                'opening_hours','photos','url']
+        };
+        service.getDetails(placeRequest, renderPlaceDetailsCallback);
+    } 
+    // Google Maps API can only process 10 place details requests at a time,
+    // and once the session is full, new requests are refilled at a rate of 2 per second.
+    // Therefore, we need to wait 5 seconds here to process another group of 10 requests.
+    setTimeout(showLoadMoreButton, 5000);
 }
 
 function renderPlaceDetailsCallback(place, status) {
@@ -68,7 +93,24 @@ function renderPlaceDetailsCallback(place, status) {
         const placesContainer = document.getElementById('places');
         const placeElement = createPlaceElement(place);
         placesContainer.appendChild(placeElement);
+
+        const indexOfProcessedPlace = toBeProcessedPlaces.indexOf(place.place_id);
+        if (indexOfProcessedPlace > -1) {
+            toBeProcessedPlaces.splice(indexOfProcessedPlace, 1);
+        }
     } 
+}
+
+function hideLoadMoreButton() {
+    const loadMoreButton = document.getElementById('load-more-button');
+    loadMoreButton.style.display = 'none';
+}
+
+function showLoadMoreButton() {
+    if (toBeProcessedPlaces.length > 0) {
+        const loadMoreButton = document.getElementById('load-more-button');
+        loadMoreButton.style.display = 'block';
+    }
 }
 
 function createPlaceElement(place) {
@@ -108,6 +150,7 @@ function createPlaceElement(place) {
     // Create the add button
     const addButton = document.createElement('div');
     addButton.setAttribute('class', 'place-button');
+    addButton.setAttribute('id', 'place-button-' + place.place_id);
     
     const eventFromThisPlace = document.getElementById(place.place_id);
     if (eventFromThisPlace) {
@@ -222,7 +265,7 @@ async function submitPlace(placeId) {
     });
 
     closeAddPlaceForm();
-    renderPlaces();
+    disablePlaceButton(placeId);
 }
 
 function validatePlaceDuration(duration) {
@@ -235,4 +278,39 @@ function validatePlaceDuration(duration) {
         return false;
     }
     return true;
+}
+
+export function renderPlaceButtons() {
+    if (firebase.auth().currentUser === null) {
+        return;
+    }
+    const userId = firebase.auth().currentUser.uid;
+    const placeListRef = database.ref('users/' + userId + '/places');
+    placeListRef.once('value', (placeListSnapshot) => {
+        placeListSnapshot.forEach(function(childPlace) {
+            let placeId = childPlace.key;
+            const eventExists = document.getElementById(placeId) !== null;
+            if (eventExists) {
+                disablePlaceButton(placeId);
+            } else {
+                enablePlaceButton(placeId);
+            }
+        });
+    });
+} 
+
+export function enablePlaceButton(placeId) {
+    const placeButton = document.getElementById('place-button-' + placeId);
+    if (placeButton) {
+        placeButton.setAttribute('onclick', 'openAddPlaceForm(event, "' + placeId + '")');
+        placeButton.innerHTML = `<i class="material-icons small">playlist_add</i>`;
+    }
+}
+
+export function disablePlaceButton(placeId) {
+    const placeButton = document.getElementById('place-button-' + placeId);
+    if (placeButton) {
+        placeButton.onclick = null;
+        placeButton.innerHTML = `<i class="material-icons small">playlist_add_check</i>`;
+    }
 }

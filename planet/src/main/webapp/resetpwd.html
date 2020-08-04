@@ -1,0 +1,21 @@
+<br>
+<span class="close-icon"><i class="small material-icons" onclick="closeModal('reset-pwd-modal')">close</i></span>
+<br>
+<form id="reset-pwd-form" class="container">
+    <h3 class="form-text">Reset Password</h3>
+    <p class="form-text">Please enter your email address to reset your password</p>
+    <hr>
+    <div class="row form-row" style="height: 20%">
+        <div class="input-field col s12">
+            <input id="email-reset-pwd" class="input-sign-in" type="email" class="validate" required>
+            <label class="form-label" for="email">Email</label>
+        </div>
+    </div>
+    <div id="submit-message" class="row form-row"></div>
+    <div class="row form-row">
+        <div class="input-field col s12">
+            <button class="btn sign-in-button waves-effect waves-light" type="button" onclick="resetPassword()"
+                style="background-color: #4CAF50;">Send Email</button>
+        </div>
+    </div>
+</form>

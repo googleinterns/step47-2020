@@ -4,7 +4,6 @@
         <meta charset="UTF-8">
         <title>Planet</title>
         <link rel="stylesheet" href="css/itinerary.css">
-        <link rel="stylesheet" href="css/signup.css">
 
         <!--Import fonts and icons-->
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -51,7 +50,10 @@
 
         <div id="content-places"> 
             <p> Start planing your itinerary by choosing your liked places from below: </p>
-            <div id="places"></div>
+            <div id="place-list-container">
+                <div id="places"></div>
+                <button class="btn waves-effect waves-light" style="display: none;" id="load-more-button" onclick="makePlaceRequests()"><i class="material-icons">refresh</i>Load more</button>
+            </div>
             <div id="add-place-to-event-form">
                 <p id="add-place-duration-label">Duration (in hours): 
                     <input type="number" id="add-place-duration" name="add-place-duration" max="9" min="0" step = "0.5"> </input></p>
@@ -90,8 +92,11 @@
                     <button class="btn waves-effect waves-light" onclick="saveEvents();"><i class="material-icons">cloud_done</i></button>
                     <button class="btn waves-effect waves-light" onclick="closeSaveEventsForm();"><i class="material-icons">highlight_off</i></button></br>
                 </div>
-                <button class="btn waves-effect waves-light" onclick="generateItinerary()">generage itnerary</button>
-
+                <select id="itinerary-selection" class="browser-default btn waves-effect waves-light" onchange="handleItinerarySelectionChange();">
+                    <option id="default-itinerary-selection" value="" disabled selected>generage itnerary</option>
+                    <option value="true">generate optimized itinerary</option>
+                    <option value="false">generate itinerary in order</option>
+                </select>
             </br></br>
             <h4> Step 3: See your itinerary here </h4>
             </div>

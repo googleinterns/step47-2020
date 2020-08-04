@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Planet</title>
+    <script src="https://www.gstatic.com/firebasejs/4.1.3/firebase.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <script src=" https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-beta/js/materialize.min.js"></script>
+    <script src="js/authentication.js"></script>
+    <link rel="stylesheet" href="css/signup.css">
+    <link rel="stylesheet" href="index.css">
+    <!--Import Google Icon Font-->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!--Import materialize.css-->
+    <link type="text/css" rel="stylesheet" href="css/materialize.min.css"  media="screen,projection"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8">
+</head>
+
+<header>
+    <script src="index.js"></script>
+    <nav>
+        <div class="nav-wrapper indigo darken-2">
+            <a href="places.html" class="brand-logo" style="padding-left: 25px">planet</a>
+            <ul class="right hide-on-med-and-down">
+                <li><a href="itinerary.html">Itinerary</a></li>
+                <li><a id="sign-out-button" style="display: none;" onclick="signOut()">Sign Out</a></li>
+                <li><a id="profile-button" style="display: none;"></a></li>
+                <li><a id="sign-in-button" style="display: none;" onclick="openModal('sign-in-modal')"><i class="material-icons right">account_circle</i>Sign In</a></li>
+            </ul>
+        </div>
+    </nav>
+</header>
+
+<body>
+    <div class="parallax-container">
+        <div class="parallax">
+            <img src="images/background.png" class="responsive-img">
+        </div>
+        <div class="container">
+            <h1>Get ready to
+                <span
+                    class="txt-rotate"
+                    data-period="2000"
+                    data-words='["search destinations.", "create a profile.", "generate itineraries.", "connect with travellers."]'>
+                </span>
+            </h1>
+            <div id="button">
+                <a href=#next class="waves-effect waves-light btn-large red accent-2">GET STARTED</a>
+            </div>
+        </div>
+    </div>
+    <div id="next">              
+    <a id="up" href=# class="waves-effect waves-light btn-floating btn red accent-2"><i class="material-icons">expand_less</i></a>        
+        <div class="row card-container center">
+            <div class="column center">
+                <div class="card">
+                    <h3>Step 1:</h3>
+                    <h3>Create a profile</h3>
+                    <hr/>
+                    <p>Sign up or log in to get started. Create a profile and connect with other travellers. View the travellers visiting the same places as you.</p>
+                    <a  onclick="openModal('sign-in-modal')" class="go waves-effect waves-light btn red accent-2">SIGN IN</a>
+                </div>                
+            </div>
+            <div class="column center">
+                <div class="card">
+                    <h3>Step 2:</h3>
+                    <h3>Search Destinations</h3>
+                    <hr/>
+                    <p>Navigate to the Planet home page and start searching and saving destinations. View your searched locations on our map and browse through a list
+                        with details about each place.</p>
+                    <a href="places.html" class="go waves-effect waves-light btn red accent-2">SEARCH</a>
+                </div>            
+            </div>
+            <div class="column center">
+                <div class="card">
+                    <h3>Step 3:</h3>
+                    <h3>Generate an Itinerary</h3>
+                    <hr/>
+                    <p>On the Itinerary page, pick and choose from your saved places to generate an itinerary. Enter in an estimated visit time and create custom 
+                        events to add.</p>
+                    <a href="itinerary.html" class="go waves-effect waves-light btn red accent-2">PLAN</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="footer">
+        <p>Planet was created and designed by Alice Zhou, Emily Zhao and Nabil Dabouz</p>
+        <p>With the help of Erick Dransch and Xingyu "Alex" Zhang</p>
+        <p>Google STEP Capstone Project</p>
+        <p>July 2020 - August 2020</p>
+    </div>
+    <div id="sign-in-modal" class="modal" style="padding-bottom: 1vh;">Hello</div>
+    <div id="sign-up-modal" class="modal" style="padding-bottom: 1vh;">Hello</div>
+    <div id="reset-pwd-modal" class="modal" style="padding-bottom: 1vh;">Hello</div>
+    <div id="account-created-modal" class="modal" style="padding-bottom: 1vh;">Hello</div>
+</body>
+</html>

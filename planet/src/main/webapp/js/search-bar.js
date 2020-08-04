@@ -31,6 +31,9 @@ function onKeyUp(event) {
         openProfile(document.getElementById('search-result-item-' + elementIndex));
         return;
     }
+}
+
+function getSearchResults() {
     const resultsContainer = document.getElementById('search-results-container');
     resultsContainer.innerHTML = '';
     const searchInput = document.getElementById('search-input').value;

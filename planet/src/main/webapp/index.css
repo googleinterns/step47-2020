@@ -1,0 +1,154 @@
+@import url('https://fonts.googleapis.com/css?family=Raleway:200,100,400');
+
+body {
+    font-family: 'Raleway',sans-serif;
+    height: 100vh; 
+    color: white;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 100%;
+}
+
+h1 {
+    font-weight: 700;
+    margin: 0.4rem;
+    color: white !important; 
+}
+
+h3 {
+    color: black;
+    font-size: 2.5rem;
+    margin: 10px;
+}
+
+.parallax-container {
+    height: 100%; 
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+.btn-large {
+    width: 20vw; 
+    justify-content: center;
+    margin: 0;
+    padding: 0;
+    border-radius: 50px;
+    font-weight: bold;
+    font-family: 'Raleway',sans-serif;
+    font-size: 1.2rem2rem; 
+}
+
+.btn {
+    border-radius: 50px;
+}
+
+#button {
+    text-align: center;
+    margin: 5vh;
+}
+
+.section {
+    height: 75%;
+}
+
+p {
+    color: black;
+    text-align: center;
+}
+
+.row {
+    margin-top: 7.5vh;
+}
+
+.card{
+    background-color: white;
+    outline: 5px #ff5252;
+    width: 23vh;
+    height: 35vh;
+    margin-left: auto;
+    margin-right: auto; 
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: column;
+            flex-direction: column;
+    padding: 1vw;
+    margin: 0.3vw;
+    box-shadow: -20px -20px 0px 0px #ff5252;
+    border-radius: 10px;
+}
+
+.card-container{
+    width: 100%;
+    min-height: 60vh;  
+    display: -webkit-box;  
+    display: -ms-flexbox;  
+    display: flex;
+    -ms-flex-wrap: wrap;
+        flex-wrap: wrap;
+    
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.column {
+  float: left;
+  margin: 3vw;
+}
+
+/* Clear floats after the columns */
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+hr  {
+    display: block;
+    border: none;
+    height: 3px;
+    background-color: #ff5252;
+    margin: 10px;
+}
+
+.center{
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+}
+
+#next {
+    text-align: center;
+    background-color: #263238;
+}
+
+#up {
+    margin: 7vw 3vw 3vw 0vw; 
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#footer {
+    padding: 0.78vh 0vh 7vh 0vh;
+}
+
+.go {
+    width:40%;
+    margin-left:auto;
+    margin-right:auto;
+    position: absolute;
+    bottom:2.3vh;
+    right: 5%;
+    left: 5%;
+    font-weight: bold;
+}

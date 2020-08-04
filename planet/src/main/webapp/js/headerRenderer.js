@@ -50,7 +50,7 @@ function renderBio(bio, userId) {
         document.getElementById('bio').innerText = bio;
         return;
     } 
-    if (userId !== currentUser.uid) {
+    if (currentUser === null || userId !== currentUser.uid) {
         document.getElementById('bio').innerText = 'No Bio';
         return;
     }

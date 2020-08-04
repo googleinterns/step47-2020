@@ -15,6 +15,9 @@
 
 import TimeRange from './TimeRange.js';
 import {renderPlaces} from './placesItinerary.js';
+import {renderPlaceButtons} from './placesItinerary.js';
+import {enablePlaceButton} from './placesItinerary.js';
+import {disablePlaceButton} from './placesItinerary.js';
 // Declare global functions
 window.openAddEventForm = openAddEventForm;
 window.closeAddEventForm = closeAddEventForm;
@@ -26,6 +29,7 @@ window.handleListOptionChange = handleListOptionChange;
 window.addEvent = addEvent;
 window.saveEvents = saveEvents;
 window.generateItinerary = generateItinerary;
+window.handleItinerarySelectionChange = handleItinerarySelectionChange;
 
 const database = firebase.database();
 
@@ -100,7 +104,7 @@ function handleListOptionChange() {
         document.getElementById('save-events-button').style.display = 'inline-block';
     }
     renderEvents(listName);
-    renderPlaces();
+    renderPlaceButtons();
 }
 
 // Add an event to the firebase realtime database
@@ -251,7 +255,7 @@ function deleteEvent(listName, ref) {
     });
 
     // Render places again since the icons might need to change
-    renderPlaces();
+    enablePlaceButton(ref);
 }
 
 async function saveEvents() {
@@ -274,9 +278,18 @@ async function saveEvents() {
     // Update the select tag options and close save events form
     renderListOptions();
     closeSaveEventsForm();
+    renderPlaceButtons();
 }
 
-async function generateItinerary() {
+function handleItinerarySelectionChange() {
+    const optimized = document.getElementById('itinerary-selection').value;
+    generateItinerary(optimized);
+    // Change back to default selection 
+    const defaultSelect = document.getElementById('default-itinerary-selection');
+    defaultSelect.selected = true;
+}
+
+async function generateItinerary(optimized) {
     if (!sessionStorage.getItem('start')) {
         alert('Please input a valid starting address');
         return;
@@ -300,7 +313,7 @@ async function generateItinerary() {
     eventListSnapshot.forEach(function(childEvent) {
         requestBody.push(childEvent.val());
     });
-    const itineraryResponse = await fetch('/generate-itinerary', 
+    const itineraryResponse = await fetch('/generate-itinerary?optimized=' + optimized, 
                         {method: 'POST', 
                         headers: {'Content-Type': 'application/json'},
                         body: JSON.stringify(requestBody) });
@@ -309,8 +322,8 @@ async function generateItinerary() {
         createItinerary([]); //Clear the previous itinerary
         alert(errorMessage);
     } else {
-        const itineraryObject = await itineraryResponse.json();
-        createItinerary(itineraryObject.itineraryItems);
+        const itineraryItems = await itineraryResponse.json();
+        createItinerary(itineraryItems);
     }
 }
 
