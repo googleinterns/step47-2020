@@ -280,8 +280,6 @@ function renderResult(placeInfo) {
     let p2 = document.createElement('p');
     let p3 = document.createElement('p');
     let p4 = document.createElement('p');
-    let p5 = document.createElement('p');
-    let p6 = document.createElement('p');
     let a = document.createElement('a');
 
     // Set variables for place details
@@ -290,16 +288,11 @@ function renderResult(placeInfo) {
     let address = document.createTextNode(placeInfo['Address']);
     let phoneNumber = document.createTextNode('Phone Number: ' + placeInfo['Phone']);
     let openingHours = document.createTextNode('Opening Hours: ' + placeInfo['Hours']);
-    let open = document.createTextNode(placeInfo['Opening']);
-    let close = document.createTextNode(placeInfo['Closing']);
     let img = document.createElement('img');
         
-    // // Check if user is signed in
-    // if (currentUser) {
-        // Display save icons
-        let icon = createIcon(placeInfo['PlaceID']);
-        div3.append(icon);
-    // }
+    // Display save icons
+    let icon = createIcon(placeInfo['PlaceID']);
+    div3.append(icon);
 
     // Check for missing details, otherwise display through HTML
     p.appendChild(name);        
@@ -328,16 +321,6 @@ function renderResult(placeInfo) {
         p4.appendChild(openingHours); 
         p4.setAttribute('id','opening-hours');   
         div3.appendChild(p4);      
-    }
-    if (placeInfo['Opening'] != '') {
-        p5.appendChild(open);
-        p5.setAttribute('id','openingTime');
-        div3.appendChild(p5);
-    }
-    if (placeInfo['Closing'] != '') {
-        p6.appendChild(close);
-        p6.setAttribute('id','closingTime');
-        div3.appendChild(p6); 
     }
     if (placeInfo['Website'] != '') {
         a.appendChild(document.createTextNode('Website'));
