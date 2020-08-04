@@ -17,6 +17,7 @@ import TimeRange from './TimeRange.js';
 import {renderPlaces} from './placesItinerary.js';
 import {renderPlaceButtons} from './placesItinerary.js';
 import {enablePlaceButton} from './placesItinerary.js';
+import {addVisitor} from './placesItinerary.js';
 import {disablePlaceButton} from './placesItinerary.js';
 // Declare global functions
 window.openAddEventForm = openAddEventForm;
@@ -307,17 +308,6 @@ async function addUserToAllPlaces(userId, eventsSnapshot, date) {
         // Add the duration of the event to the time variable
         time += parseInt(eventSnapshot.val()['duration']) * HOUR_IN_MIN; 
     });
-}
-
-async function addVisitor(userId, placeId, date, time) {
-    const placeSnapshot = await database.ref('users/' + userId + '/places/' + placeId).once('value');
-    const visistsReference = database.ref('places/' + placeId + '/' + date);
-    // Check that the place is in the user's wish list
-    if (placeSnapshot.val()) {
-        visistsReference.update({
-            [userId]: time
-        });
-    }
 }
 
 async function deleteVisitor(userId, placeId, date) {
