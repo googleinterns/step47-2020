@@ -12,22 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-const UP_ARROW = 38;
-const DOWN_ARROW = 40;
-const ENTER_KEY = 13;
-
 let elementIndex = -1;
 
 function onKeyUp(event) {
-    if (event.keyCode === DOWN_ARROW) {
+    if (event.key === 'ArrowDown') {
         focusOnNextElement();
         return;
     }
-    if (event.keyCode === UP_ARROW) {
+    if (event.key === 'ArrowUp') {
         focusOnPreviousElement();
         return;
     }
-    if (event.keyCode === ENTER_KEY) {
+    if (event.key === 'Enter') {
         openProfile(document.getElementById('search-result-item-' + elementIndex));
         return;
     }
