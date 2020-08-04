@@ -29,8 +29,8 @@ import com.google.maps.model.DirectionsRoute;
 import com.google.maps.model.DirectionsLeg;
 import com.google.maps.model.Duration;
 
-public final class ItineraryGenerator {
-    public List<ItineraryItem> generateItinerary(List<Event> events, boolean optimized) throws ItineraryException{
+public class ItineraryGenerator {
+    public List<ItineraryItem> generateItinerary(List<Event> events, ItineraryOrder optimized) throws ItineraryException{
 
         // Return an empty list if events are empty or only contains the starting point event
         if (events.size() <= 1) { 
@@ -50,7 +50,7 @@ public final class ItineraryGenerator {
 
     // Function that creates an itinerary
     private List<ItineraryItem> scheduleItinerary(List<Event> events, int openingTime, int endingTime,
-                                            boolean optimized) throws ItineraryException {
+                                            ItineraryOrder optimized) throws ItineraryException {
         List<ItineraryItem> items = new ArrayList();
         DirectionsRoute directionsRoute = getDirectionsRoute(events, optimized);
         DirectionsLeg[] directionsLegs = directionsRoute.legs;
@@ -84,7 +84,7 @@ public final class ItineraryGenerator {
     // Each DirectionsLeg contains starting address, ending address, and duration
     // DirectionRoute also has int[] waypointOrder, which will contain the order of the waypoints
     // For the MVP, real time traffic is NOT used.
-    private DirectionsRoute getDirectionsRoute(List<Event> events, boolean optimized) throws ItineraryException{
+    public DirectionsRoute getDirectionsRoute(List<Event> events, ItineraryOrder optimized) throws ItineraryException{
         String origin = events.get(0).getAddress();
         String destination = origin; // The ending location should be assumed as the starting location 
                                      // since users most likely want a round trip
@@ -98,7 +98,7 @@ public final class ItineraryGenerator {
                                                 .origin(origin)
                                                 .destination(destination)
                                                 .waypoints(waypoints)
-                                                .optimizeWaypoints(optimized)
+                                                .optimizeWaypoints(optimized.value)
                                                 .await();
             DirectionsRoute directionsRoute = directionsResult.routes[0];
             return directionsRoute;
