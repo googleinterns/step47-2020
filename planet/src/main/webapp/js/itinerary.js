@@ -227,10 +227,11 @@ function createEventElement(listName, ref, name, address, duration) {
 }
 
 async function deleteEvent(listName, ref) {
+    const DEFAULT_DATE = '08-07-2020';
     const userId = firebase.auth().currentUser.uid;
     const eventListRef = database.ref('events/' + userId + '/' + listName);
     const toBeDeletedEventRef = eventListRef.child(ref);
-    let listDate = '08-07-2020'; // Default value
+    let listDate = DEFAULT_DATE;
     toBeDeletedEventRef.remove();
 
     // Fix order after deleting the event
@@ -252,8 +253,8 @@ async function deleteEvent(listName, ref) {
         });
     });
     // We check that the list is saved by the user
-    // If the user saved the list than the listDate is not the default value
-    if (listDate !== '08-07-2020') {
+    // If the user saved the list then the listDate is not the default value
+    if (listDate !== DEFAULT_DATE) {
         deleteVisitor(userId, ref, listDate);
     }
 
