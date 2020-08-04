@@ -49,6 +49,7 @@ function onKeyUp(event) {
                 addSearchResultElement(
                     childSnapshot.val()['name'],
                     childSnapshot.val()['username'],
+                    childSnapshot.val()['profilePic'],
                     'search-result-item-' + counter
                 )
             );
@@ -90,7 +91,7 @@ function hideContainer() {
     resultsContainer.style.opacity = '0';
 }
 
-function addSearchResultElement(name, username, id) {
+function addSearchResultElement(name, username, pictureSrc, id) {
     const newElement = document.createElement('li');
     newElement.id = id;
     
@@ -105,7 +106,7 @@ function addSearchResultElement(name, username, id) {
     usernameElement.style.fontSize = 'min(1.2vw, 12px)';
     usernameElement.style.margin = '0';
 
-    const imageElement = createProfilePicture('/images/profile-pic.png');
+    const imageElement = createProfilePicture(pictureSrc);
     
     newElement.classList.add('row', 'result-element', 'valign-wrapper');
     newElement.style.margin = '0';
@@ -148,6 +149,7 @@ function openProfile(userElement) {
 }
 
 function createProfilePicture(src) {
+    src = src !== undefined ? src : '/images/profile-pic.png';
     const imageContainer = document.createElement('div');
     imageContainer.classList.add('col', 's1', 'valign-wrapper');
     imageContainer.style.margin = '0';
