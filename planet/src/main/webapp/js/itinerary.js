@@ -230,7 +230,7 @@ async function deleteEvent(listName, ref) {
     const userId = firebase.auth().currentUser.uid;
     const eventListRef = database.ref('events/' + userId + '/' + listName);
     const toBeDeletedEventRef = eventListRef.child(ref);
-    let eventDate = '08/07/2020'; // Default value
+    let listDate = '08-07-2020'; // Default value
     toBeDeletedEventRef.remove();
 
     // Fix order after deleting the event
@@ -247,13 +247,14 @@ async function deleteEvent(listName, ref) {
                 }
                 count += 1;
             } else {
-                eventDate = childEvent.val();
+                listDate = childEvent.val();
             }
         });
     });
-
-    if (listName !== 'currentList') {
-        deleteVisitor(userId, ref, eventDate);
+    // We check that the list is saved by the user
+    // If the user saved the list than the listDate is not the default value
+    if (listDate !== '08-07-2020') {
+        deleteVisitor(userId, ref, listDate);
     }
 
     // Render places again since the icons might need to change
