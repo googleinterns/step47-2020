@@ -323,7 +323,7 @@ function renderResult(placeInfo) {
         div3.appendChild(p4);      
     }
     if (placeInfo['Website'] != '') {
-        a.appendChild(document.createTextNode('Website'));
+        a.appendChild(document.createTextNode('Google Maps'));
         a.href = placeInfo['Website'];
         a.title = 'More'; 
         div3.appendChild(a);
