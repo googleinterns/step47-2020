@@ -1,0 +1,22 @@
+<div class="nav-wrapper indigo darken-2">
+    <a href="/places.html" class="brand-logo" style="padding-left: 25px">planet</a>
+    <ul class="right hide-on-med-and-down">
+        <li><a href="/itinerary.html">Itinerary</a></li>
+        <li><a id="sign-out-button" style="display: none;" onclick="signOut()">Sign Out</a></li>
+        <li><a id="profile-button" style="display: none;"></a></li>
+        <li><a id="sign-in-button" style="display: none;" onclick="openModal('sign-in-modal')"><i
+                    class="material-icons right">account_circle</i>Sign In</a></li>
+    </ul>
+    <ul id="search-bar-container" class="right hide-on-med-and-down">
+        <li id="search-bar" class="row">
+            <i id="search-icon" class="col s1 material-icons">search</i>
+            <div class="col s11 input-field">
+                <input id="search-input" type="search" placeholder="Search"
+                    style="height: auto; padding:0; margin: 0;" oninput="getSearchResults()" 
+                    onfocus="displayContainer()" onblur="hideContainer()">
+                <ul id="search-results-container"></ul>
+                <i class="material-icons">close</i>
+            </div>
+        </li>
+    </ul>
+</div>
