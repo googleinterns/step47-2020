@@ -16,6 +16,7 @@ let userId;
 let listIndex = 0;
 let eventsList = [];
 let listName = 'List X';
+let listDate = '08-07-2020';
 
 export const ProfileEventsRenderer = { 
     renderListOfEvents: async (uid) => {
@@ -27,7 +28,7 @@ export const ProfileEventsRenderer = {
             return;
         }
         renderSlideButton('keyboard_arrow_left');
-        renderList(eventsList, listName);
+        renderList(eventsList, listName, listDate);
         renderSlideButton('keyboard_arrow_right');
     }
 }
@@ -68,13 +69,17 @@ function getListFromSnapshot(index, snapshot) {
 function getListFromObject(object) {
     let list = [];
     for (const property in object) {
-        object[property].id = property;
-        list.push(object[property]);
+        if (property !== 'date') {
+            object[property].id = property;
+            list.push(object[property]);
+        } else {
+            listDate = object[property];
+        }
     }
     return list;
 }
 
-function renderList(events, name) {
+function renderList(events, name, date) {
     const eventsSection = document.getElementById('events-section');
     eventsSection.style.paddingTop = '2%';
     let eventsListElement = document.getElementById('events-list');
@@ -87,14 +92,33 @@ function renderList(events, name) {
     eventsListElement.innerHTML = '';
     eventsListElement.style.display = 'table-cell';
     eventsListElement.style.width = '95%';
-    const listName = document.createElement('h3');
-    listName.style.textAlign = 'center';
-    listName.classList.add('row');
-    listName.innerHTML = name;
-    eventsListElement.appendChild(listName);
+    
+    eventsListElement.appendChild(createListNameElement(name));
+    eventsListElement.appendChild(createListDateElement(date));
     for (const event of events) {
         eventsListElement.appendChild(createEvent(event.name, event.address, event.duration, event.id));
     }
+}
+
+function createListNameElement(name) {
+    const listName = document.createElement('h3');
+    listName.style.textAlign = 'center';
+    listName.style.marginBottom = '0';
+    listName.classList.add('row');
+    listName.innerHTML = name;
+    return listName;
+}
+
+function createListDateElement(date) {
+    const listDate = document.createElement('div');
+    listDate.id = 'current-list-date';
+    listDate.style.textAlign = 'center';
+    listDate.style.width = 'fit-content';
+    listDate.classList.add('row', 'valign-wrapper');
+    listDate.innerHTML = 
+        '<i class="col small material-icons" style="padding: 0">date_range</i>' +
+        '<p>' + date + '</p>';
+    return listDate;
 }
 
 function createEvent(name, address, duration, eventId) {
@@ -232,7 +256,7 @@ async function getNextList() {
         listIndex--;
         return;
     }
-    renderList(eventsList, listName);
+    renderList(eventsList, listName, listDate);
 }
 
 async function getPreviousList() {
@@ -246,7 +270,7 @@ async function getPreviousList() {
         listIndex++;
         return;
     }
-    renderList(eventsList, listName);
+    renderList(eventsList, listName, listDate);
 }
 
 function createIcon(icon) {
