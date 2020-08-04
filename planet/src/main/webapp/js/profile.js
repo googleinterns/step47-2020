@@ -18,6 +18,21 @@ import {AboutSectionRenderer} from './about-section-renderer.js';
 
 window.loadUserInformation = loadUserInformation;
 window.switchSection = switchSection;
+window.updateImage = updateImage;
+window.resetProfilePicture = resetProfilePicture;
+
+const VALID_FILE_TYPES = [
+    "image/apng",
+    "image/bmp",
+    "image/gif",
+    "image/jpeg",
+    "image/pjpeg",
+    "image/png",
+    "image/svg+xml",
+    "image/tiff",
+    "image/webp",
+    "image/x-icon"
+];
 
 let user;
 let userId;
@@ -107,7 +122,8 @@ async function loadUserInformation(username) {
                 userId,
                 user['name'],
                 user['location'],
-                user['bio']
+                user['bio'],
+                user['profilePic']
             );
             AboutSectionRenderer.init(
                 user['work'],
@@ -122,4 +138,25 @@ async function loadUserInformation(username) {
     }
     document.getElementById('profile-page').remove();
     document.getElementById('not-found-message').style.display = 'block';
+}
+
+function updateImage() {
+    const fileInput = document.getElementById('image-upload');
+    const imageElement = document.getElementById('image-display');
+    if (fileInput && imageElement) {
+        if (fileInput.files.length !== 0 // At least one file is selected
+            && VALID_FILE_TYPES.includes(fileInput.files[0].type) // The type must be valid
+            ) {
+            imageElement.src = URL.createObjectURL(fileInput.files[0]);
+        }
+    }
+}
+
+function resetProfilePicture() {
+    const fileInput = document.getElementById('image-upload');
+    fileInput.value = '';
+    document.getElementById('image-display').src = 
+        user['profilePic'] !== undefined ?
+        user['profilePic'] : 
+        '/images/profile-pic.png';
 }
