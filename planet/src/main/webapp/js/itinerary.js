@@ -30,6 +30,7 @@ window.addEvent = addEvent;
 window.saveEvents = saveEvents;
 window.generateItinerary = generateItinerary;
 window.handleItinerarySelectionChange = handleItinerarySelectionChange;
+window.sendEmail = sendEmail;
 
 const database = firebase.database();
 
@@ -378,3 +379,11 @@ function reorderEvents() {
         });
     });
 } 
+
+async function sendEmail() {
+    const response = await fetch('/send-itinerary-to-email', 
+                        {method: 'POST'});
+    const errorMessage = await response.text();
+    console.log(errorMessage);
+
+}
