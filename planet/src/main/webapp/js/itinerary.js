@@ -420,9 +420,16 @@ function reorderEvents() {
 } 
 
 async function sendEmail() {
-    const response = await fetch('/send-itinerary-to-email', 
-                        {method: 'POST'});
-    const errorMessage = await response.text();
-    console.log(errorMessage);
-
+    const user = firebase.auth().currentUser;
+    if (user) {
+        const userEmail = user.email;
+        const itineraryContent = document.getElementById('itinerary').innerText;
+        
+        if (itineraryContent) {
+            await fetch('/send-itinerary-to-email?email=' + userEmail, 
+                    {method: 'POST',
+                    headers: {'Content-Type': 'text/plain'},
+                    body: itineraryContent});
+        }
+    }  
 }
