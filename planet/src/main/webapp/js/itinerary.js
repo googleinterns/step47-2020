@@ -423,10 +423,11 @@ async function sendEmail() {
     const user = firebase.auth().currentUser;
     if (user) {
         const userEmail = user.email;
+        const listName = document.getElementById ('list-options').value;
         const itineraryContent = document.getElementById('itinerary').innerText;
         
         if (itineraryContent) {
-            await fetch('/send-itinerary-to-email?email=' + userEmail, 
+            await fetch('/send-itinerary-to-email?email=' + userEmail + '&listName=' + listName, 
                     {method: 'POST',
                     headers: {'Content-Type': 'text/plain'},
                     body: itineraryContent});

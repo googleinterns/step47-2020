@@ -43,6 +43,7 @@ public class SendEmailServlet extends HttpServlet {
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         BufferedReader br = request.getReader();
         String userEmail = request.getParameterMap().get("email")[0];
+        String listName = request.getParameterMap().get("listName")[0];
         String itineraryContent = "";
 
         if (br != null) {
@@ -54,8 +55,7 @@ public class SendEmailServlet extends HttpServlet {
                 message.setFrom(new InternetAddress("alicexyz@google.com", "Alice Zhou"));
                 message.addRecipient(Message.RecipientType.TO,
                                 new InternetAddress(userEmail));
-                //TODO: add custom subject, html body, and attached file
-                message.setSubject("Your itinerary for Toronto trip");
+                message.setSubject("Your itinerary for " + listName);
                 Multipart multipartContent = new MimeMultipart();
 
                 // Add email body
