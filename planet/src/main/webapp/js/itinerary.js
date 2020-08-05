@@ -17,6 +17,7 @@ import TimeRange from './TimeRange.js';
 import {renderPlaces} from './placesItinerary.js';
 import {renderPlaceButtons} from './placesItinerary.js';
 import {enablePlaceButton} from './placesItinerary.js';
+import {addVisitor} from './placesItinerary.js';
 import {disablePlaceButton} from './placesItinerary.js';
 // Declare global functions
 window.openAddEventForm = openAddEventForm;
@@ -30,6 +31,7 @@ window.addEvent = addEvent;
 window.saveEvents = saveEvents;
 window.generateItinerary = generateItinerary;
 window.handleItinerarySelectionChange = handleItinerarySelectionChange;
+window.sendEmail = sendEmail;
 
 const database = firebase.database();
 
@@ -192,13 +194,15 @@ function renderEvents(listName) {
         const eventsContainer = document.getElementById('events');
         eventsContainer.innerHTML = '';
         eventListSnapshot.forEach(function(childEvent) {
-            let eventObject = childEvent.val();
-            let eventElement = createEventElement (listName,
-                                                childEvent.key,
-                                                eventObject.name, 
-                                                eventObject.address, 
-                                                eventObject.duration);
-            eventsContainer.appendChild(eventElement);
+            if (childEvent.key !== 'date') {
+                let eventObject = childEvent.val();
+                let eventElement = createEventElement (listName,
+                                                    childEvent.key,
+                                                    eventObject.name, 
+                                                    eventObject.address, 
+                                                    eventObject.duration);
+                eventsContainer.appendChild(eventElement);
+            }
         });
     });
 }
@@ -224,35 +228,37 @@ function createEventElement(listName, ref, name, address, duration) {
     return eventElement;
 }
 
-function deleteEvent(listName, ref) {
+async function deleteEvent(listName, ref) {
+    const DEFAULT_DATE = '08-07-2020';
     const userId = firebase.auth().currentUser.uid;
     const eventListRef = database.ref('events/' + userId + '/' + listName);
     const toBeDeletedEventRef = eventListRef.child(ref);
+    let listDate = DEFAULT_DATE;
     toBeDeletedEventRef.remove();
 
     // Fix order after deleting the event
     eventListRef.orderByChild('order').once('value', (eventListSnapshot) => {
         let count = 1;
         eventListSnapshot.forEach(function(childEvent) {
-            let event = childEvent.val();
-            let eventKey = childEvent.key;
-            if (event.order !== count) {
-                eventListRef.child(eventKey).update({
-                    order: count
-                });
+            if (childEvent.key !== 'date'){
+                let event = childEvent.val();
+                let eventKey = childEvent.key;
+                if (event.order !== count) {
+                    eventListRef.child(eventKey).update({
+                        order: count
+                    });
+                }
+                count += 1;
+            } else {
+                listDate = childEvent.val();
             }
-            count += 1;
         });
     });
-
-    // Check if this is an event created from a place, and if so, 
-    // remove the user id from the visitors list 
-    const placeRef = database.ref('places/' + ref);
-    placeRef.once('value', (placeSnapshot) => {
-        if (placeSnapshot.val()) {
-            placeRef.child('visitors').child(userId).remove();
-        }
-    });
+    // We check that the list is saved by the user
+    // If the user saved the list then the listDate is not the default value
+    if (listDate !== DEFAULT_DATE) {
+        deleteVisitor(userId, ref, listDate);
+    }
 
     // Render places again since the icons might need to change
     enablePlaceButton(ref);
@@ -260,8 +266,13 @@ function deleteEvent(listName, ref) {
 
 async function saveEvents() {
     const listName = document.getElementById('save-events-name').value;
-    if (!listName) {
-        alert('Please input a list name!');
+    const listDate = document.getElementById('save-events-date').value;
+    if (!listName || !listDate) {
+        alert('Please input a list name and a date!');
+        return;
+    }
+    if (!isDateValid(listDate)) {
+        alert('The chosen date is earlier than today!');
         return;
     }
     const userId = firebase.auth().currentUser.uid;
@@ -273,12 +284,39 @@ async function saveEvents() {
         return;
     }
     newListRef.set(currentListSnapshot.val());
+    newListRef.update({
+        date: listDate
+    });
+    addUserToAllPlaces(userId, currentListSnapshot, listDate);
     // Clear current list
     currentListRef.remove();
     // Update the select tag options and close save events form
     renderListOptions();
     closeSaveEventsForm();
     renderPlaceButtons();
+}
+
+function isDateValid(date) {
+    return Date.parse(date) > Date.now();
+}
+
+async function addUserToAllPlaces(userId, eventsSnapshot, date) {
+    // TODO: Consider the real time range of the events
+    let time = 600;
+    const HOUR_IN_MIN = 60;
+    eventsSnapshot.forEach((eventSnapshot) => {
+        addVisitor(userId, eventSnapshot.key, date, time);
+        // Add the duration of the event to the time variable
+        time += parseInt(eventSnapshot.val()['duration']) * HOUR_IN_MIN; 
+    });
+}
+
+async function deleteVisitor(userId, placeId, date) {
+    const visistsReference = database.ref('places/' + placeId + '/' + date);
+    const visitsSnapshot = await visistsReference.once('value');
+    if (visitsSnapshot.val()) {
+        visistsReference.child(userId).remove();
+    }
 }
 
 function handleItinerarySelectionChange() {
@@ -311,7 +349,9 @@ async function generateItinerary(optimized) {
     const eventListRef = database.ref('events/' + userId + '/' + listName);
     const eventListSnapshot = await eventListRef.once('value');
     eventListSnapshot.forEach(function(childEvent) {
-        requestBody.push(childEvent.val());
+        if (childEvent.key !== 'date') {
+            requestBody.push(childEvent.val());
+        }
     });
     const itineraryResponse = await fetch('/generate-itinerary?optimized=' + optimized, 
                         {method: 'POST', 
@@ -378,3 +418,11 @@ function reorderEvents() {
         });
     });
 } 
+
+async function sendEmail() {
+    const response = await fetch('/send-itinerary-to-email', 
+                        {method: 'POST'});
+    const errorMessage = await response.text();
+    console.log(errorMessage);
+
+}

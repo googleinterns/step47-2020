@@ -39,6 +39,7 @@ document.addEventListener('DOMContentLoaded', function() {
     loadElement('/signin.html', 'sign-in-modal');
     loadElement('/signup.html', 'sign-up-modal');
     loadElement('/resetpwd.html', 'reset-pwd-modal');
+    loadElement('/uploadpic.html', 'upload-picture-modal');
     const elements = document.querySelectorAll('.modal');
     M.Modal.init(elements, {
         opacity: 0.7

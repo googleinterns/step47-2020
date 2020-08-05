@@ -33,8 +33,8 @@
     </div>
     <div id="profile-page" class="profile-container" style="display: none">
         <div id="profile-header" class="row card" style="background-color: #bbdefb;">
-            <div class="col s3 valign-wrapper">
-                <img class="center-align circle responsive-img" src="/images/profile-pic.png"/>
+            <div id="profile-pic-container" class="col s3 valign-wrapper">
+                <img id="profile-pic" class="center-align circle responsive-img">
             </div>
             <div class="col s7" style="position: absolute; bottom: 0; left: 25%;">
                 <div id="name-container" class="row valign-wrapper" style="margin: 0">
@@ -76,6 +76,7 @@
         <div id="reset-pwd-modal" class="modal" style="padding-bottom: 1vh;">Hello</div>
         <div id="list-visitors" class="modal" style="padding: 1vh;">Hello</div>
         <div id="account-created-modal" class="modal" style="padding-bottom: 1vh;">Hello</div>
+        <div id="upload-picture-modal" class="modal" style="padding-bottom: 1vh;">Hello</div>
     </div>
     <!-- Compiled and minified JavaScript -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>

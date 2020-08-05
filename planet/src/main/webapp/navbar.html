@@ -12,7 +12,7 @@
             <i id="search-icon" class="col s1 material-icons">search</i>
             <div class="col s11 input-field">
                 <input id="search-input" type="search" placeholder="Search"
-                    style="height: auto; padding:0; margin: 0;" oninput="getSearchResults()" 
+                    style="height: auto; padding:0; margin: 0;" onkeyup="onKeyUp(event)" oninput="getSearchResults()" 
                     onfocus="displayContainer()" onblur="hideContainer()">
                 <ul id="search-results-container"></ul>
                 <i class="material-icons">close</i>

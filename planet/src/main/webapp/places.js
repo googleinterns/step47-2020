@@ -200,7 +200,7 @@ function callback(place, status) {
     if (status == google.maps.places.PlacesServiceStatus.OK) {
         // Add place details to dictionary
         let placeDetails = {PlaceID: '',Name: '', Rating: '', Address: '', Photo: '',Phone: '',
-        Hours: '', Website: '',Opening: '',Closing: ''}; 
+        Hours: '', Website: ''}; 
         placeDetails['PlaceID'] = place.place_id;
         placeDetails['Name'] = place.name; 
         // Check if place details exist
@@ -214,7 +214,12 @@ function callback(place, status) {
             placeDetails['Phone'] = place.formatted_phone_number;
         }
         if (place.opening_hours) {
-            placeDetails['Hours'] = place.opening_hours.weekday_text;
+            let hours = [];
+            hours.push('Opening Hours:');
+            place.opening_hours.weekday_text.forEach((day) => {
+                hours.push(day);
+            }); 
+            placeDetails['Hours'] = hours;
         }
         if (place.photos) {
             placeDetails['Photo'] = place.photos[0].getUrl({maxHeight:200});
@@ -280,8 +285,6 @@ function renderResult(placeInfo) {
     let p2 = document.createElement('p');
     let p3 = document.createElement('p');
     let p4 = document.createElement('p');
-    let p5 = document.createElement('p');
-    let p6 = document.createElement('p');
     let a = document.createElement('a');
 
     // Set variables for place details
@@ -289,17 +292,11 @@ function renderResult(placeInfo) {
     let rating = document.createTextNode('Rating: ' + placeInfo['Rating']);
     let address = document.createTextNode(placeInfo['Address']);
     let phoneNumber = document.createTextNode('Phone Number: ' + placeInfo['Phone']);
-    let openingHours = document.createTextNode('Opening Hours: ' + placeInfo['Hours']);
-    let open = document.createTextNode(placeInfo['Opening']);
-    let close = document.createTextNode(placeInfo['Closing']);
     let img = document.createElement('img');
         
-    // Check if user is signed in
-    if (firebase.auth().currentUser) {
-        // Display save icons
-        let icon = createIcon(placeInfo['PlaceID']);
-        div3.append(icon);
-    }
+    // Display save icons
+    let icon = createIcon(placeInfo['PlaceID']);
+    div3.append(icon);
 
     // Check for missing details, otherwise display through HTML
     p.appendChild(name);        
@@ -325,22 +322,14 @@ function renderResult(placeInfo) {
         div3.appendChild(p3);         
     }
     if (placeInfo['Hours'] != '') {
-        p4.appendChild(openingHours); 
+        placeInfo['Hours'].forEach((day) => {
+            p4.appendChild(createParagraphElement(day));
+        });
         p4.setAttribute('id','opening-hours');   
         div3.appendChild(p4);      
     }
-    if (placeInfo['Opening'] != '') {
-        p5.appendChild(open);
-        p5.setAttribute('id','openingTime');
-        div3.appendChild(p5);
-    }
-    if (placeInfo['Closing'] != '') {
-        p6.appendChild(close);
-        p6.setAttribute('id','closingTime');
-        div3.appendChild(p6); 
-    }
     if (placeInfo['Website'] != '') {
-        a.appendChild(document.createTextNode('Website'));
+        a.appendChild(document.createTextNode('Google Maps'));
         a.href = placeInfo['Website'];
         a.title = 'More'; 
         div3.appendChild(a);
@@ -353,12 +342,35 @@ function renderResult(placeInfo) {
     document.getElementById('greeting').innerHTML = 'Find a location: ' + document.getElementById('pac-input').value;
 }
 
+function createParagraphElement(content){
+    const p = document.createElement('p');
+    p.innerText = content;
+    return p;
+}
+
+/** Create and add save icon */
 function createIcon(placeID) {
-    // Create and add save icon 
     let icon = document.createElement('i');
-    icon.innerHTML = 'favorite_border';
+    let currentUser = firebase.auth().currentUser;
+    if (currentUser) {
+        firebase.database().ref('users/' + currentUser.uid +'/places').child(placeID).once('value').then(function(snapshot) {
+            // Places exist in the database if and only if they've previously been favourited by the user
+            let exists = snapshot.exists();
+            if (exists) {
+                icon.innerHTML = 'favorite'; 
+            }
+            else {
+                icon.innerHTML = 'favorite_border';
+            }
+        }); 
+        // Allow user to save place if signed in
+        icon.setAttribute('onclick','savePlace(this);');
+    }
+    else {
+        icon.innerHTML = 'favorite_border'; 
+        icon.setAttribute('onclick','createToast();');
+    }
     icon.classList.add('material-icons','small');
-    icon.setAttribute('onclick','savePlace(this);');
     icon.setAttribute('name',placeID);
     return icon; 
 }
@@ -392,4 +404,9 @@ function updateDatabase(placeID, userID) {
 /** Delete placeID from current user when place is unsaved by user */
 function deletePlace(placeID, userID) {
     firebase.database().ref('users/' + userID + '/places').child(placeID).remove();
+}
+
+/** Create toast alert when user saves place when not signed in */
+function createToast() {
+     M.toast({html: 'Sign in to start saving!', classes:'rounded'})
 }

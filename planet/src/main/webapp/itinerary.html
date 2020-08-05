@@ -90,6 +90,8 @@
                  <div id="save-events-form" class="save-events-form">
                     <p id="save-events-label"> Save the list as: 
                         <input type="text" name="save-events-name" id="save-events-name" placeholder="list1"></input></p>
+                    <p id="save-events-label"> 
+                        <input type="date" name="save-events-date" id="save-events-date"></p>
                     <button class="btn waves-effect waves-light" onclick="saveEvents();"><i class="material-icons">cloud_done</i></button>
                     <button class="btn waves-effect waves-light" onclick="closeSaveEventsForm();"><i class="material-icons">highlight_off</i></button></br>
                 </div>
@@ -103,6 +105,7 @@
             </div>
             <div id="itinerary">
             </div>
+            <button class="btn waves-effect waves-light" onclick="sendEmail();">Send itinerary to my email</button>
         </div>
         <div id="sign-in-modal" class="modal" style="padding-bottom: 1vh;"></div>
         <div id="sign-up-modal" class="modal" style="padding-bottom: 1vh;"></div>
