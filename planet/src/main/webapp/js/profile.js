@@ -19,6 +19,8 @@ import {AboutSectionRenderer} from './about-section-renderer.js';
 window.loadUserInformation = loadUserInformation;
 window.switchSection = switchSection;
 
+// Declare global constantes and variables
+const database = firebase.database();
 let user;
 let userId;
 
