@@ -12,8 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+let currentUser;
+const database = firebase.database();
+
 export const HeaderRenderer = {
     init: (userId, displayName, location, bio) => {
+        currentUser = firebase.auth().currentUser;
         renderName(displayName);
         renderLocation(location, userId);
         renderBio(bio, userId);
