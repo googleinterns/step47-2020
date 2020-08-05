@@ -12,29 +12,33 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import {firebaseConfig} from './firebase-config.js';
 
+window.signUp = signUp;
+window.signIn = signIn;
+window.signOut = signOut;
+window.signInWithGoogle = signInWithGoogle;
+window.signInWithFacebook = signInWithFacebook;
+window.signInWithGithub = signInWithGithub;
+window.onForgotPassword = onForgotPassword;
+window.resetPassword = resetPassword;
+window.openProfile = openProfile;
+window.closeModal = closeModal;
+window.openModal = openModal;
+
+// Initialize the Firebase Application
+firebase.initializeApp(firebaseConfig);
 // Declare global constantes and variables
-let firebaseConfig;
-let currentUser;
-let database;
+const database = firebase.database();
+let currentUser = firebase.auth().currentUser;
 
-// Load the Firebase Configurations
-fetch('/firebase-config.json')
-.then(response => response.json())
-.then(firebaseConfig => {
-    // Initialize the Firebase Application
-    firebase.initializeApp(firebaseConfig);
-    database = firebase.database();
-    currentUser = firebase.auth().currentUser;
+document.addEventListener('DOMContentLoaded', function() {
     loadElement('/navbar.html', 'nav-bar', () => {
         firebase.auth().onAuthStateChanged(checkUserSignIn);
     });
     loadElement('/signin.html', 'sign-in-modal');
     loadElement('/signup.html', 'sign-up-modal');
     loadElement('/resetpwd.html', 'reset-pwd-modal');
-});
-
-document.addEventListener('DOMContentLoaded', function() {
     const elements = document.querySelectorAll('.modal');
     M.Modal.init(elements, {
         opacity: 0.7
@@ -45,10 +49,10 @@ function checkUserSignIn() {
     currentUser = firebase.auth().currentUser;
     if (currentUser !== null && currentUser.emailVerified) {
         document.getElementById('profile-button').innerText = currentUser.displayName;
-        document.getElementById('profile-button').style.display = 'block';
-        document.getElementById('sign-out-button').style.display = 'block';
-        document.getElementById('search-bar-container').style.display = 'block';
-        document.getElementById('sign-in-button').style.display = 'none';
+        setStylingElement('display', 'block', 'profile-button');
+        setStylingElement('display', 'block', 'sign-out-button');
+        setStylingElement('display', 'block', 'search-bar-container');
+        setStylingElement('display', 'none', 'sign-in-button');
         // Set the emailVerified property to true
         database.ref('users/' + currentUser.uid).once('value', (userSnapshot) => {
             if (userSnapshot.exists()) {
@@ -59,10 +63,17 @@ function checkUserSignIn() {
         });
 
     } else {
-        document.getElementById('profile-button').style.display = 'none';
-        document.getElementById('sign-out-button').style.display = 'none';
-        document.getElementById('search-bar-container').style.display = 'none';
-        document.getElementById('sign-in-button').style.display = 'block';
+        setStylingElement('display', 'none', 'profile-button');
+        setStylingElement('display', 'none', 'sign-out-button');
+        setStylingElement('display', 'none', 'search-bar-container');
+        setStylingElement('display', 'block', 'sign-in-button');
+    }
+}
+
+function setStylingElement(property, value, elementId) {
+    const element = document.getElementById(elementId);
+    if (element) {
+        element.style[property] = value;
     }
 }
 
@@ -335,6 +346,7 @@ function openModal(modalElement) {
 function loadElement(href, elementId, hanlder = () => {return;}) {
     const element = document.getElementById(elementId);
     if (element === null) {
+        hanlder();
         return;
     }
     const xmlhttp = new XMLHttpRequest();
