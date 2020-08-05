@@ -22,7 +22,7 @@ window.updateImage = updateImage;
 window.resetProfilePicture = resetProfilePicture;
 window.updateProfilePicture = updateProfilePicture;
 
-const VALIS_FILE_TYPES = [
+const VALID_FILE_TYPES = [
     "image/apng",
     "image/bmp",
     "image/gif",
@@ -151,7 +151,7 @@ function updateImage() {
     const imageElement = document.getElementById('image-display');
     if (fileInput && imageElement) {
         if (fileInput.files.length !== 0 // At least one file is selected
-            && VALIS_FILE_TYPES.includes(fileInput.files[0].type) // The type must be valid
+            && VALID_FILE_TYPES.includes(fileInput.files[0].type) // The type must be valid
             ) {
             imageElement.src = URL.createObjectURL(fileInput.files[0]);
         }
