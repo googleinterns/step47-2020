@@ -361,9 +361,11 @@ async function generateItinerary(optimized) {
         const errorMessage = await itineraryResponse.text();
         createItinerary([]); //Clear the previous itinerary
         alert(errorMessage);
+        document.getElementById('email-itinerary-button').style.display = 'none';
     } else {
         const itineraryItems = await itineraryResponse.json();
         createItinerary(itineraryItems);
+        document.getElementById('email-itinerary-button').style.display = 'inline-block';
     }
 }
 
