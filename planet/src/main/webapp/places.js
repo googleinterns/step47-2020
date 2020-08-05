@@ -200,7 +200,7 @@ function callback(place, status) {
     if (status == google.maps.places.PlacesServiceStatus.OK) {
         // Add place details to dictionary
         let placeDetails = {PlaceID: '',Name: '', Rating: '', Address: '', Photo: '',Phone: '',
-        Hours: '', Website: '',Opening: '',Closing: ''}; 
+        Hours: '', Website: ''}; 
         placeDetails['PlaceID'] = place.place_id;
         placeDetails['Name'] = place.name; 
         // Check if place details exist
@@ -214,7 +214,12 @@ function callback(place, status) {
             placeDetails['Phone'] = place.formatted_phone_number;
         }
         if (place.opening_hours) {
-            placeDetails['Hours'] = place.opening_hours.weekday_text;
+            let hours = [];
+            hours.push('Opening Hours:');
+            place.opening_hours.weekday_text.forEach((day) => {
+                hours.push(day);
+            }); 
+            placeDetails['Hours'] = hours;
         }
         if (place.photos) {
             placeDetails['Photo'] = place.photos[0].getUrl({maxHeight:200});
@@ -287,7 +292,6 @@ function renderResult(placeInfo) {
     let rating = document.createTextNode('Rating: ' + placeInfo['Rating']);
     let address = document.createTextNode(placeInfo['Address']);
     let phoneNumber = document.createTextNode('Phone Number: ' + placeInfo['Phone']);
-    let openingHours = document.createTextNode('Opening Hours: ' + placeInfo['Hours']);
     let img = document.createElement('img');
         
     // Display save icons
@@ -318,12 +322,14 @@ function renderResult(placeInfo) {
         div3.appendChild(p3);         
     }
     if (placeInfo['Hours'] != '') {
-        p4.appendChild(openingHours); 
+        placeInfo['Hours'].forEach((day) => {
+            p4.appendChild(createParagraphElement(day));
+        });
         p4.setAttribute('id','opening-hours');   
         div3.appendChild(p4);      
     }
     if (placeInfo['Website'] != '') {
-        a.appendChild(document.createTextNode('Website'));
+        a.appendChild(document.createTextNode('Google Maps'));
         a.href = placeInfo['Website'];
         a.title = 'More'; 
         div3.appendChild(a);
@@ -334,6 +340,12 @@ function renderResult(placeInfo) {
     
     // Add search keyword to header
     document.getElementById('greeting').innerHTML = 'Find a location: ' + document.getElementById('pac-input').value;
+}
+
+function createParagraphElement(content){
+    const p = document.createElement('p');
+    p.innerText = content;
+    return p;
 }
 
 /** Create and add save icon */
