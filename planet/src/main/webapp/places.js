@@ -23,7 +23,7 @@ let promises = [];
 let bounds;
 let count = 0;
 let places;
-const TORONTO_COORDINATES = {lat:43.6532, lng:-79.3832}; 
+const TORONTO_COORDINATES = {lat:43.6532, lng:-79.3832};
 
 /** Initializes Map, implements search box and marks locations of searches */
 function initMap() {
@@ -295,7 +295,7 @@ function renderResult(placeInfo) {
     let img = document.createElement('img');
         
     // Check if user is signed in
-    if (currentUser) {
+    if (firebase.auth().currentUser) {
         // Display save icons
         let icon = createIcon(placeInfo['PlaceID']);
         div3.append(icon);
@@ -366,7 +366,7 @@ function createIcon(placeID) {
 /** Toggle save icon on click */
 function savePlace(x) {
     let placeID = $(x).attr('name');
-    let userID = currentUser.uid; 
+    let userID = firebase.auth().currentUser.uid; 
     if(x.innerHTML === "favorite_border") {
         // Set as saved
         x.innerHTML = "favorite";
@@ -386,10 +386,10 @@ function updateDatabase(placeID, userID) {
     const time = -date.getTime();
 
     // Add placeID to current userID in user tree with negative timestamp
-    database.ref('users/' + userID +'/places').child(placeID).set(time);
+    firebase.database().ref('users/' + userID +'/places').child(placeID).set(time);
 }
 
 /** Delete placeID from current user when place is unsaved by user */
 function deletePlace(placeID, userID) {
-    database.ref('users/' + userID + '/places').child(placeID).remove();
+    firebase.database().ref('users/' + userID + '/places').child(placeID).remove();
 }
