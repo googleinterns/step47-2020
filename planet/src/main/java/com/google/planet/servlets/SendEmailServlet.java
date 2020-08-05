@@ -36,6 +36,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.annotation.WebServlet;
 import java.io.BufferedReader;
+import java.util.stream.Collectors;
 
 @WebServlet("/send-itinerary-to-email")
 public class SendEmailServlet extends HttpServlet {
@@ -47,9 +48,10 @@ public class SendEmailServlet extends HttpServlet {
         String itineraryContent = "";
 
         if (br != null) {
-            itineraryContent = br.readLine();
+            itineraryContent =  br.lines().collect(Collectors.joining("\n"));
             Properties props = new Properties();
             Session session = Session.getDefaultInstance(props, null);
+            
             try {
                 Message message = new MimeMessage(session);
                 message.setFrom(new InternetAddress("alicexyz@google.com", "Alice Zhou"));
