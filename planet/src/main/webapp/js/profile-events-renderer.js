@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+const database = firebase.database();
 let userId;
 let listIndex = 0;
 let eventsList = [];
