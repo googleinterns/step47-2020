@@ -7,7 +7,8 @@
 <head>
     <!-- Include the firebase and local JS files -->  
     <script src="https://www.gstatic.com/firebasejs/4.1.3/firebase.js"></script> 
-    <script src="/js/authentication.js"></script>
+    <script type="module" src="/js/firebase-config.js"></script>
+    <script type="module" src="/js/authentication.js"></script>
     <script type="module" src="/js/headerRenderer.js"></script>
     <script type="module" src="/js/profile-events-renderer.js"></script>
     <script type="module" src="/js/about-section-renderer.js"></script>
