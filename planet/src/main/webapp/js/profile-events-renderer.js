@@ -180,13 +180,13 @@ function createEvent(name, address, duration, eventId) {
 
 async function renderVisitorsList(eventId) {
     const placeId = eventId.slice(6, eventId.length);
-    const visitors = await getVisitors(placeId);
+    const visitors = await getVisitors(placeId, listDate);
     const modalElement = document.getElementById('list-visitors');
     modalElement.innerHTML = '';
     if (visitors.length !== 0) {
         for (const visitorId of visitors) {
             modalElement.appendChild(createListElement(
-                await getVisitorName(visitorId)
+                await getVisitorInfo(visitorId)
             ));
         }
     } else {
@@ -198,28 +198,63 @@ async function renderVisitorsList(eventId) {
     M.Modal.getInstance(modalElement).open();
 }
 
-function createListElement(text) {
-    const element = document.createElement('li');
-    element.style.textAlign = 'center';
-    element.innerText = text;
-    return element;
+function createListElement(user) {
+    const newElement = document.createElement('li');
+    newElement.classList.add('row', 'result-element', 'valign-wrapper');
+    newElement.style.margin = '0';
+    newElement.style.marginTop = '0.5%';
+
+    const nameContainer = document.createElement('div');
+    nameContainer.classList.add('col', 's5');
+    nameContainer.style.margin = '0';
+
+    const nameElement = document.createElement('span');
+    nameElement.classList.add('row');
+    nameElement.innerText = user['name'];
+    nameElement.style.fontSize = 'min(1.7vw, 16px)';
+    nameElement.style.paddingRight = '1%';
+    nameElement.style.margin = '0';
+    
+    const usernameElement = document.createElement('span');
+    usernameElement.classList.add('row');
+    usernameElement.innerText = '(' + user['username'] + ')';
+    usernameElement.style.fontSize = 'min(1.2vw, 12px)';
+    usernameElement.style.margin = '0';
+
+    nameContainer.appendChild(nameElement);
+    nameContainer.appendChild(usernameElement);
+
+    const imageContainer = document.createElement('div');
+    imageContainer.classList.add('col', 's2', 'valign-wrapper');
+    imageContainer.style.margin = '0';
+    imageContainer.style.padding = '0';
+    const image = document.createElement('img');
+    image.src = user['profilePic'] !== undefined ? user['profilePic'] : '/images/profile-pic.png';
+    image.classList.add('center-align', 'circle', 'responsive-img');
+    imageContainer.appendChild(image);
+
+    
+    newElement.appendChild(imageContainer);
+    newElement.appendChild(nameContainer);
+
+    return newElement;
 }
 
-async function getVisitorName(visitorId) {
+async function getVisitorInfo(visitorId) {
     const userSnapshot = await database.ref('users/' + visitorId).once('value');
     if (userSnapshot.val() === null) {
         alert('No visitor found with the id provided!');
     }
-    return userSnapshot.val()['name'];
+    return userSnapshot.val();
 }
 
-async function getVisitors(placeId) {
+async function getVisitors(placeId, date) {
     let visitors = [];
-    const placeSnapshot = await database.ref('places/' + placeId).once('value');
-    if (placeSnapshot.val() !== null) {
-        for (const userId in placeSnapshot.val().visitors) {
-            visitors.push(userId);
-        }
+    const visitorsSnapshot = await database.ref('places/' + placeId + '/' + date).once('value');
+    if (visitorsSnapshot.val() !== null) {
+        visitorsSnapshot.forEach((userSnapshot) => {
+            visitors.push(userSnapshot.key);
+        });
     }
     return visitors;
 }
