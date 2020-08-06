@@ -42,17 +42,18 @@ import java.util.stream.Collectors;
 public class SendEmailServlet extends HttpServlet {
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        BufferedReader br = request.getReader();
+        BufferedReader requestBufferedReader = request.getReader();
         String userEmail = request.getParameterMap().get("email")[0];
         String listName = request.getParameterMap().get("listName")[0];
         String itineraryContent = "";
 
-        if (br != null) {
-            itineraryContent =  br.lines().collect(Collectors.joining("\n"));
+        if (requestBufferedReader != null) {
+            itineraryContent =  requestBufferedReader.lines().collect(Collectors.joining("\n"));
             Properties props = new Properties();
             Session session = Session.getDefaultInstance(props, null);
             
             try {
+                // TODO: make an official email for Planet
                 Message message = new MimeMessage(session);
                 message.setFrom(new InternetAddress("alicexyz@google.com", "Alice Zhou"));
                 message.addRecipient(Message.RecipientType.TO,
