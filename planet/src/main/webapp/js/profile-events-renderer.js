@@ -126,7 +126,7 @@ function createEvent(name, address, duration, eventId) {
     eventElement.classList.add('card');
     eventElement.style.backgroundColor = 'lightcyan';
 
-    const visitorsIcon = createPeopleIcon();
+    const visitorsIcon = createPeopleIcon(eventId);
     eventElement.appendChild(visitorsIcon);
 
     const eventName = document.createElement('h4');
@@ -169,7 +169,7 @@ function createEvent(name, address, duration, eventId) {
     return eventElement;
 }
 
-function createPeopleIcon() {
+function createPeopleIcon(eventId) {
     const visitorsIcon = document.createElement('i');
     visitorsIcon.classList.add('material-icons', 'row');
     visitorsIcon.id = 'event-' + eventId;
@@ -189,7 +189,7 @@ function createPeopleIcon() {
 function renderDateInput(eventId, date) {
     const dateContainer = document.getElementById('date-container');
     dateContainer.innerHTML = '';
-    dateContainer.appendChild(createDateInput(event.target.id, listDate));
+    dateContainer.appendChild(createDateInput(eventId, date));
 }
 
 async function renderVisitorsList(eventId, date) {
@@ -228,40 +228,42 @@ function createDateInput(eventId, initialValue) {
 }
 
 function createListElement(user) {
+    // Create a new list elemet
     const newElement = document.createElement('li');
     newElement.classList.add('row', 'result-element', 'valign-wrapper');
     newElement.style.margin = '0';
     newElement.style.marginTop = '0.5%';
-
+    // Create the name and username container element
     const nameContainer = document.createElement('div');
     nameContainer.classList.add('col', 's5');
     nameContainer.style.margin = '0';
-
+    // Create the name element
     const nameElement = document.createElement('span');
     nameElement.classList.add('row');
     nameElement.innerText = user['name'];
     nameElement.style.fontSize = 'min(1.7vw, 16px)';
     nameElement.style.paddingRight = '1%';
     nameElement.style.margin = '0';
-    
+    // Create the username element
     const usernameElement = document.createElement('span');
     usernameElement.classList.add('row');
     usernameElement.innerText = '(' + user['username'] + ')';
     usernameElement.style.fontSize = 'min(1.2vw, 12px)';
     usernameElement.style.margin = '0';
-
+    // Add the name and the username to the name container
     nameContainer.appendChild(nameElement);
     nameContainer.appendChild(usernameElement);
-
+    // Create an image container
     const imageContainer = document.createElement('div');
     imageContainer.classList.add('col', 's2', 'valign-wrapper');
     imageContainer.style.margin = '0';
     imageContainer.style.padding = '0';
+    // Create the image element
     const image = document.createElement('img');
     image.src = user['profilePic'] !== undefined ? user['profilePic'] : '/images/profile-pic.png';
     image.classList.add('center-align', 'circle', 'responsive-img');
     imageContainer.appendChild(image);
-
+    // Add the image and the username elements to the list elenent
     newElement.appendChild(imageContainer);
     newElement.appendChild(nameContainer);
 
