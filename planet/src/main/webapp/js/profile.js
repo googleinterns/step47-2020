@@ -112,7 +112,7 @@ async function loadUserInformation(username, blobKey) {
         }
         // If the blobkey exists, get the image url and store in the database
         if (blobKey !== 'null') {
-            let picture = await fetch('/serve?blob-key=' + blobKey);
+            let picture = await fetch('/serve-file?blob-key=' + blobKey);
             database.ref('/users/' + userId).update({
                 profilePic: picture.url
             })
