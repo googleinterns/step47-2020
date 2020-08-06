@@ -68,7 +68,10 @@
             </div>
         </div>
         <div id="reset-pwd-modal" class="modal" style="padding-bottom: 1vh;">Hello</div>
-        <div id="list-visitors" class="modal" style="padding: 1vh; width: 35%">Hello</div>
+        <div id="list-visitors" class="modal" style="padding: 1vh; width: 35%">
+            <div id="date-container" class="row center-align" style="margin: 0;"></div>
+            <div id="list-visitors-container"></div>
+        </div>
         <div id="account-created-modal" class="modal" style="padding-bottom: 1vh;">Hello</div>
     </div>
     <!-- Compiled and minified JavaScript -->
