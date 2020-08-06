@@ -14,15 +14,13 @@
 
 package com.google.planet.data;
 
-import java.util.List;
-import java.util.Arrays;
+public enum ItineraryOrder {
+    OPTIMIZED (true),
+    UNOPTIMIZED (false);
 
-public final class Itinerary {
-    public final List<ItineraryItem> itineraryItems; 
-    public final String errorMessage;
+    public final boolean value;
 
-    public Itinerary(List<ItineraryItem> itineraryItems, String errorMessage) {
-        this.itineraryItems = itineraryItems;
-        this.errorMessage = errorMessage;
+    private ItineraryOrder(boolean value) {
+      this.value = value;
     }
 }

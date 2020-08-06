@@ -39,6 +39,7 @@ document.addEventListener('DOMContentLoaded', function() {
     loadElement('/signup.html', 'sign-up-modal');
     loadElement('/resetpwd.html', 'reset-pwd-modal');
     loadElement('/uploadpic.html', 'upload-picture-modal');
+    loadElement('/navbar.html', 'nav-bar');
     database = firebase.database();
     currentUser = firebase.auth().currentUser;
     firebase.auth().onAuthStateChanged(checkUserSignIn);

@@ -89,11 +89,16 @@
                  <div id="save-events-form" class="save-events-form">
                     <p id="save-events-label"> Save the list as: 
                         <input type="text" name="save-events-name" id="save-events-name" placeholder="list1"></input></p>
+                    <p id="save-events-label"> 
+                        <input type="date" name="save-events-date" id="save-events-date"></p>
                     <button class="btn waves-effect waves-light" onclick="saveEvents();"><i class="material-icons">cloud_done</i></button>
                     <button class="btn waves-effect waves-light" onclick="closeSaveEventsForm();"><i class="material-icons">highlight_off</i></button></br>
                 </div>
-                <button class="btn waves-effect waves-light" onclick="generateItinerary()">generage itnerary</button>
-
+                <select id="itinerary-selection" class="browser-default btn waves-effect waves-light" onchange="handleItinerarySelectionChange();">
+                    <option id="default-itinerary-selection" value="" disabled selected>generage itnerary</option>
+                    <option value="true">generate optimized itinerary</option>
+                    <option value="false">generate itinerary in order</option>
+                </select>
             </br></br>
             <h4> Step 3: See your itinerary here </h4>
             </div>

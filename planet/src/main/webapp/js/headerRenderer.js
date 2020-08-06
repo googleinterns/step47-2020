@@ -20,7 +20,7 @@ export const HeaderRenderer = {
         renderPicture(profilePic);
         if (currentUser !== null && userId === currentUser.uid) {
             addEditButton();
-            addEditProfilePictureIcon(username);
+            addEditProfilePictureIcon(username, profilePic);
         }
     },
 }
@@ -70,11 +70,14 @@ function renderPicture(url) {
     document.getElementById('profile-pic').src = '/images/profile-pic.png';
 }
 
-function addEditProfilePictureIcon(username) {
+function addEditProfilePictureIcon(username, profilePic) {
     const profilePictureElement = document.getElementById('profile-pic-container');
     profilePictureElement.style.cursor = 'pointer';
     // Open the update profile dialog when the user clicks on the profile picture
     profilePictureElement.addEventListener('click', () => {
+        if (profilePic) {
+            document.getElementById('image-display').src = profilePic;
+        }
         openModal('upload-picture-modal');
         fetch('/blobstore-upload-url?username=' + username)
         .then((response) => {
@@ -93,7 +96,7 @@ function addEditProfilePictureIcon(username) {
         iconContainer.style.width = '23%';
         const editIcon = document.createElement('i');
         editIcon.classList.add('material-icons');
-        editIcon.style.fontSize = '3vw';
+        editIcon.style.fontSize = 'min(3vw, 32px)';
         editIcon.innerHTML = 'photo_camera';
         iconContainer.appendChild(editIcon);
         document.getElementById('profile-pic-container').appendChild(iconContainer);
