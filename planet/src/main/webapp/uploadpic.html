@@ -1,7 +1,7 @@
 <br>
 <span class="close-icon"><i class="small material-icons" onclick="closeModal('upload-picture-modal')">close</i></span>
 <br>
-<form id="upload-pic-form" class="center-align container">
+<form id="upload-pic-form" class="center-align container" method="post" enctype="multipart/form-data">
     <h3 class="form-text" style="font-size: min(2vw, 24px);">Update Profile Picture</h3>
     <hr>
     <div class="center-align" style="padding: 2%; border: 1px solid black">
@@ -22,7 +22,7 @@
         </div>
         <div class="input-field col s4">
             <button class="btn sign-in-button waves-effect waves-light" type="button"
-                style="background-color: #4CAF50;">Confirm</button>
+                style="background-color: #4CAF50;" onclick="updateProfilePicture()">Confirm</button>
         </div>
     </div>
 </form>

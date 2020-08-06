@@ -20,6 +20,7 @@ window.loadUserInformation = loadUserInformation;
 window.switchSection = switchSection;
 window.updateImage = updateImage;
 window.resetProfilePicture = resetProfilePicture;
+window.updateProfilePicture = updateProfilePicture;
 
 const VALID_FILE_TYPES = [
     "image/apng",
@@ -102,22 +103,23 @@ function switchSection(linkId, sectionId) {
     diplaySection(sectionId);
 }
 
-async function loadUserInformation(username) {
+async function loadUserInformation(username, blobKey) {
     const usersReference = database.ref('/users');
     const userSnapshot = await usersReference.orderByChild('username').equalTo(username).once('value');
-    if (userSnapshot.val() === null) {
-        document.getElementById('profile-page').remove();
-        document.getElementById('not-found-message').style.display = 'block';
-        return;
-    }
     if (userSnapshot.val() !== null) {
         // The userSnapshot.val() contains one property (user)
         for (const property in userSnapshot.val()) {
             userId = property;
             user = userSnapshot.val()[property];
         }
-    
-        if (user['emailVerified']) {
+        // If the blobkey exists, get the image url and store in the database
+        if (blobKey !== 'null') {
+            let picture = await fetch('/serve-file?blob-key=' + blobKey);
+            database.ref('/users/' + userId).update({
+                profilePic: picture.url
+            });
+            return;
+        } else if (user['emailVerified']) {
             document.getElementById('not-found-message').remove();
             document.getElementById('profile-page').style.display = 'block';
             HeaderRenderer.init(
@@ -125,7 +127,8 @@ async function loadUserInformation(username) {
                 user['name'],
                 user['location'],
                 user['bio'],
-                user['profilePic']
+                user['profilePic'],
+                user['username']
             );
             AboutSectionRenderer.init(
                 user['work'],
@@ -161,4 +164,8 @@ function resetProfilePicture() {
         user['profilePic'] !== undefined ?
         user['profilePic'] : 
         '/images/profile-pic.png';
+}
+
+function updateProfilePicture() {
+    document.getElementById('upload-pic-form').submit();
 }

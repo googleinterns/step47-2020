@@ -16,7 +16,7 @@ let currentUser;
 const database = firebase.database();
 
 export const HeaderRenderer = {
-    init: (userId, displayName, location, bio, profilePic) => {
+    init: (userId, displayName, location, bio, profilePic, username) => {
         currentUser = firebase.auth().currentUser;
         renderName(displayName);
         renderLocation(location, userId);
@@ -24,7 +24,7 @@ export const HeaderRenderer = {
         renderPicture(profilePic);
         if (currentUser !== null && userId === currentUser.uid) {
             addEditButton();
-            addEditProfilePictureIcon(profilePic);
+            addEditProfilePictureIcon(username, profilePic);
         }
     },
 }
@@ -74,7 +74,7 @@ function renderPicture(url) {
     document.getElementById('profile-pic').src = '/images/profile-pic.png';
 }
 
-function addEditProfilePictureIcon(profilePic) {
+function addEditProfilePictureIcon(username, profilePic) {
     const profilePictureElement = document.getElementById('profile-pic-container');
     profilePictureElement.style.cursor = 'pointer';
     // Open the update profile dialog when the user clicks on the profile picture
@@ -83,6 +83,13 @@ function addEditProfilePictureIcon(profilePic) {
             document.getElementById('image-display').src = profilePic;
         }
         openModal('upload-picture-modal');
+        fetch('/blobstore-upload-url?username=' + username)
+        .then((response) => {
+            return response.text();
+        })
+        .then((fileUrl) => {
+            document.getElementById('upload-pic-form').action = fileUrl;
+        });
     });
     // Display the photo camera icon when the mouse enters the profile picture
     profilePictureElement.addEventListener('mouseenter', (event) => {
