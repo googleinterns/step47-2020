@@ -137,7 +137,7 @@ function createEvent(name, address, duration, eventId) {
         const modalElement = document.getElementById('list-visitors');
         const dateContainer = document.getElementById('date-container');
         dateContainer.innerHTML = '';
-        dateContainer.appendChild(createDateInput(listDate));
+        dateContainer.appendChild(createDateInput(event.target.id, listDate));
         renderVisitorsList(event.target.id, listDate);
         M.Modal.getInstance(modalElement).open();
     });
@@ -205,13 +205,16 @@ async function renderVisitorsList(eventId, date) {
     }
 }
 
-function createDateInput(initialValue) {
+function createDateInput(eventId, initialValue) {
     const dateElement = document.createElement('input');
     dateElement.value = initialValue;
     dateElement.type = 'date';
     dateElement.style.width = 'auto';
     dateElement.style.margin = '0';
     dateElement.style.borderBottom = 'white';
+    dateElement.addEventListener('change', () => {
+        renderVisitorsList(eventId, dateElement.value);
+    });
     return dateElement;
 }
 
@@ -266,6 +269,9 @@ async function getVisitorInfo(visitorId) {
 
 async function getVisitors(placeId, date) {
     let visitors = [];
+    if (date === '') {
+        return visitors;
+    }
     const visitorsSnapshot = await database.ref('places/' + placeId + '/' + date).once('value');
     if (visitorsSnapshot.val() !== null) {
         visitorsSnapshot.forEach((userSnapshot) => {
