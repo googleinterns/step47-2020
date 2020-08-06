@@ -69,6 +69,7 @@ function getListFromSnapshot(index, snapshot) {
 function getListFromObject(object) {
     let list = [];
     for (const property in object) {
+        // Within the list of events, we have the date property
         if (property !== 'date') {
             object[property].id = property;
             list.push(object[property]);
@@ -126,7 +127,7 @@ function createEvent(name, address, duration, eventId) {
     eventElement.classList.add('card');
     eventElement.style.backgroundColor = 'lightcyan';
 
-    const visitorsIcon = createPeopleIcon(eventId);
+    const visitorsIcon = createVisitorsIcon(eventId);
     eventElement.appendChild(visitorsIcon);
 
     const eventName = document.createElement('h4');
@@ -169,7 +170,7 @@ function createEvent(name, address, duration, eventId) {
     return eventElement;
 }
 
-function createPeopleIcon(eventId) {
+function createVisitorsIcon(eventId) {
     const visitorsIcon = document.createElement('i');
     visitorsIcon.classList.add('material-icons', 'row');
     visitorsIcon.id = 'event-' + eventId;
