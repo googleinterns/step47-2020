@@ -88,7 +88,6 @@ public class SendEmailServlet extends HttpServlet {
             } 
         } else {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            response.getWriter().println("");
         }
     }
 }
