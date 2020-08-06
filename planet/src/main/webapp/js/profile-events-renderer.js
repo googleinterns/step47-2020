@@ -126,9 +126,12 @@ function createEvent(name, address, duration, eventId) {
     const eventElement = document.createElement('div');
     eventElement.classList.add('card');
     eventElement.style.backgroundColor = 'lightcyan';
-
-    const visitorsIcon = createVisitorsIcon(eventId);
-    eventElement.appendChild(visitorsIcon);
+    // Check if the user is the currentUser
+    if (firebase.auth().currentUser &&
+        firebase.auth().currentUser.uid === userId) { 
+        const visitorsIcon = createVisitorsIcon(eventId);
+        eventElement.appendChild(visitorsIcon);
+    }
 
     const eventName = document.createElement('h4');
     eventName.classList.add('row');
