@@ -8,10 +8,11 @@
 <head>
     <!-- Include the firebase and local JS files -->  
     <script src="https://www.gstatic.com/firebasejs/4.1.3/firebase.js"></script> 
-    <script src="/js/authentication.js"></script>
+    <script type="module" src="/js/firebase-config.js"></script>
+    <script type="module" src="/js/authentication.js"></script>
     <script type="module" src="/js/headerRenderer.js"></script>
     <script type="module" src="/js/profile-events-renderer.js"></script>
-    <script type="module" src="/js/aboutSectionRenderer.js"></script>
+    <script type="module" src="/js/about-section-renderer.js"></script>
     <script type="module" src="/js/profile.js"></script>
     <link href='//fonts.googleapis.com/css?family=Marmelad' rel='stylesheet' type='text/css'>
     <!-- Compiled and minified CSS -->
@@ -19,6 +20,7 @@
     <!--Import Google Icon Font-->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" href="/css/profile.css">
+    <link rel="stylesheet" href="/css/navbar.css">
     <link rel="stylesheet" href="/css/signup.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta charset="UTF-8">
@@ -26,6 +28,7 @@
 </head>
 
 <body onload="loadUserInformation('<%= username %>', '<%= blobKey %>')">
+    <nav id="nav-bar"></nav>
     <div id="not-found-message" style="display: none; font-size: 30px; font-family: initial;">
         Profile Not Found
     </div>
@@ -69,6 +72,8 @@
             <div id="events-section" style="display: none;">
             </div>
         </div>
+        <div id="sign-in-modal" class="modal" style="padding-bottom: 1vh;">Hello</div>
+        <div id="sign-up-modal" class="modal" style="padding-bottom: 1vh;">Hello</div>
         <div id="reset-pwd-modal" class="modal" style="padding-bottom: 1vh;">Hello</div>
         <div id="list-visitors" class="modal" style="padding: 1vh;">Hello</div>
         <div id="account-created-modal" class="modal" style="padding-bottom: 1vh;">Hello</div>

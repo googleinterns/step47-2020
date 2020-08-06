@@ -23,7 +23,7 @@ let promises = [];
 let bounds;
 let count = 0;
 let places;
-const TORONTO_COORDINATES = {lat:43.6532, lng:-79.3832}; 
+const TORONTO_COORDINATES = {lat:43.6532, lng:-79.3832};
 
 /** Initializes Map, implements search box and marks locations of searches */
 function initMap() {
@@ -351,9 +351,9 @@ function createParagraphElement(content){
 /** Create and add save icon */
 function createIcon(placeID) {
     let icon = document.createElement('i');
-
+    let currentUser = firebase.auth().currentUser;
     if (currentUser) {
-        database.ref('users/' + currentUser.uid +'/places').child(placeID).once('value').then(function(snapshot) {
+        firebase.database().ref('users/' + currentUser.uid +'/places').child(placeID).once('value').then(function(snapshot) {
             // Places exist in the database if and only if they've previously been favourited by the user
             let exists = snapshot.exists();
             if (exists) {
@@ -378,7 +378,7 @@ function createIcon(placeID) {
 /** Toggle save icon on click */
 function savePlace(x) {
     let placeID = $(x).attr('name');
-    let userID = currentUser.uid; 
+    let userID = firebase.auth().currentUser.uid; 
     if(x.innerHTML === "favorite_border") {
         // Set as saved
         x.innerHTML = "favorite";
@@ -398,12 +398,12 @@ function updateDatabase(placeID, userID) {
     const time = -date.getTime();
 
     // Add placeID to current userID in user tree with negative timestamp
-    database.ref('users/' + userID +'/places').child(placeID).set(time);
+    firebase.database().ref('users/' + userID +'/places').child(placeID).set(time);
 }
 
 /** Delete placeID from current user when place is unsaved by user */
 function deletePlace(placeID, userID) {
-    database.ref('users/' + userID + '/places').child(placeID).remove();
+    firebase.database().ref('users/' + userID + '/places').child(placeID).remove();
 }
 
 /** Create toast alert when user saves place when not signed in */
