@@ -126,22 +126,8 @@ function createEvent(name, address, duration, eventId) {
     eventElement.classList.add('card');
     eventElement.style.backgroundColor = 'lightcyan';
 
-    const usersIcon = document.createElement('i');
-    usersIcon.classList.add('material-icons', 'row');
-    usersIcon.id = 'event-' + eventId;
-    usersIcon.style.position = 'absolute';
-    usersIcon.style.right = '1%';
-    usersIcon.innerText = 'people';
-    usersIcon.title = 'People who visited the place';
-    usersIcon.addEventListener('click', function() {
-        const modalElement = document.getElementById('list-visitors');
-        const dateContainer = document.getElementById('date-container');
-        dateContainer.innerHTML = '';
-        dateContainer.appendChild(createDateInput(event.target.id, listDate));
-        renderVisitorsList(event.target.id, listDate);
-        M.Modal.getInstance(modalElement).open();
-    });
-    eventElement.appendChild(usersIcon);
+    const visitorsIcon = createPeopleIcon();
+    eventElement.appendChild(visitorsIcon);
 
     const eventName = document.createElement('h4');
     eventName.classList.add('row');
@@ -181,6 +167,29 @@ function createEvent(name, address, duration, eventId) {
     durationElement.appendChild(durationText);
     eventElement.appendChild(durationElement);
     return eventElement;
+}
+
+function createPeopleIcon() {
+    const visitorsIcon = document.createElement('i');
+    visitorsIcon.classList.add('material-icons', 'row');
+    visitorsIcon.id = 'event-' + eventId;
+    visitorsIcon.style.position = 'absolute';
+    visitorsIcon.style.right = '1%';
+    visitorsIcon.innerText = 'people';
+    visitorsIcon.title = 'People who visited the place';
+    visitorsIcon.addEventListener('click', function() {
+        const modalElement = document.getElementById('list-visitors');
+        renderDateInput(event.target.id, listDate);
+        renderVisitorsList(event.target.id, listDate);
+        M.Modal.getInstance(modalElement).open();
+    });
+    return visitorsIcon;
+}
+
+function renderDateInput(eventId, date) {
+    const dateContainer = document.getElementById('date-container');
+    dateContainer.innerHTML = '';
+    dateContainer.appendChild(createDateInput(event.target.id, listDate));
 }
 
 async function renderVisitorsList(eventId, date) {
