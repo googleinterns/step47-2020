@@ -15,6 +15,7 @@
 package com.google.planet.servlets;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.Properties;
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -63,8 +64,11 @@ public class SendEmailServlet extends HttpServlet {
             MimeBodyPart attachment = new MimeBodyPart();
             String itinerary = "your itinerary";
             InputStream attachmentDataStream = new ByteArrayInputStream(itinerary.getBytes("UTF-16"));
-            attachment.setFileName("itinerary.pdf");
-            attachment.setContent(attachmentDataStream, "application/pdf");
+            attachment.setContent(attachmentDataStream, "text/plain");
+            Date date= new Date();
+            long time = date.getTime();
+            String fileName = "itinerary" + (Long.toString(time)) +".txt";
+            attachment.setFileName(fileName);
             multipartContent.addBodyPart(attachment);
 
             message.setContent(multipartContent);
