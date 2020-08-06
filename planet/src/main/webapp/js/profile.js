@@ -115,9 +115,6 @@ async function loadUserInformation(username, blobKey) {
             let picture = await fetch('/serve-file?blob-key=' + blobKey);
             database.ref('/users/' + userId).update({
                 profilePic: picture.url
-            })
-            .then(() => {
-                window.location.href = '/user/' + username;
             });
             return;
         } else if (user['emailVerified']) {
