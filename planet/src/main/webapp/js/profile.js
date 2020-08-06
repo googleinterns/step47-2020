@@ -34,6 +34,8 @@ const VALID_FILE_TYPES = [
     "image/x-icon"
 ];
 
+// Declare global constantes and variables
+const database = firebase.database();
 let user;
 let userId;
 

@@ -12,46 +12,48 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import {firebaseConfig} from './firebase-config.js';
 
-// Declare global constantes and variables
-const firebaseConfig = {
-    apiKey: 'AIzaSyCAZ83Nbjr6HIgz7BHM2cAG7ktLyPp2mVk',
-    authDomain: 'ndabouz-step-2020-2.firebaseapp.com',
-    databaseURL: 'https://ndabouz-step-2020-2.firebaseio.com',
-    projectId: 'ndabouz-step-2020-2',
-    storageBucket: 'ndabouz-step-2020-2.appspot.com',
-    messagingSenderId: '966794754966',
-    appId: '1:966794754966:web:e2f42bafdd3c5ec2c77bb7',
-    measurementId: 'G-9W48MVBXLE'
-};
-let currentUser;
-let database;
+window.signUp = signUp;
+window.signIn = signIn;
+window.signOut = signOut;
+window.signInWithGoogle = signInWithGoogle;
+window.signInWithFacebook = signInWithFacebook;
+window.signInWithGithub = signInWithGithub;
+window.onForgotPassword = onForgotPassword;
+window.resetPassword = resetPassword;
+window.openProfile = openProfile;
+window.closeModal = closeModal;
+window.openModal = openModal;
 
 // Initialize the Firebase Application
 firebase.initializeApp(firebaseConfig);
+// Declare global constantes and variables
+const database = firebase.database();
+let currentUser = firebase.auth().currentUser;
 
 document.addEventListener('DOMContentLoaded', function() {
-    const elements = document.querySelectorAll('.modal');
-    M.Modal.init(elements, {
-        opacity: 0.7
+    loadElement('/navbar.html', 'nav-bar', () => {
+        firebase.auth().onAuthStateChanged(checkUserSignIn);
     });
     loadElement('/signin.html', 'sign-in-modal');
     loadElement('/signup.html', 'sign-up-modal');
     loadElement('/resetpwd.html', 'reset-pwd-modal');
     loadElement('/uploadpic.html', 'upload-picture-modal');
-    loadElement('/navbar.html', 'nav-bar');
-    database = firebase.database();
-    currentUser = firebase.auth().currentUser;
-    firebase.auth().onAuthStateChanged(checkUserSignIn);
+    const elements = document.querySelectorAll('.modal');
+    M.Modal.init(elements, {
+        opacity: 0.7
+    });
 });
 
 function checkUserSignIn() {
     currentUser = firebase.auth().currentUser;
     if (currentUser !== null && currentUser.emailVerified) {
         document.getElementById('profile-button').innerText = currentUser.displayName;
-        document.getElementById('profile-button').style.display = 'block';
-        document.getElementById('sign-out-button').style.display = 'block';
-        document.getElementById('sign-in-button').style.display = 'none';
+        setStylingElement('display', 'block', 'profile-button');
+        setStylingElement('display', 'block', 'sign-out-button');
+        setStylingElement('display', 'block', 'search-bar-container');
+        setStylingElement('display', 'none', 'sign-in-button');
         // Set the emailVerified property to true
         database.ref('users/' + currentUser.uid).once('value', (userSnapshot) => {
             if (userSnapshot.exists()) {
@@ -62,9 +64,17 @@ function checkUserSignIn() {
         });
 
     } else {
-        document.getElementById('profile-button').style.display = 'none';
-        document.getElementById('sign-out-button').style.display = 'none';
-        document.getElementById('sign-in-button').style.display = 'block';
+        setStylingElement('display', 'none', 'profile-button');
+        setStylingElement('display', 'none', 'sign-out-button');
+        setStylingElement('display', 'none', 'search-bar-container');
+        setStylingElement('display', 'block', 'sign-in-button');
+    }
+}
+
+function setStylingElement(property, value, elementId) {
+    const element = document.getElementById(elementId);
+    if (element) {
+        element.style[property] = value;
     }
 }
 
@@ -205,6 +215,7 @@ function signIn() {
             return;
         };
         closeModal('sign-in-modal');
+        window.location.reload();
     }).catch(function(error) {
         // Handle Errors here.
         console.log(error);
@@ -226,6 +237,7 @@ function signIn() {
 
 function signOut() {
     firebase.auth().signOut().then(checkUserSignIn);
+    window.location.reload();
 }
 
 function signInWithGoogle() {
@@ -256,6 +268,7 @@ function signInWithProvider(provider) {
                     currentUser.emailVerified);
             }
             closeModal('sign-in-modal');
+            window.location.reload();
         });
     }).catch(function(error) {
         const errorCode = error.code;
@@ -331,15 +344,21 @@ function openModal(modalElement) {
     M.Modal.getInstance(modal).open();
 }
 
-function loadElement(href, elementId) {
+function loadElement(href, elementId, hanlder = () => {return;}) {
     const element = document.getElementById(elementId);
     if (element === null) {
+        hanlder();
         return;
     }
     const xmlhttp = new XMLHttpRequest();
-    xmlhttp.open("GET", href, false);
+    xmlhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+          element.innerHTML = xmlhttp.responseText;
+          hanlder();
+        }
+    };
+    xmlhttp.open("GET", href, true);
     xmlhttp.send();
-    element.innerHTML = xmlhttp.responseText;
 }
 
 function openProfile() {
