@@ -133,8 +133,13 @@ function createEvent(name, address, duration, eventId) {
     usersIcon.style.right = '1%';
     usersIcon.innerText = 'people';
     usersIcon.title = 'People who visited the place';
-    usersIcon.addEventListener('click', function() { 
-        renderVisitorsList(event.target.id);
+    usersIcon.addEventListener('click', function() {
+        const modalElement = document.getElementById('list-visitors');
+        const dateContainer = document.getElementById('date-container');
+        dateContainer.innerHTML = '';
+        dateContainer.appendChild(createDateInput(listDate));
+        renderVisitorsList(event.target.id, listDate);
+        M.Modal.getInstance(modalElement).open();
     });
     eventElement.appendChild(usersIcon);
 
@@ -178,14 +183,17 @@ function createEvent(name, address, duration, eventId) {
     return eventElement;
 }
 
-async function renderVisitorsList(eventId) {
+async function renderVisitorsList(eventId, date) {
     const placeId = eventId.slice(6, eventId.length);
-    const visitors = await getVisitors(placeId, listDate);
-    const modalElement = document.getElementById('list-visitors');
-    modalElement.innerHTML = '';
+    const visitors = await getVisitors(placeId, date);
+    const listElement = document.getElementById('list-visitors-container');
+    listElement.innerHTML = '';
     if (visitors.length !== 0) {
         for (const visitorId of visitors) {
-            modalElement.appendChild(createListElement(
+            const dividerElement = document.createElement('div');
+            dividerElement.classList.add('divider');
+            listElement.appendChild(dividerElement);
+            listElement.appendChild(createListElement(
                 await getVisitorInfo(visitorId)
             ));
         }
@@ -193,9 +201,18 @@ async function renderVisitorsList(eventId) {
         const noVisitorsElement = document.createElement('p');
         noVisitorsElement.style.textAlign = 'center';
         noVisitorsElement.innerText = 'No one has ever visited this place! Be the first one';
-        modalElement.appendChild(noVisitorsElement);
+        listElement.appendChild(noVisitorsElement);
     }
-    M.Modal.getInstance(modalElement).open();
+}
+
+function createDateInput(initialValue) {
+    const dateElement = document.createElement('input');
+    dateElement.value = initialValue;
+    dateElement.type = 'date';
+    dateElement.style.width = 'auto';
+    dateElement.style.margin = '0';
+    dateElement.style.borderBottom = 'white';
+    return dateElement;
 }
 
 function createListElement(user) {
@@ -233,7 +250,6 @@ function createListElement(user) {
     image.classList.add('center-align', 'circle', 'responsive-img');
     imageContainer.appendChild(image);
 
-    
     newElement.appendChild(imageContainer);
     newElement.appendChild(nameContainer);
 
