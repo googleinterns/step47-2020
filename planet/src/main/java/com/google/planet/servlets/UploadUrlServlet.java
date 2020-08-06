@@ -33,6 +33,7 @@ public class UploadUrlServlet extends HttpServlet {
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String username = request.getParameter("username");
         BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
+        // Get the url that gets called after the upload is complete
         String uploadUrl = blobstoreService.createUploadUrl("/upload-file?username=" + username);
 
         response.setContentType("text/html");
