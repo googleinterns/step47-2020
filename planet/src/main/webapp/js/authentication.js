@@ -25,6 +25,7 @@ window.resetPassword = resetPassword;
 window.openProfile = openProfile;
 window.closeModal = closeModal;
 window.openModal = openModal;
+window.resetForm = resetForm;
 
 // Initialize the Firebase Application
 firebase.initializeApp(firebaseConfig);
