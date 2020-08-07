@@ -59,25 +59,25 @@ function getListFromSnapshot(index, snapshot) {
     for (const listId in snapshot.val()) {
         if (counter === index) {
             listName = listId;
-            return getListFromObject(snapshot.val()[listId]);
+            return getListOfEvents(snapshot.val()[listId]);
         }
         counter++;
     }
     return [];
 }
 
-function getListFromObject(object) {
-    let list = [];
-    for (const property in object) {
+function getListOfEvents(listSnapshot) {
+    let eventsList = [];
+    for (const eventId in listSnapshot) {
         // Within the list of events, we have the date property
-        if (property !== 'date') {
-            object[property].id = property;
-            list.push(object[property]);
+        if (eventId !== 'date') {
+            listSnapshot[eventId].id = eventId;
+            eventsList.push(listSnapshot[eventId]);
         } else {
-            listDate = object[property];
+            listDate = listSnapshot[eventId];
         }
     }
-    return list;
+    return eventsList;
 }
 
 function renderList(events, name, date) {
