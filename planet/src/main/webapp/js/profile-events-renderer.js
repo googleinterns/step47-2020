@@ -17,6 +17,7 @@ let userId;
 let listIndex = 0;
 let eventsList = [];
 let listName = 'List X';
+let listDate = '08-07-2020';
 
 export const ProfileEventsRenderer = { 
     renderListOfEvents: async (uid) => {
@@ -28,7 +29,7 @@ export const ProfileEventsRenderer = {
             return;
         }
         renderSlideButton('keyboard_arrow_left');
-        renderList(eventsList, listName);
+        renderList(eventsList, listName, listDate);
         renderSlideButton('keyboard_arrow_right');
     }
 }
@@ -59,23 +60,28 @@ function getListFromSnapshot(index, snapshot) {
     for (const listId in snapshot.val()) {
         if (counter === index) {
             listName = listId;
-            return getListFromObject(snapshot.val()[listId]);
+            return getListOfEvents(snapshot.val()[listId]);
         }
         counter++;
     }
     return [];
 }
 
-function getListFromObject(object) {
-    let list = [];
-    for (const property in object) {
-        object[property].id = property;
-        list.push(object[property]);
+function getListOfEvents(listSnapshot) {
+    let eventsList = [];
+    for (const eventId in listSnapshot) {
+        // Within the list of events, we have the date property
+        if (eventId !== 'date') {
+            listSnapshot[eventId].id = eventId;
+            eventsList.push(listSnapshot[eventId]);
+        } else {
+            listDate = listSnapshot[eventId];
+        }
     }
-    return list;
+    return eventsList;
 }
 
-function renderList(events, name) {
+function renderList(events, name, date) {
     const eventsSection = document.getElementById('events-section');
     eventsSection.style.paddingTop = '2%';
     let eventsListElement = document.getElementById('events-list');
@@ -88,32 +94,45 @@ function renderList(events, name) {
     eventsListElement.innerHTML = '';
     eventsListElement.style.display = 'table-cell';
     eventsListElement.style.width = '95%';
-    const listName = document.createElement('h3');
-    listName.style.textAlign = 'center';
-    listName.classList.add('row');
-    listName.innerHTML = name;
-    eventsListElement.appendChild(listName);
+    
+    eventsListElement.appendChild(createListNameElement(name));
+    eventsListElement.appendChild(createListDateElement(date));
     for (const event of events) {
         eventsListElement.appendChild(createEvent(event.name, event.address, event.duration, event.id));
     }
+}
+
+function createListNameElement(name) {
+    const listName = document.createElement('h3');
+    listName.style.textAlign = 'center';
+    listName.style.marginBottom = '0';
+    listName.classList.add('row');
+    listName.innerHTML = name;
+    return listName;
+}
+
+function createListDateElement(date) {
+    const listDate = document.createElement('div');
+    listDate.id = 'current-list-date';
+    listDate.style.textAlign = 'center';
+    listDate.style.width = 'fit-content';
+    listDate.classList.add('row', 'valign-wrapper');
+    listDate.innerHTML = 
+        '<i class="col small material-icons" style="padding: 0">date_range</i>' +
+        '<p>' + date + '</p>';
+    return listDate;
 }
 
 function createEvent(name, address, duration, eventId) {
     const eventElement = document.createElement('div');
     eventElement.classList.add('card');
     eventElement.style.backgroundColor = 'lightcyan';
-
-    const usersIcon = document.createElement('i');
-    usersIcon.classList.add('material-icons', 'row');
-    usersIcon.id = 'event-' + eventId;
-    usersIcon.style.position = 'absolute';
-    usersIcon.style.right = '1%';
-    usersIcon.innerText = 'people';
-    usersIcon.title = 'People who visited the place';
-    usersIcon.addEventListener('click', function() { 
-        renderVisitorsList(event.target.id);
-    });
-    eventElement.appendChild(usersIcon);
+    // Check if the user is the currentUser
+    if (firebase.auth().currentUser &&
+        firebase.auth().currentUser.uid === userId) { 
+        const visitorsIcon = createVisitorsIcon(eventId);
+        eventElement.appendChild(visitorsIcon);
+    }
 
     const eventName = document.createElement('h4');
     eventName.classList.add('row');
@@ -155,48 +174,125 @@ function createEvent(name, address, duration, eventId) {
     return eventElement;
 }
 
-async function renderVisitorsList(eventId) {
+function createVisitorsIcon(eventId) {
+    const visitorsIcon = document.createElement('i');
+    visitorsIcon.classList.add('material-icons', 'row');
+    visitorsIcon.id = 'event-' + eventId;
+    visitorsIcon.style.position = 'absolute';
+    visitorsIcon.style.right = '1%';
+    visitorsIcon.innerText = 'people';
+    visitorsIcon.title = 'People who visited the place';
+    visitorsIcon.addEventListener('click', function() {
+        const modalElement = document.getElementById('list-visitors');
+        renderDateInput(event.target.id, listDate);
+        renderVisitorsList(event.target.id, listDate);
+        M.Modal.getInstance(modalElement).open();
+    });
+    return visitorsIcon;
+}
+
+function renderDateInput(eventId, date) {
+    const dateContainer = document.getElementById('date-container');
+    dateContainer.innerHTML = '';
+    dateContainer.appendChild(createDateInput(eventId, date));
+}
+
+async function renderVisitorsList(eventId, date) {
     const placeId = eventId.slice(6, eventId.length);
-    const visitors = await getVisitors(placeId);
-    const modalElement = document.getElementById('list-visitors');
-    modalElement.innerHTML = '';
+    const visitors = await getVisitors(placeId, date);
+    const listElement = document.getElementById('list-visitors-container');
+    listElement.innerHTML = '';
     if (visitors.length !== 0) {
         for (const visitorId of visitors) {
-            modalElement.appendChild(createListElement(
-                await getVisitorName(visitorId)
+            const dividerElement = document.createElement('div');
+            dividerElement.classList.add('divider');
+            listElement.appendChild(dividerElement);
+            listElement.appendChild(createListElement(
+                await getVisitorInfo(visitorId)
             ));
         }
     } else {
         const noVisitorsElement = document.createElement('p');
         noVisitorsElement.style.textAlign = 'center';
         noVisitorsElement.innerText = 'No one has ever visited this place! Be the first one';
-        modalElement.appendChild(noVisitorsElement);
+        listElement.appendChild(noVisitorsElement);
     }
-    M.Modal.getInstance(modalElement).open();
 }
 
-function createListElement(text) {
-    const element = document.createElement('li');
-    element.style.textAlign = 'center';
-    element.innerText = text;
-    return element;
+function createDateInput(eventId, initialValue) {
+    const dateElement = document.createElement('input');
+    dateElement.value = initialValue;
+    dateElement.type = 'date';
+    dateElement.style.width = 'auto';
+    dateElement.style.margin = '0';
+    dateElement.style.borderBottom = 'white';
+    dateElement.addEventListener('change', () => {
+        renderVisitorsList(eventId, dateElement.value);
+    });
+    return dateElement;
 }
 
-async function getVisitorName(visitorId) {
+function createListElement(user) {
+    // Create a new list elemet
+    const newElement = document.createElement('li');
+    newElement.classList.add('row', 'result-element', 'valign-wrapper');
+    newElement.style.margin = '0';
+    newElement.style.marginTop = '0.5%';
+    // Create the name and username container element
+    const nameContainer = document.createElement('div');
+    nameContainer.classList.add('col', 's5');
+    nameContainer.style.margin = '0';
+    // Create the name element
+    const nameElement = document.createElement('span');
+    nameElement.classList.add('row');
+    nameElement.innerText = user['name'];
+    nameElement.style.fontSize = 'min(1.7vw, 16px)';
+    nameElement.style.paddingRight = '1%';
+    nameElement.style.margin = '0';
+    // Create the username element
+    const usernameElement = document.createElement('span');
+    usernameElement.classList.add('row');
+    usernameElement.innerText = '(' + user['username'] + ')';
+    usernameElement.style.fontSize = 'min(1.2vw, 12px)';
+    usernameElement.style.margin = '0';
+    // Add the name and the username to the name container
+    nameContainer.appendChild(nameElement);
+    nameContainer.appendChild(usernameElement);
+    // Create an image container
+    const imageContainer = document.createElement('div');
+    imageContainer.classList.add('col', 's2', 'valign-wrapper');
+    imageContainer.style.margin = '0';
+    imageContainer.style.padding = '0';
+    // Create the image element
+    const image = document.createElement('img');
+    image.src = user['profilePic'] !== undefined ? user['profilePic'] : '/images/profile-pic.png';
+    image.classList.add('center-align', 'circle', 'responsive-img');
+    imageContainer.appendChild(image);
+    // Add the image and the username elements to the list elenent
+    newElement.appendChild(imageContainer);
+    newElement.appendChild(nameContainer);
+
+    return newElement;
+}
+
+async function getVisitorInfo(visitorId) {
     const userSnapshot = await database.ref('users/' + visitorId).once('value');
     if (userSnapshot.val() === null) {
         alert('No visitor found with the id provided!');
     }
-    return userSnapshot.val()['name'];
+    return userSnapshot.val();
 }
 
-async function getVisitors(placeId) {
+async function getVisitors(placeId, date) {
     let visitors = [];
-    const placeSnapshot = await database.ref('places/' + placeId).once('value');
-    if (placeSnapshot.val() !== null) {
-        for (const userId in placeSnapshot.val().visitors) {
-            visitors.push(userId);
-        }
+    if (date === '') {
+        return visitors;
+    }
+    const visitorsSnapshot = await database.ref('places/' + placeId + '/' + date).once('value');
+    if (visitorsSnapshot.val() !== null) {
+        visitorsSnapshot.forEach((userSnapshot) => {
+            visitors.push(userSnapshot.key);
+        });
     }
     return visitors;
 }
@@ -233,7 +329,7 @@ async function getNextList() {
         listIndex--;
         return;
     }
-    renderList(eventsList, listName);
+    renderList(eventsList, listName, listDate);
 }
 
 async function getPreviousList() {
@@ -247,7 +343,7 @@ async function getPreviousList() {
         listIndex++;
         return;
     }
-    renderList(eventsList, listName);
+    renderList(eventsList, listName, listDate);
 }
 
 function createIcon(icon) {
