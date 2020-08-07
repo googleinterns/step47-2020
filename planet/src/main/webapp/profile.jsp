@@ -14,6 +14,7 @@
     <script type="module" src="/js/profile-events-renderer.js"></script>
     <script type="module" src="/js/about-section-renderer.js"></script>
     <script type="module" src="/js/profile.js"></script>
+    <script src="/js/search-bar.js"></script>
     <link href='//fonts.googleapis.com/css?family=Marmelad' rel='stylesheet' type='text/css'>
     <!-- Compiled and minified CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
@@ -39,7 +40,7 @@
             </div>
             <div class="col s7" style="position: absolute; bottom: 0; left: 25%;">
                 <div id="name-container" class="row valign-wrapper" style="margin: 0">
-                    <h2 id="display-name" class="col s11" style="margin: 0; font-size: 3vw;"></h2>
+                    <h2 id="display-name" class="col s11" style="margin: 0; font-size: min(3vw, 40px);"></h2>
                 </div>
                 <div id="location-container" class="row valign-wrapper" style="margin: 0">
                     <div id="location" class="col s11 valign-wrapper" style="margin: 0"></div>
