@@ -24,7 +24,7 @@ function onKeyUp(event) {
         return;
     }
     if (event.key === 'Enter') {
-        openProfile(document.getElementById('search-result-item-' + elementIndex));
+        openUserProfile(document.getElementById('search-result-item-' + elementIndex));
         return;
     }
 }
@@ -37,7 +37,7 @@ function getSearchResults() {
         return;
     }
     elementIndex = -1;
-    database.ref('users').orderByChild('name')  // Order elements by name
+    firebase.database().ref('users').orderByChild('name')  // Order elements by name
     .startAt(searchInput + ' ') // Start at the users whose names start with searchInput + ' '
     .endAt(searchInput + 'z')   // End with the users whose names start with searchInput + 'z'
     .limitToFirst(5) // Get the first 5 results
@@ -98,6 +98,7 @@ function addSearchResultElement(name, username, pictureSrc, id) {
     nameElement.innerText = name;
     nameElement.style.fontSize = 'min(1.7vw, 16px)';
     nameElement.style.paddingRight = '1%';
+    nameElement.style.paddingLeft = '1%';
     nameElement.style.margin = '0';
     
     const usernameElement = document.createElement('span');
@@ -110,6 +111,7 @@ function addSearchResultElement(name, username, pictureSrc, id) {
     newElement.classList.add('row', 'result-element', 'valign-wrapper');
     newElement.style.margin = '0';
     newElement.style.marginTop = '0.5%';
+    newElement.style.width = '-webkit-fill-available';
     newElement.setAttribute('onmouseenter', 'onMouseEnter(event)');
     newElement.setAttribute('onmouseleave', 'onMouseLeave(event)');
     newElement.setAttribute('onmousedown', 'accessProfile(event)');
@@ -136,10 +138,10 @@ function onMouseLeave(event) {
 
 function accessProfile(event) {
     const userElement = event.currentTarget;
-    openProfile(userElement);
+    openUserProfile(userElement);
 }
 
-function openProfile(userElement) {
+function openUserProfile(userElement) {
     if (userElement) {
         let username = userElement.lastElementChild.innerText;
         username = username.slice(1, username.length - 1);
